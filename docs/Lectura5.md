@@ -86,7 +86,7 @@ $(VENV):
 	@echo "Creando venv con: $(PY_BOOT) -m venv --prompt $(VENV_PROMPT) $(VENV)"
 	@$(PY_BOOT) -m venv --prompt "$(VENV_PROMPT)" $(VENV)
 ```
-La caché incremental funciona porque \$(VENV) es un objetivo con el mismo nombre que el directorio `bdd/`. Make compara marcas de tiempo: si ese directorio ya existe, asume el target actualizado y omite su receta,  por eso no vuelve a crear el entorno. 
+El caché incremental funciona porque \$(VENV) es un objetivo con el mismo nombre que el directorio `bdd/`. Make compara marcas de tiempo: si ese directorio ya existe, asume el target actualizado y omite su receta,  por eso no vuelve a crear el entorno. 
 Al invocar `make prepare`, solo se ejecutan los pasos de instalación, que son idempotentes (pip no reinstala paquetes ya satisfechos). 
 Si cambias la versión de Python o deseas regenerar el venv, puedes forzar la reconstrucción borrándolo (`rm -rf bdd/`) o ejecutando `make -B $(VENV)`/`touch -t 0001010000 bdd`. 
 Así controlas reconstrucciones sin perder reproducibilidad y coherencia de versiones.
