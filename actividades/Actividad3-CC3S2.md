@@ -3,7 +3,7 @@
 Esta actividad cierra la unidad cubriendo los temas de Introducción a DevOps (qué es y qué no es, del código a producción), el marco CALMS, automatización reproducible con 
 Linux/Bash y Make, la visión cultural de DevOps (comunicación y colaboración) y su evolución a DevSecOps, así como los módulos de redes y arquitectura  (HTTP/DNS/TLS, puertos/procesos y metodología 12-Factor App). 
 
-La actividad se divide en una parte teórica (reflexión conceptual)  y una parte práctica (ejercicios basados en el laboratorio proporcionado). 
+La actividad se divide en una parte teórica (reflexión conceptual) y una parte práctica (ejercicios basados en el laboratorio proporcionado). 
 
 **Instrucciones generales:**
 
@@ -41,30 +41,40 @@ La actividad se divide en una parte teórica (reflexión conceptual)  y una part
 #### Parte práctica
 
 1. **Automatización reproducible con Make y Bash (Automation en CALMS).**
-   Ejecuta Makefile para preparar, hosts-setup y correr la app. Agrega un target para verificar idempotencia HTTP (reintentos con curl).
-   Explica cómo Lean minimiza fallos. Haz un rastreo: tabla "objetivo -> prepara/verifica -> evidencia" de Instrucciones.md.
+   Ejecuta Makefile para preparar, hosts-setup y correr la app. Agrega un target para verificar idempotencia HTTP (reintentos con curl). Explica cómo Lean minimiza fallos.
+   Haz una tabla de rastreo de objetivos con esta cabeceras,  "objetivo -> prepara/verifica -> evidencia" de Instrucciones.md.
+   
+   **Tabla de rastreo de objetivos (Makefile + Instrucciones.md)**
+
+   | Objetivo (Make) | Prepara / Verifica | Evidencia (captura o salida) |
+   |-----------------|--------------------|------------------------------|
+   | `make deps`     | Instala dependencias necesarias para la app | Captura de consola mostrando instalación / verificación de paquetes |
+   | `make run`      | Levanta la aplicación Flask en el puerto configurado | Mensaje de “Running on http://127.0.0.1:xxxx” + salida de `ss -lnt` con el puerto en LISTEN |
+   | `make hosts-setup` | Configura resolución local para el dominio de la app | Captura del archivo `/etc/hosts` actualizado o salida de `ping miapp.local` resolviendo a la IP       correcta |
+   | `make cleanup`  | Elimina archivos temporales y detiene servicios | Captura mostrando que los procesos ya no están activos / carpeta limpia |
+
 
    * *Tip:* Intenta romper el Makefile cambiando una variable y observa si sigue siendo reproducible.
 
-2. **Del código a producción con 12-Factor (Build/Release/Run).**
+3. **Del código a producción con 12-Factor (Build/Release/Run).**
    Modifica variables de entorno (`PORT`, `MESSAGE`, `RELEASE`) sin tocar código. Crea un artefacto inmutable con `git archive` y verifica paridad dev-prod.
    Documenta en tabla "variable -> efecto observable". Simula un fallo de backing service (puerto equivocado) y resuélvelo con disposability. Relaciona con logs y port binding.
 
    * *Tip:* Muestra cómo un log puede servir de "única fuente de verdad" en la depuración.
 
-3. **HTTP como contrato observable.**
+4. **HTTP como contrato observable.**
    Inspecciona cabeceras como ETag o HSTS. Define qué operaciones son seguras para reintentos. Implementa readiness y liveness simples, y mide latencias con curl.
    Documenta contrato mínimo (campos respuesta, trazabilidad en logs). Explica cómo definirías un **SLO**.
 
    * *Tip:* Piensa qué pasaría si tu endpoint principal no fuera idempotente.
 
-4. **DNS y Caché en operación.**
+5. **DNS y Caché en operación.**
    Configura IP estática en Netplan. Usa dig para observar TTL decreciente y getent local para resolución de `miapp.local`.
    Explica cómo opera sin zona pública, el camino stub/recursor/autoritativos y overrides locales. Diferencia respuestas cacheadas y autoritativas.
 
    * *Tip:* Haz dos consultas seguidas y compara TTL. ¿Qué cambia?.
 
-5. **TLS y Seguridad en DevSecOps (Reverse Proxy).**
+6. **TLS y Seguridad en DevSecOps (Reverse Proxy).**
   
     Un **gate** (puerta/umbral de calidad) es una **verificación automática no negociable** en el flujo de CI/CD que **bloquea** el avance de un cambio si **no** se cumplen  criterios objetivos. 
     Sirve para **cumplir políticas** (seguridad, rendimiento, estilo, compatibilidad) antes de promover un artefacto a la siguiente etapa. 
@@ -93,6 +103,13 @@ La actividad se divide en una parte teórica (reflexión conceptual)  y una part
    * *Tip:* Piensa cómo este script podría integrarse en GitHub Actions.
 
 9. **Escenario integrado y mapeo 12-Factor.**
-   Modifica el endpoint para introducir un fallo no idempotente. Realiza un despliegue manual tipo blue/green (dos instancias) y documenta un postmortem con fallas, lecciones y prevención DevSecOps. Propón un runbook breve. Completa una tabla con 6 factores: principio, implementación en el laboratorio, evidencia y mejora hacia producción.
+   En este ejercicio deberás trabajar con un **endpoint** de la aplicación (por ejemplo, `GET /`) y modificarlo conceptualmente para introducir un **fallo no idempotente**, es      decir, que al repetir la misma solicitud se altere el estado o la respuesta. La evidencia debe mostrar cómo dos peticiones idénticas generan resultados distintos y por qué       esto rompe la idempotencia, afectando reintentos, cachés y balanceadores.
+
+   Posteriormente, realiza un **despliegue manual tipo blue/green**, manteniendo dos instancias: una estable (Blue) y otra con el fallo (Green). Documenta cómo harías la
+   conmutación de tráfico de Blue a Green únicamente si pasa los chequeos de readiness y liveness, y cómo ejecutarías un rollback rápido si se detecta el problema.
+
+   A continuación, redacta un **postmortem** que incluya un resumen del incidente, una línea de tiempo, impacto en usuarios, causa raíz, lecciones técnicas y culturales, además     de acciones preventivas desde una perspectiva **DevSecOps**. Después, propone un **runbook breve**, entendido como un procedimiento paso a paso que cualquier integrante del      equipo pueda seguir en caso de repetir el incidente.
+
+   Finalmente, completa una **tabla con seis factores de 12-Factor App**, explicando para cada uno: el principio, cómo está implementado en el laboratorio, la evidencia recogida    y qué mejora propondrías hacia producción.
 
    * *Tip:* Usa este ejercicio para mostrar tu capacidad de análisis cultural, no solo técnico.
