@@ -1,7 +1,7 @@
 ## Fundamentos operativos de DevOps y DevSecOps
 
 Esta lectura explora cómo DevOps y DevSecOps integran desarrollo, operaciones y seguridad para entregar servicios fiables, seguros y escalables. 
-Bajo el marco [CALMS](https://www.atlassian.com/devops/frameworks/calms-framework) (Culture, Automation, Lean, Measurement, Sharing), la cultura fomenta la corresponsabilidad entre equipos, la automatización sistematiza pipelines, el enfoque **lean** minimiza fallos, la medición guía con métricas como SLO (Service Level Objectives), y el compartir difunde aprendizajes mediante runbooks y postmortems. 
+Bajo el marco [CALMS](https://www.atlassian.com/devops/frameworks/calms-framework) (Culture, Automation, Lean, Measurement, Sharing), la cultura fomenta la corresponsabilidad entre equipos, la automatización sistematiza pipelines, el enfoque **Lean** minimiza fallos, la medición guía con métricas como SLO (Service Level Objectives), y el compartir difunde aprendizajes mediante runbooks y postmortems. 
 
 El principio ["you build it, you run it"](https://www.thoughtworks.com/insights/decoder/y/you-build-it-you-run-it) asigna al equipo que desarrolla la responsabilidad de operar el servicio, asegurando decisiones de diseño (idempotencia, caché, TLS) informadas por la operación. 
 Los bucles de feedback-métricas, logs y trazas cierran el ciclo, retroalimentando mejoras en diseño y despliegues. 
