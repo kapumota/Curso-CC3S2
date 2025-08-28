@@ -1,4 +1,4 @@
-## Make y Makefile
+## Make para devops y devsecops
 
 Este documento busca explicar de forma integrada qué es **Make** y cómo un **Makefile** puede sostener un flujo de DevOps/DevSecOps. 
 El punto de partida es el [Laboratorio 1](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio1): una app Flask, Nginx como reverse proxy con TLS, y un servicio systemd. 
@@ -341,6 +341,22 @@ make run PORT=9000 MESSAGE="Hola DevOps" RELEASE=v1
 
 La app responderá con esos valores, porque `app.py` los lee del entorno. Y la detección del SO que viste en `VENV_BIN` evita condicionar a un único sistema.
 
+Para evitar ifs frágiles y que cada target degrade con mensajes claros cuando falta una herramienta, declara los binarios una sola vez:
+
+```make
+# Descubrimiento (command -v) para uso condicional en targets
+CURL      := $(shell command -v curl 2>/dev/null)
+SS        := $(shell command -v ss 2>/dev/null)
+NETSTAT   := $(shell command -v netstat 2>/dev/null)
+LSOF      := $(shell command -v lsof 2>/dev/null)
+OPENSSL   := $(shell command -v openssl 2>/dev/null)
+SYSTEMCTL := $(shell command -v systemctl 2>/dev/null)
+UFW       := $(shell command -v ufw 2>/dev/null)
+SED       := $(shell command -v sed 2>/dev/null)
+NGINX     := $(shell command -v nginx 2>/dev/null)
+```
+
+De esta forma, cada receta puede anteponer `[ -n "$(CMD)" ] && ... || echo "no disponible"` y seguir siendo idempotente y autoexplicativa.
 
 #### 5) Targets abstractos, `.PHONY` 
 
@@ -419,3 +435,10 @@ endif
 
 Esto complementa perfecto el vhost de Nginx: el navegador resuelve `https://miapp.local/` **sin** montar un DNS real.
 
+#### 8) `.PHONY` y ayuda como contrato de uso
+
+```make
+.PHONY: help prepare run check-http tls-cert nginx systemd-install check-tls cleanup cleanup-check hosts-setup
+```
+
+Gracias al objetivo `help`, que recorre el Makefile y extrae las descripciones marcadas con `##` usando grep/awk, el archivo  se vuelve **documentación ejecutable**: muestra qué comandos existen, para qué sirven y cómo usarlos, sin abrir archivos.
