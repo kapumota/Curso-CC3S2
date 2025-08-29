@@ -1,4 +1,4 @@
-## **Actividad:** Introducción a Git - conceptos básicos y operaciones esenciales
+## **Actividad 6**: Introducción a Git conceptos básicos y operaciones esenciales
 
 ### Objetivo de aprendizaje
 
@@ -29,12 +29,11 @@ user.name=Your Name
 user.email=Your Email
 ```
 
-¡Ahora, la primera tarea está hecha! Pasemos rápidamente a las operaciones básicas de Git.
-
-
 #### git init: Donde comienza tu viaje de código
 
-Al igual que cada gran viaje tiene su origen, en el mundo de Git, el viaje de tu código comienza con el comando `git init`. El comando se usa para inicializar un nuevo repositorio de Git y comenzar a rastrear directorios existentes. Cuando ejecutas el comando, configura un directorio `.git` lleno de todo lo necesario para el control de versiones. Con eso fuera del camino, estás listo para sumergirte en la gama de comandos de Git y comenzar a rastrear y actualizar tu proyecto:
+Al igual que cada gran viaje tiene su origen, en el mundo de Git, el viaje de tu código comienza con el comando `git init`. El comando se usa para inicializar un nuevo repositorio de Git y comenzar a rastrear directorios existentes. Cuando ejecutas el comando, configura un directorio `.git` lleno de todo lo necesario para el control de versiones. 
+
+Con eso fuera del camino, estás listo para sumergirte en la gama de comandos de Git y comenzar a rastrear y actualizar tu proyecto:
 
 ```bash
 // Crea un directorio
@@ -51,7 +50,6 @@ Otra forma es pasar un nombre de directorio como argumento, como `git init kapum
 Ahora que se ha creado el directorio `.git/`, los cambios en los archivos se guardan en el directorio `.git/`, pero Git no guarda automáticamente los archivos. En Git, *guardar* se completa ejecutando el comando `git add`, que selecciona conscientemente los archivos para guardar entre los que se han editado, agregado o eliminado, y el comando `git commit`, que registra esos cambios.
 
 A continuación, agreguemos algo de código al repositorio.
-
 
 #### git add: Preparando tu código
 
@@ -92,10 +90,12 @@ No commits yet
 
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
-    new file:   README.m
+    new file:   README.md
 ```
 
-Ahora Git reconoce `README.md` como un nuevo archivo y ahora está rastreado. El estado objetivo para guardar mediante el comando `git add` se llama *staged* (preparado). También puedes escuchar el término *índice* (index) utilizado indistintamente con *staging*. Antes de que los archivos o cambios sean preparados, residen en un área a menudo referida como el *espacio de trabajo* (workspace). Esta es esencialmente el entorno donde estás haciendo cambios activamente en tus archivos. 
+Ahora Git reconoce `README.md` como un nuevo archivo y ahora está rastreado. El estado objetivo para guardar mediante el comando `git add` se llama *staged* (preparado). También puedes escuchar el término *índice* (index) utilizado indistintamente con *staging*. Antes de que los archivos o cambios sean preparados, residen en un área a menudo referida como el *espacio de trabajo* (workspace). 
+
+Esta es esencialmente el entorno donde estás haciendo cambios activamente en tus archivos. 
 
 Algunos también pueden referirse a esta área como el *árbol de trabajo* (worktree). En resumen, en este proceso, has preparado el archivo `README.md` desde el árbol de trabajo utilizando el comando `git add`.
 
@@ -112,7 +112,7 @@ Imagina que estás jugando un videojuego desafiante. A medida que avanzas, a men
 Para cometer cambios, generalmente puedes hacer lo siguiente:
 
 ```bash
-$ git commit -m "Initial commit with README.md
+$ git commit -m "Commit inicial con README.md
 ```
 
 Aquí, la bandera `-m` es seguida por un mensaje corto y descriptivo que captura la esencia de los cambios que has hecho. Escribir buenos mensajes de *commit* es un arte, ya que ayuda a entender el historial y la intención de los cambios.
@@ -128,7 +128,7 @@ nothing to commit, working tree clean
 
 Si aparece el mensaje "*nothing to commit*", tus cambios han sido incorporados.
 
-Bueno, eso es todo; es muy fácil guardar un archivo en Git. Revisémoslo aquí. El flujo de edición, preparación y commit sigue siendo el mismo sin importar cuán complejo sea tu proyecto:
+El flujo de edición, preparación y commit sigue siendo el mismo sin importar cuán complejo sea tu proyecto:
 
 1. **Editar archivos**: Realiza los cambios necesarios en tus archivos. 
 
@@ -150,7 +150,7 @@ commit a16e562c4cb1e4cc014220ec62f1182b3928935c (HEAD -> main)
 Author: Kapumota <kapumota@example.com>
 Date:   Thu Sep 28 16:30:00 2023 +0900
 
-    Initial commit with README.md
+    Commit inicial con README.md
 ```
 
 Esto mostrará una lista de todos los *commits*, cada uno con lo siguiente:
@@ -180,9 +180,9 @@ $ git log --graph --pretty=format:'%x09 %h %ar ("%an") %s'
 
 ```bash
 $ echo " CONTRIBUTING" > CONTRIBUTING.md
-$ echo " README\n\nWelcome to the project" > README.md
+$ echo " README\n\nBienvenido al proyecto" > README.md
 $ git add .
-$ git commit -m "Set up the repository base documentation"
+$ git commit -m "Configura la documentación base del repositorio"
 ```
 
 Una vez hecho, agrega un código de ejemplo en Python:
@@ -190,7 +190,7 @@ Una vez hecho, agrega un código de ejemplo en Python:
 ```bash
 $ echo "print('Hello World')" > main.py
 $ git add .
-$ git commit –m "Add main.py"
+$ git commit –m "Agrega main.py"
 ```
 
 Cuando se confirme en el *log* que está correctamente registrado, está hecho:
@@ -198,19 +198,18 @@ Cuando se confirme en el *log* que está correctamente registrado, está hecho:
 ```bash
 $ git log --oneline
 
-344a02a (HEAD -> main) Add main.py
-b641640 Set up the repository base documentation
-a16e562 Initial commit with README.md
+344a02a (HEAD -> main) Agrega main.py
+b641640 Configura la documentación base del repositorio
+a16e562 Commit inicial con README.md
 ```
 
 En esencia, el comando `git log` es una herramienta vital para cualquier desarrollador. Te ayuda a navegar fácilmente a través del historial de tu código, ya sea que estés buscando un cambio específico o simplemente revisando el trabajo anterior.
 
----
 
 ### Trabajar con ramas: La piedra angular de la colaboración
 
-Mientras que las secciones anteriores te proporcionan una comprensión sólida de cómo inicializar y gestionar un repositorio de Git, el concepto de *branching* lleva esto a un nuevo nivel. Mientras que acumular `git commit` solo crea un historial lineal, `git branch` se puede usar para crear un historial del entorno paralelo. Luego, puedes fusionar esos múltiples entornos en uno, lo que permite que varias personas trabajen en ellos, dándote la flexibilidad para experimentar con nuevas características, correcciones de errores o incluso ideas totalmente vanguardistas sin afectar la base de código principal.
-
+Mientras que las secciones anteriores te proporcionan una comprensión sólida de cómo inicializar y gestionar un repositorio de Git, el concepto de *branching* lleva esto a un nuevo nivel. Mientras que acumular `git commit` solo crea un historial lineal, `git branch` se puede usar para crear un historial del entorno paralelo. 
+Luego, puedes fusionar esos múltiples entornos en uno, lo que permite que varias personas trabajen en ellos, dándote la flexibilidad para experimentar con nuevas características, correcciones de errores o incluso ideas totalmente vanguardistas sin afectar la base de código principal.
 
 #### git branch: Entendiendo los conceptos básicos de Git branch
 
@@ -369,7 +368,7 @@ $ git branch -d feature/new-feature
    - Edita el archivo `main.py` para incluir una función adicional:
      ```python
      def greet():
-         print('Hello from advanced feature')
+         print('Hello como una función avanzada')
 
      greet()
      ```
@@ -377,7 +376,7 @@ $ git branch -d feature/new-feature
 
      ```bash
      $ git add main.py
-     $ git commit -m "Add greet function in advanced feature"
+     $ git commit -m "Agrega la funcion greet como función avanzada"
      ```
 
 3. **Simular un desarrollo paralelo en la rama main:**
@@ -388,13 +387,13 @@ $ git branch -d feature/new-feature
      ```
    - Edita el archivo `main.py` de forma diferente (por ejemplo, cambia el mensaje del print original):
      ```python
-     print('Hello World - updated in main')
+     print('Hello World-actualiado en main')
      ```
    - Añade y confirma estos cambios en la rama `main`:
 
      ```bash
      $ git add main.py
-     $ git commit -m "Update main.py message in main branch"
+     $ git commit -m "Actualizar el mensaje main.py en la rama main"
      ```
 
 4. **Intentar fusionar la rama feature/advanced-feature en main:**
@@ -410,7 +409,7 @@ $ git branch -d feature/new-feature
 
      ```bash
      $ git add main.py
-     $ git commit -m "Resolve merge conflict between main and feature/advanced-feature"
+     $ git commit -m "Resuelve el conflicto de fusión entre la versión main y feature/advanced-feature"
      ```
 
 6. **Eliminar la rama fusionada:**
@@ -491,13 +490,13 @@ $ git branch -d feature/new-feature
    - Realiza algunas modificaciones en `main.py` que simulen una corrección de errores:
      ```python
      def greet():
-         print('Fixed bug in feature')
+         print('Error corregido en la función')
      ```
    - Añade y confirma los cambios en la nueva rama:
 
      ```bash
      $ git add main.py
-     $ git commit -m "Fix bug in rollback feature"
+     $ git commit -m "Corregir error en la funcionalidad de rollback"
      ```
 
 3. **Fusionar los cambios en la rama principal:**
@@ -522,7 +521,6 @@ $ git branch -d feature/new-feature
      $ git branch -d bugfix/rollback-feature
      ```
 
-
 #### Ejercicio 4: Manipulación y restauración de commits con git reset y git restore
 
 **Objetivo:** Comprender cómo usar `git reset` y `git restore` para deshacer cambios en el historial y en el área de trabajo.
@@ -532,13 +530,13 @@ $ git branch -d feature/new-feature
 1. **Hacer cambios en el archivo main.py:**
    - Edita el archivo `main.py` para introducir un nuevo cambio:
      ```python
-     print('This change will be reset')
+     print('Este cambio se restablecerá')
      ```
    - Añade y confirma los cambios:
 
      ```bash
      $ git add main.py
-     $ git commit -m "Introduce a change to be reset"
+     $ git commit -m "Introduce un cambio para restablecer"
      ```
 
 2. **Usar git reset para deshacer el commit:**
@@ -553,7 +551,7 @@ $ git branch -d feature/new-feature
    - Realiza un cambio en `README.md` y no lo confirmes:
 
      ```bash
-     $ echo "Another line in README" >> README.md
+     $ echo "Agrega linea en README" >> README.md
      $ git status
      ```
    - Usa `git restore` para deshacer este cambio no confirmado:
@@ -589,9 +587,9 @@ $ git branch -d feature/new-feature
    - Realiza cambios en los archivos del proyecto y confírmalos:
 
      ```bash
-     $ echo "print('Collaboration is key!')" > collaboration.py
+     $ echo "print('Colaboracion es clave!')" > colaboracion.py
      $ git add .
-     $ git commit -m "Add collaboration script"
+     $ git commit -m "Agrega script de colaboración"
      ```
    - Envía la rama al repositorio remoto:
 
@@ -625,9 +623,9 @@ $ git branch -d feature/new-feature
    - Realiza y confirma varios cambios en `main.py` en la rama `main`:
 
      ```bash
-     $ echo "print('Cherry pick this!')" >> main.py
+     $ echo "print('Cherry pick!')" >> main.py
      $ git add main.py
-     $ git commit -m "Add cherry-pick example"
+     $ git commit -m "Agrega ejemplo de cherry-pick"
      ```
 
 2. **Crear una nueva rama y aplicar el commit específico:**
@@ -643,7 +641,7 @@ $ git branch -d feature/new-feature
    - Realiza algunos cambios en `main.py` pero no los confirmes:
 
      ```bash
-     $ echo "This change is stashed" >> main.py
+     $ echo "Este cambio está en el stash" >> main.py
      $ git status
      ```
    - Guarda temporalmente estos cambios utilizando `git stash`:
