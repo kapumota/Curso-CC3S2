@@ -22,7 +22,7 @@ Nota de seguridad: `script` puede capturar información sensible. Antes de entre
 **Entrega mínima:**
 - Un archivo `README.md` con respuestas a ejercicios, comandos clave y explicaciones breves (usa Markdown para formatear, ej. listas y código con ```bash:disable-run
 - El archivo `evidencias/sesion.txt` (o la versión redactada).
-- Archivos generados durante el lab (ej. `etc_lista.txt`, `mayus.txt`, etc.).
+- Archivos generados durante el laboratorio (ej. `etc_lista.txt`, `mayus.txt`, etc.).
 - Output de comandos de auditoría: `journalctl -p err..alert --since "today"` (o fallback en no-systemd: `sudo tail -n 100 /var/log/syslog | grep -i error`), `find /tmp -mtime -5 -type f -printf '%TY-%Tm-%Td %TT %p\n' | sort` (archivos modificados en últimos 5 días, ordenados), y `sudo -l` (evidencia de principio de menor privilegio; captura solo un fragmento representativo para evitar exponer políticas internas).
 - Incluye un mini-pipeline con datos "reales" (ej. en Ubuntu: `sudo journalctl -t sshd -t sudo --since today | awk '{print $1,$2,$3,$5}' | sort | uniq -c | sort -nr` para contar eventos de autenticación SSH/sudo, ordenados por frecuencia).
 
