@@ -1,4 +1,4 @@
-## Laboratorio: Introducción a herramientas CLI en entornos Unix-like para DevSecOps
+## Actividad 4: Introducción a herramientas CLI en entornos Unix-like para DevSecOps
 Bienvenidos a este laboratorio diseñado en el manejo de la línea de comandos (CLI) en sistemas Unix-like, con un enfoque orientado a DevSecOps. 
 DevSecOps integra la seguridad en el ciclo de vida del desarrollo de software, y el dominio de la CLI es fundamental para automatizar tareas, gestionar entornos, auditar sistemas y procesar datos de manera segura y eficiente.
 
