@@ -159,7 +159,7 @@ Para habilitar systemd: Edita `/etc/wsl.conf` con `sudo nano /etc/wsl.conf` y ag
 Riesgo: Procesamiento de logs puede exponer datos sensibles o causar borrados masivos. 
 Mitigación: Usa filtros como `journalctl -p err..alert` para severidades, rotación de logs, y opciones seguras en find/xargs (-i para interactivo, -- para seguridad).
 
-#### Marco Teórico
+#### Marco teórico
 El "Unix text toolkit" es un conjunto de herramientas para procesar texto, vital en DevSecOps para analizar logs, parsear outputs de herramientas de seguridad (como Nmap o OWASP ZAP), y automatizar informes. 
 - **grep**: Busca patrones en texto.
 - **sed**: Edita streams de texto (sustituir, eliminar).
