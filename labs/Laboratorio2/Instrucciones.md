@@ -1,4 +1,4 @@
-### Laboratorio: Pipeline DevOps con Make y Bash
+## Laboratorio: Pipeline DevOps con Make y Bash
 
 Este laboratorio muestra cómo orquestar **lint, tests, build y empaquetado** con un Makefile y Bash "robusto". Está pensado para usarse en **Ubuntu sobre WSL2** (Windows), pero también funciona en Linux nativo.
 
