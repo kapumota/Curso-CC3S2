@@ -417,3 +417,140 @@ help: ## Mostrar ayuda
 * Ejecuta `touch src/hello.py` y luego `make all`; identifica qué objetivos se rehacen (`build`, `test`, `package`) y relaciona el comportamiento con el timestamp actualizado y la cadena de dependencias especificada.
 * Ejecuta `make -j4 all` y observa ejecución concurrente de objetivos independientes; confirma resultados idénticos a modo secuencial y explica cómo `mkdir -p $(@D)` y dependencias precisas evitan condiciones de carrera.
 * Ejecuta `make lint` y luego `make format`; interpreta diagnósticos de `shellcheck`, revisa diferencias aplicadas por `shfmt` y, si está disponible, considera la salida de `ruff` sobre `src/` antes de empaquetar.
+
+### Parte 3: Extender
+
+#### 3.1 `lint` mejorado
+
+Rompe a propósito un *quoting* en `scripts/run_tests.sh` (por ejemplo, quita comillas a una variable que pueda contener espacios) y ejecuta `make lint`. `shellcheck` debe reportar el problema; corrígelo y vuelve a correr.
+Luego ejecuta `make format` para aplicar `shfmt` y estandarizar estilo. Si tienes `ruff`, inspecciona Python y corrige advertencias.
+*(Nota: si `ruff` no está instalado, el Makefile ya lo trata como opcional y no debe romper la build.)*
+
+```bash
+make lint
+make format
+ruff check src || true
+```
+
+#### 3.2 Rollback adicional
+
+Este chequeo asegura que, si el temporal desaparece, el script falla limpiamente y el `trap` revierte el estado (restaura `hello.py` desde `.bak`) preservando el código de salida.
+Borra el archivo temporal manualmente y observa el comportamiento: mensaje claro, salida no-cero, restauración y limpieza.
+*(Sugerencia práctica para reproducir la condición sin ambigüedad: opcionalmente imprime la ruta del temporal y da una pequeña pausa antes del chequeo para poder borrarlo desde otra terminal, por ejemplo, añadir `echo "$tmp" > out/tmp_path.txt; sleep 3` justo antes del `if`.)*
+
+```bash
+# Al final de run_tests (sin cambiar nada más)
+if [[ ! -f "$tmp" ]]; then
+    echo "Error: archivo temporal perdido"
+    exit 3
+fi
+```
+
+```bash
+# Prueba
+./scripts/run_tests.sh
+# (opcional) En otra terminal, borra el tmp antes del check:
+# rm -f "$(cat out/tmp_path.txt)"
+```
+
+#### 3.3 Incrementalidad
+
+Ejecuta dos veces `make benchmark` para comparar un build limpio frente a uno cacheado; revisa `out/benchmark.txt`. Después, modifica el *timestamp* del origen con `touch src/hello.py` y repite. Observa que `build`, `test` y `package` se rehacen.
+Interpreta tiempos y relación con dependencias y marcas de tiempo.
+
+```bash
+make benchmark
+make benchmark
+touch src/hello.py
+make benchmark
+```
+
+#### Checklist de Smoke-Tests - Bootstrap
+
+Confirma permisos de ejecución del script, presencia de herramientas requeridas y ayuda autodocumentada. Espera que `make tools` falle temprano si falta una dependencia, con mensaje específico.
+`make help` debe listar objetivos y descripciones extraídas de comentarios `##`, útil para *onboarding* y operación cotidiana.
+
+```bash
+chmod +x scripts/run_tests.sh
+make tools
+make help
+```
+
+#### Checklist de Smoke-Tests - Primera pasada
+
+Construye, prueba, empaqueta. Verifica que `out/hello.txt` exista y que `dist/app.tar.gz` solo contenga `hello.txt`. El empaquetado usa flags deterministas (`--sort`, `--numeric-owner`, `--owner=0`, `--group=0`, `--mtime='UTC 1970-01-01'`) para reproducibilidad bit a bit.
+Cualquier diferencia sugiere herramienta incompatible (BSD tar) o contaminación del entorno (TZ o metadatos).
+
+```bash
+make all
+ls -l out/hello.txt dist/app.tar.gz
+tar -tzf dist/app.tar.gz
+```
+
+#### Checklist de Smoke-Tests - Incrementalidad
+
+Compara tiempos entre ejecuciones consecutivas de `make benchmark`; la segunda debe ser más rápida por la caché de Make. Tras `touch src/hello.py`, espera reconstrucción de `build/test/package`.
+Documenta el impacto en tiempos y explica cómo el grafo de dependencias dirige reconstrucciones mínimas necesarias.
+
+```bash
+make benchmark
+make benchmark
+touch src/hello.py
+make benchmark
+```
+
+#### Checklist de Smoke-Tests - Rollback
+
+Introduce un cambio que rompa la aserción del test del script Bash y ejecútalo. Observa "Test falló", creación de `.bak`, código de salida `2` y restauración automática por `trap`.
+*(Precisión: si rompes el `print` para que no contenga "Hello, World!", fallará el script Bash y `make test` se detendrá **antes** de `python -m unittest`. la función `greet` en sí sigue siendo válida.)*
+
+```python
+# src/hello.py
+print(greet("Mundo"))
+```
+
+```bash
+./scripts/run_tests.sh ; echo $?
+git checkout -- src/hello.py
+```
+
+#### Checklist de Smoke-Tests - Lint y formato
+
+Ejecuta `make lint` y corrige problemas de shell reportados por `shellcheck`. Aplica `make format` para normalizar estilo con `shfmt`. Si `ruff` está disponible, revisa `src` y corrige advertencias.
+Mantén el build verde sin exigir `ruff` (guard clause), útil en máquinas heterogéneas.
+
+```bash
+make lint
+make format
+ruff check src || true
+```
+
+#### Checklist de Smoke-Tests - Limpieza
+
+Asegura un entorno de compilación limpio y reproducible para CI y pruebas locales. `make dist-clean` elimina artefactos (`out/`, `dist/`) y cachés (`.ruff_cache`, `__pycache__`).
+Luego, `make all` debe reconstruir todo desde cero sin depender de estado previo del árbol de trabajo.
+
+```bash
+make dist-clean
+make all
+```
+
+#### Checklist de Smoke-Tests - Reproducibilidad
+
+Valida que dos empaquetados consecutivos generen el mismo hash SHA256. Si difieren, revisa versión de `tar` (debe ser **GNU**), zona horaria (`TZ=UTC`), permisos y que no se cuelen archivos extra.
+La verificación protege la cadena de suministro y evita *drift* entre desarrolladores y CI.
+
+```bash
+make verify-repro
+```
+
+#### Notas de portabilidad
+
+* Usa **GNU tar** para reproducibilidad: `--sort=name`, `--numeric-owner`, `--owner=0`, `--group=0`, `--mtime='UTC 1970-01-01'`. Verifica artefactos con `sha256sum` (GNU coreutils). Evita BSD tar: carece de estos flags y rompe hashes en CI portables.
+* Mantén `ruff` como opcional mediante *guard clause*: `command -v ruff >/dev/null && ruff check src || echo "ruff no instalado"`; evita fallos cuando no está disponible y continúa la build, reportando su ausencia.
+* En WSL, trabaja en `~/proyecto` (o cualquier ruta Linux). Evita `/mnt/c` por I/O lento y diferencias de permisos; mejora tiempos y estabilidad de herramientas.
+* El paralelismo con `make -j` es seguro porque cada receta crea su directorio objetivo con `mkdir -p $(@D)` y las dependencias evitan carreras.
+* Incluye `out/`, `dist/`, `.ruff_cache/` y `**/__pycache__/` en `.gitignore` para evitar artefactos generados en commits y reducir ruido en diffs.
+* Define (si te interesa CI) un objetivo `ci` que encadene `tools`, `check`, `package` y `verify-repro`; así validas dependencias, pruebas, empaquetado y reproducibilidad antes de subir cambios o crear tags.
+* Para probar determinismo y detectar variables "fantasma", usa entornos mínimos: `env -i LC_ALL=C LANG=C TZ=UTC make ...`.
+
