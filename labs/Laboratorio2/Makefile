@@ -69,15 +69,16 @@ dist-clean: clean ## Limpiar todo (incluye caches opcionales)
 	@rm -rf .ruff_cache
 
 verify-repro: ## Verificar que dist/app.tar.gz sea 100% reproducible
-	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s all
-	@cp dist/app.tar.gz dist/app1.tar.gz
-	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s all
-	@cp dist/app.tar.gz dist/app2.tar.gz
-	@h1=$$(sha256sum dist/app1.tar.gz | awk '{print $$1}'); \
-	 h2=$$(sha256sum dist/app2.tar.gz | awk '{print $$1}'); \
-	 echo "SHA256_1=$$h1"; echo "SHA256_2=$$h2"; \
-	 [ "$$h1" = "$$h2" ] && echo "OK: reproducible" || { echo "ERROR: no reproducible"; exit 1; }
-	@rm -f dist/app1.tar.gz dist/app2.tar.gz
+	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s package
+	@cp $(DIST_DIR)/app.tar.gz app1.tar.gz
+	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s package
+	@cp $(DIST_DIR)/app.tar.gz app2.tar.gz
+	@h1=$$(sha256sum app1.tar.gz | awk '{print $$1}'); \
+	  h2=$$(sha256sum app2.tar.gz | awk '{print $$1}'); \
+	  echo "SHA256_1=$$h1"; echo "SHA256_2=$$h2"; \
+	  test "$$h1" = "$$h2" && echo "OK: reproducible" || { echo "ERROR: no reproducible"; exit 1; }
+	@rm -f app1.tar.gz app2.tar.gz
+
 
 clean: ## Limpiar archivos generados
 	rm -rf $(OUT_DIR) $(DIST_DIR)
