@@ -4,6 +4,40 @@
 
 Familiarizarse con los conceptos básicos de Git y realizar operaciones esenciales, como la configuración inicial, creación de repositorios, preparación y confirmación de cambios, visualización de historial, y gestión de ramas.
 
+#### Entregable
+
+* En la **raíz de tu repositorio**, crea la **`Actividad6-CC3S2/`** y sube ahí **todas las evidencias de tus respuestas**.
+
+#### Estructura mínima
+
+```
+Actividad6-CC3S2/
+├── README.md
+└── logs/
+    ├── git-version.txt        # salida de: git --version
+    ├── config.txt             # git config --list
+    ├── init-status.txt        # git init + git status (inicial)
+    ├── add-commit.txt         # git add + git commit -m "..."
+    ├── log-oneline.txt        # git log --oneline
+    ├── branches.txt           # git branch -vv
+    └── merge-o-conflicto.txt  # git merge (+ cómo resolviste si hubo conflicto)
+```
+
+*(Opcional: `revert.txt`, `rebase.txt`, `cherry-pick.txt`, `stash.txt` si los usas.)*
+
+#### Qué incluir en `README.md` (breve)
+
+* 1-2 líneas por tema: `git config`, `init`, `add/commit`, `log`, **ramas** (crear/cambiar/merge y resolución), y (si aplica) `revert/rebase/cherry-pick/stash`.
+* Indica **qué comando** generó cada archivo de `logs/`.
+* Si usaste remoto/PR, añade la **URL** o escribe "sin remoto".
+
+#### Reglas
+
+* Solo **texto/Markdown** (no binarios ni capturas).
+* **Redacta** datos sensibles (correo privado, tokens).
+* Mantén nombres de archivos **exactos** y salidas **cortas** (trunca lo irrelevante).
+
+
 #### Conceptos básicos de Git: Comienza con una experiencia práctica
 
 Antes de profundizar en los detalles, comencemos con una experiencia práctica. Es probable que sea más fácil comprender el concepto probándolo en lugar de solo leerlo al principio.
