@@ -296,6 +296,8 @@ run_tests "${SRC_DIR}/hello.py"
 
 ### Parte 2: Leer - Analizar un repositorio completo
 
+> Para esta sección de la actividad utiliza de referencia el laboratorio 2 del curso entregado [aquí](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio2).
+
 #### 2.1 Test de ejemplo
 
 `tests/test_hello.py`:
