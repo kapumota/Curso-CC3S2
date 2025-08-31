@@ -554,3 +554,73 @@ make verify-repro
 * Define (si te interesa CI) un objetivo `ci` que encadene `tools`, `check`, `package` y `verify-repro`; así validas dependencias, pruebas, empaquetado y reproducibilidad antes de subir cambios o crear tags.
 * Para probar determinismo y detectar variables "fantasma", usa entornos mínimos: `env -i LC_ALL=C LANG=C TZ=UTC make ...`.
 
+
+#### Entrega de la Actividad 5
+
+Coloca **todas las respuestas y evidencias** de la *Actividad 5: Construyendo un pipeline DevOps con Make y Bash* en una carpeta en la **raíz del repositorio** llamada **`Actividad5-CC3S2`**. La entrega debe ser autocontenida y fácil de revisar.
+
+#### 1) Estructura requerida
+
+```
+Actividad5-CC3S2/
+├── README.md                 # Respuestas y explicación breve por ejercicio
+├── logs/                     # Salidas de consola organizadas
+│   ├── make-help.txt
+│   ├── build-run1.txt
+│   ├── build-run2.txt
+│   ├── dry-run-build.txt
+│   ├── make-d.txt
+│   ├── fallo-python4.txt
+│   ├── sha256-1.txt
+│   ├── sha256-2.txt
+│   └── sha256-diff.txt
+├── evidencia/                # Evidencias puntuales (archivos/fragmentos)
+│   ├── out-hello-run1.txt
+│   ├── missing-separator.txt
+│   └── notas.md              # (opcional) aclaraciones breves
+├── artefactos/               # Copias de artefactos generados
+│   ├── out/
+│   │   └── hello.txt
+│   └── dist/
+│       └── app.tar.gz
+└── meta/
+    ├── entorno.txt           # Versiones (OS, Python, GNU tar, etc.)
+    └── commit.txt            # SHA corto del repo (si usaste git)
+```
+
+> **Nota:** Los artefactos originales se generan en `out/` y `dist/` del proyecto,  copia los **finales** a `Actividad5-CC3S2/artefactos/` para la entrega.
+
+#### 2) Contenido mínimo del `README.md` (dentro de `Actividad5-CC3S2/`)
+
+Incluye secciones breves (3-8 líneas cada una) que respondan a lo pedido en el enunciado:
+
+* **Resumen del entorno**: SO, shell, versiones de `make`, `bash`, `python3`, `tar` (indica si es **GNU tar**), `sha256sum`.
+* **Parte 1-Construir**:
+
+  * Explica qué hace `build` y cómo `$(PYTHON) $< > $@` usa `$<` y `$@`.
+  * Menciona el **modo estricto** (`-e -u -o pipefail`) y `.DELETE_ON_ERROR`.
+  * Diferencia entre la 1.ª y 2.ª corrida de `build` (idempotencia).
+* **Parte 2-Leer**:
+
+  * Qué observaste con `make -n` y `make -d` (decisiones de rehacer o no).
+  * Rol de `.DEFAULT_GOAL`, `.PHONY` y ayuda autodocumentada.
+* **Parte 3-Extender**:
+
+  * Qué detectó `shellcheck`/`shfmt` (o evidencia de que no están instalados).
+  * Demostración de **rollback** con `trap` (códigos de salida y restauración).
+  * **Reproducibilidad**: factores que la garantizan (`--sort`, `--mtime`, `--numeric-owner`, `TZ=UTC`) y el resultado de `verify-repro`.
+* **Incidencias y mitigaciones**: cualquier problema y cómo lo resolviste.
+* **Conclusión operativa**: 2-3 líneas sobre por qué el pipeline es apto para CI/CD.
+
+> Si alguna herramienta opcional no está disponible (p. ej., `ruff`), deja **evidencia** en `logs/` de su ausencia (mensaje claro) y continúa con el resto.
+
+#### 3) Comprobación rápida antes de subir
+
+* La carpeta **existe en la raíz** y contiene `README.md`.
+* Están los directorios `logs/`, `evidencia/`, `artefactos/`, `meta/`.
+* `artefactos/dist/app.tar.gz` **coincide** con el último build.
+* `sha256-1.txt` y `sha256-2.txt` muestran **el mismo hash**.
+* El `README.md` explica **cada ejercicio** en pocas líneas con referencia a sus evidencias.
+
+
+
