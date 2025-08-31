@@ -1,5 +1,6 @@
 ## Actividad 4: Introducción a herramientas CLI en entornos Unix-like para DevSecOps
-Bienvenidos a este laboratorio diseñado en el manejo de la línea de comandos (CLI) en sistemas Unix-like, con un enfoque orientado a DevSecOps. 
+
+Este laboratorio diseñado en el manejo de la línea de comandos (CLI) en sistemas Unix-like, con un enfoque orientado a DevSecOps. 
 DevSecOps integra la seguridad en el ciclo de vida del desarrollo de software, y el dominio de la CLI es fundamental para automatizar tareas, gestionar entornos, auditar sistemas y procesar datos de manera segura y eficiente.
 
 Este laboratorio se divide en tres secciones principales, cada una con un marco teórico seguido de explicaciones paso a paso y ejercicios de reforzamiento. 
@@ -13,18 +14,51 @@ Inicia tu terminal (en Ubuntu: `Ctrl+Alt+T` o busca "Terminal"). Asegúrate de t
 Ahora, procedamos paso a paso. Ejecuta cada comando en tu terminal y observa los resultados.
 
 **Preparación para evidencias y evaluación (Entregable):**
-Para registrar tu trabajo y facilitar la evaluación, crea un directorio dedicado y graba la sesión:
+Para registrar tu trabajo y facilitar la evaluación, crea un directorio dedicado y graba la sesión (opcional):
 - `mkdir -p ~/lab-cli/evidencias && cd ~/lab-cli`
-- `script -q evidencias/sesion.txt` (esto inicia la grabación; al finalizar el laboratorio, ejecuta `exit` para detenerla).
-Nota de seguridad: `script` puede capturar información sensible. Antes de entregar, revisa y redacta el archivo con:
-`sed -E 's/(password|token|secret)/[REDACTED]/gi' evidencias/sesion.txt > evidencias/sesion_redactada.txt` (usa la versión redactada para la entrega).
+- `script -q evidencias/sesion.txt` (esto inicia la grabación. Al finalizar el laboratorio, ejecuta `exit` para detenerla).
+
+**Nota de seguridad:** `script` puede capturar información sensible. **Antes de entregar**, revisa y **redacta** tu sesión:
+
+1. Crea la versión redactada (palabras sensibles y pares `clave=valor` / `clave: valor`):
+
+```bash
+sed -E \
+  -e 's/(password|token|secret)/[REDACTED]/gI' \
+  -e 's/\b(pass(word)?|token|secret|api[-_]?key)\b[[:space:]]*[:=][[:space:]]*[^[:space:]]+/\1: [REDACTED]/gI' \
+  evidencias/sesion.txt > evidencias/sesion_redactada.txt
+```
+
+2. Oculta credenciales en cabeceras HTTP (Authorization Basic/Bearer):
+
+```bash
+sed -E 's/\b(Authorization:)[[:space:]]+(Basic|Bearer)[[:space:]]+[A-Za-z0-9._~+\/=-]+/\1 \2 [REDACTED]/gI' \
+  evidencias/sesion_redactada.txt > evidencias/sesion_redactada.tmp && mv evidencias/sesion_redactada.tmp evidencias/sesion_redactada.txt
+```
+
+3. (Opcional) Quita códigos de color ANSI:
+
+```bash
+sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' \
+  evidencias/sesion_redactada.txt > evidencias/sesion_redactada.tmp && mv evidencias/sesion_redactada.tmp evidencias/sesion_redactada.txt
+```
+
+4. Verifica que no queden secretos:
+
+```bash
+grep -nEi '(pass(word)?|token|secret|api[-_]?key|authorization)' evidencias/sesion_redactada.txt | head
+```
+
+> Usa la **versión redactada** (`evidencias/sesion_redactada.txt`) para la entrega.
 
 **Entrega mínima:**
+
 - Un archivo `README.md` con respuestas a ejercicios, comandos clave y explicaciones breves (usa Markdown para formatear, ej. listas y código con ```bash:disable-run
 - El archivo `evidencias/sesion.txt` (o la versión redactada).
 - Archivos generados durante el laboratorio (ej. `etc_lista.txt`, `mayus.txt`, etc.).
 - Output de comandos de auditoría: `journalctl -p err..alert --since "today"` (o fallback en no-systemd: `sudo tail -n 100 /var/log/syslog | grep -i error`), `find /tmp -mtime -5 -type f -printf '%TY-%Tm-%Td %TT %p\n' | sort` (archivos modificados en últimos 5 días, ordenados), y `sudo -l` (evidencia de principio de menor privilegio; captura solo un fragmento representativo para evitar exponer políticas internas).
 - Incluye un mini-pipeline con datos "reales" (ej. en Ubuntu: `sudo journalctl -t sshd -t sudo --since today | awk '{print $1,$2,$3,$5}' | sort | uniq -c | sort -nr` para contar eventos de autenticación SSH/sudo, ordenados por frecuencia).
+- Todos los entregables deben colocarse en una carpeta llamada **Actividad4-CC3S2** en la raíz del repositorio.
 
 ### Sección 1: Manejo sólido de CLI
 #### Riesgo & mitigación en DevSecOps
@@ -96,6 +130,7 @@ Estos elementos permiten operaciones eficientes y seguras, reduciendo errores hu
 - `wc -l lista.txt` (cuenta líneas en lista.txt).
 
 ### Sección 2: Administración básica
+
 #### Riesgo & Mitigación en DevSecOps
 Riesgo: Over-permission en usuarios/permisos puede exponer datos sensibles en contenedores o repos. 
 Mitigación: Aplica `umask 027` para archivos nuevos (solo durante la sesión), evita operaciones recursivas en `/` y usa `--preserve-root` con `chown/chgrp/rm`. 
