@@ -7,7 +7,7 @@
 
 #### 1) ¿Qué debes **entregar** exactamente?
 
-1. En tu **repositorio personal del curso**, crea una **carpeta** llamada **`Actividad 1-CC3S2`** (si tu entorno tiene problemas con espacios, acepta `Actividad_1`, pero mantén el nombre visible como "Actividad 1" en el README).
+1. En tu **repositorio personal del curso**, crea una **carpeta** llamada **`Actividad1-CC3S2`** (si tu entorno tiene problemas con espacios, acepta `Actividad_1`, pero mantén el nombre visible como "Actividad 1" en el README).
 3. Dentro de esa carpeta, incluye:
 
    * Un único archivo **`README.md`** (en **Markdown**) con todo el desarrollo.
