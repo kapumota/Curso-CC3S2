@@ -68,13 +68,13 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
 
    * *Tip:* Piensa qué pasaría si tu endpoint principal no fuera idempotente.
 
-5. **DNS y Caché en operación.**
+5. **DNS y caché en operación.**
    Configura IP estática en Netplan. Usa dig para observar TTL decreciente y getent local para resolución de `miapp.local`.
    Explica cómo opera sin zona pública, el camino stub/recursor/autoritativos y overrides locales. Diferencia respuestas cacheadas y autoritativas.
 
    * *Tip:* Haz dos consultas seguidas y compara TTL. ¿Qué cambia?.
 
-6. **TLS y Seguridad en DevSecOps (Reverse Proxy).**
+6. **TLS y seguridad en DevSecOps (Reverse Proxy).**
   
     Un **gate** (puerta/umbral de calidad) es una **verificación automática no negociable** en el flujo de CI/CD que **bloquea** el avance de un cambio si **no** se cumplen  criterios objetivos. 
     Sirve para **cumplir políticas** (seguridad, rendimiento, estilo, compatibilidad) antes de promover un artefacto a la siguiente etapa. 
@@ -89,7 +89,7 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
       - **Evidencia** (salida del comando que valida la versión), y
       - **Acción** (fallar el job con un código de salida ≠ 0 para evitar la promoción a la siguiente etapa).
 
-7. **Puertos, Procesos y Firewall.**
+7. **Puertos, procesos y firewall.**
     Usa ss/lsof para listar puertos/procesos de app y Nginx. Diferencia loopback de expuestos públicamente. Presenta una "foto" de conexiones activas y analiza patrones.
     Explica cómo restringirías el acceso al backend y qué test harías para confirmarlo. Integra systemd: instala el servicio, ajusta entorno seguro y prueba parada.
     Simula incidente (mata proceso) y revisa logs con journalctl.
@@ -103,13 +103,12 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
    * *Tip:* Piensa cómo este script podría integrarse en GitHub Actions.
 
 9. **Escenario integrado y mapeo 12-Factor.**
-   En este ejercicio deberás trabajar con un **endpoint** de la aplicación (por ejemplo, `GET /`) y modificarlo conceptualmente para introducir un **fallo no idempotente**, es      decir, que al repetir la misma solicitud se altere el estado o la respuesta. La evidencia debe mostrar cómo dos peticiones idénticas generan resultados distintos y por qué       esto rompe la idempotencia, afectando reintentos, cachés y balanceadores.
+   En este ejercicio deberás trabajar con un **endpoint** de la aplicación (por ejemplo, `GET /`) y modificarlo conceptualmente para introducir un **fallo no idempotente**, es  decir, que al repetir la misma solicitud se altere el estado o la respuesta. La evidencia debe mostrar cómo dos peticiones idénticas generan resultados distintos y por qué esto rompe la idempotencia, afectando reintentos, cachés y balanceadores.
 
-   Posteriormente, realiza un **despliegue manual tipo blue/green**, manteniendo dos instancias: una estable (Blue) y otra con el fallo (Green). Documenta cómo harías la
-   conmutación de tráfico de Blue a Green únicamente si pasa los chequeos de readiness y liveness, y cómo ejecutarías un rollback rápido si se detecta el problema.
+   Posteriormente, realiza un **despliegue manual tipo blue/green**, manteniendo dos instancias: una estable (Blue) y otra con el fallo (Green). Documenta cómo harías la conmutación de tráfico de Blue a Green únicamente si pasa los chequeos de readiness y liveness, y cómo ejecutarías un rollback rápido si se detecta el problema.
 
-   A continuación, redacta un **postmortem** que incluya un resumen del incidente, una línea de tiempo, impacto en usuarios, causa raíz, lecciones técnicas y culturales, además     de acciones preventivas desde una perspectiva **DevSecOps**. Después, propone un **runbook breve**, entendido como un procedimiento paso a paso que cualquier integrante del      equipo pueda seguir en caso de repetir el incidente.
+   A continuación, redacta un [**postmortem**](https://github.com/dastergon/postmortem-templates) que incluya un resumen del incidente, una línea de tiempo, impacto en usuarios, causa raíz, lecciones técnicas y culturales, además     de acciones preventivas desde una perspectiva **DevSecOps**. Después, propone un **runbook breve**, entendido como un procedimiento paso a paso que cualquier integrante del  equipo pueda seguir en caso de repetir el incidente.
 
-   Finalmente, completa una **tabla con seis factores de 12-Factor App**, explicando para cada uno: el principio, cómo está implementado en el laboratorio, la evidencia recogida    y qué mejora propondrías hacia producción.
+   Finalmente, completa una **tabla con seis factores de 12-Factor App**, explicando para cada uno: el principio, cómo está implementado en el laboratorio, la evidencia recogida  y qué mejora propondrías hacia producción.
 
    * *Tip:* Usa este ejercicio para mostrar tu capacidad de análisis cultural, no solo técnico.
