@@ -189,13 +189,13 @@ Para habilitar systemd: Edita `/etc/wsl.conf` con `sudo nano /etc/wsl.conf` y ag
 - `namei -l secreto.txt` (verifica permisos y propietario).
 - `id devsec` (confirma grupos).
 
-### Sección 3: Unix Text Toolkit
+### Sección 3: Utilidades de texto de Unix
 #### Riesgo & Mitigación en DevSecOps
 Riesgo: Procesamiento de logs puede exponer datos sensibles o causar borrados masivos. 
 Mitigación: Usa filtros como `journalctl -p err..alert` para severidades, rotación de logs, y opciones seguras en find/xargs (-i para interactivo, -- para seguridad).
 
 #### Marco teórico
-El "Unix text toolkit" es un conjunto de herramientas para procesar texto, vital en DevSecOps para analizar logs, parsear outputs de herramientas de seguridad (como Nmap o OWASP ZAP), y automatizar informes. 
+El "Utilidades de texto Unix" es un conjunto de herramientas para procesar texto, vital en DevSecOps para analizar logs, parsear outputs de herramientas de seguridad (como Nmap o OWASP ZAP), y automatizar informes. 
 - **grep**: Busca patrones en texto.
 - **sed**: Edita streams de texto (sustituir, eliminar).
 - **awk**: Procesa datos estructurados (columnas).
