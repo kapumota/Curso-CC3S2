@@ -56,25 +56,25 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
 
    * *Tip:* Intenta romper el Makefile cambiando una variable y observa si sigue siendo reproducible.
 
-3. **Del código a producción con 12-Factor (Build/Release/Run).**
+2. **Del código a producción con 12-Factor (Build/Release/Run).**
    Modifica variables de entorno (`PORT`, `MESSAGE`, `RELEASE`) sin tocar código. Crea un artefacto inmutable con `git archive` y verifica paridad dev-prod.
    Documenta en tabla "variable -> efecto observable". Simula un fallo de backing service (puerto equivocado) y resuélvelo con disposability. Relaciona con logs y port binding.
 
    * *Tip:* Muestra cómo un log puede servir de "única fuente de verdad" en la depuración.
 
-4. **HTTP como contrato observable.**
+3. **HTTP como contrato observable.**
    Inspecciona cabeceras como ETag o HSTS. Define qué operaciones son seguras para reintentos. Implementa readiness y liveness simples, y mide latencias con curl.
    Documenta contrato mínimo (campos respuesta, trazabilidad en logs). Explica cómo definirías un **SLO**.
 
    * *Tip:* Piensa qué pasaría si tu endpoint principal no fuera idempotente.
 
-5. **DNS y caché en operación.**
+4. **DNS y caché en operación.**
    Configura IP estática en Netplan. Usa dig para observar TTL decreciente y getent local para resolución de `miapp.local`.
    Explica cómo opera sin zona pública, el camino stub/recursor/autoritativos y overrides locales. Diferencia respuestas cacheadas y autoritativas.
 
    * *Tip:* Haz dos consultas seguidas y compara TTL. ¿Qué cambia?.
 
-6. **TLS y seguridad en DevSecOps (Reverse Proxy).**
+5. **TLS y seguridad en DevSecOps (Reverse Proxy).**
   
     Un **gate** (puerta/umbral de calidad) es una **verificación automática no negociable** en el flujo de CI/CD que **bloquea** el avance de un cambio si **no** se cumplen  criterios objetivos. 
     Sirve para **cumplir políticas** (seguridad, rendimiento, estilo, compatibilidad) antes de promover un artefacto a la siguiente etapa. 
@@ -89,20 +89,20 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
       - **Evidencia** (salida del comando que valida la versión), y
       - **Acción** (fallar el job con un código de salida ≠ 0 para evitar la promoción a la siguiente etapa).
 
-7. **Puertos, procesos y firewall.**
+6. **Puertos, procesos y firewall.**
     Usa ss/lsof para listar puertos/procesos de app y Nginx. Diferencia loopback de expuestos públicamente. Presenta una "foto" de conexiones activas y analiza patrones.
     Explica cómo restringirías el acceso al backend y qué test harías para confirmarlo. Integra systemd: instala el servicio, ajusta entorno seguro y prueba parada.
     Simula incidente (mata proceso) y revisa logs con journalctl.
 
    * *Tip:* Fíjate si el backend escucha en todas las interfaces o solo en loopback.
 
-8. **Integración CI/CD**
+7. **Integración CI/CD**
    Diseña un script Bash que verifique HTTP, DNS, TLS y latencias antes del despliegue. Define umbrales (ej. latencia >0.5s falla).
    Ejecuta el script antes y después de una modificación (por ejemplo, cambio de puerto) y observa cómo se retroalimenta CALMS.
 
    * *Tip:* Piensa cómo este script podría integrarse en GitHub Actions.
 
-9. **Escenario integrado y mapeo 12-Factor.**
+8. **Escenario integrado y mapeo 12-Factor.**
    En este ejercicio deberás trabajar con un **endpoint** de la aplicación (por ejemplo, `GET /`) y modificarlo conceptualmente para introducir un **fallo no idempotente**, es  decir, que al repetir la misma solicitud se altere el estado o la respuesta. La evidencia debe mostrar cómo dos peticiones idénticas generan resultados distintos y por qué esto rompe la idempotencia, afectando reintentos, cachés y balanceadores.
 
    Posteriormente, realiza un **despliegue manual tipo blue/green**, manteniendo dos instancias: una estable (Blue) y otra con el fallo (Green). Documenta cómo harías la conmutación de tráfico de Blue a Green únicamente si pasa los chequeos de readiness y liveness, y cómo ejecutarías un rollback rápido si se detecta el problema.
