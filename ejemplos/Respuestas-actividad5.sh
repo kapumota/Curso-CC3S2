@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # scripts/lab2_step_by_step.sh (v2 robust)
-# Automatiza, en un solo script, los ejercicios solicitados para Laboratorio2 y la actividad 5 con manejo robusto
+# Automatiza, en un solo script, los ejercicios solicitados para Laboratorio2 y la actividad 5 (parte 2) con manejo robusto
 # cuando 'make clean' o similares borran el directorio de evidencias.
 # Requisitos: make, bash, awk, grep, sha256sum, GNU tar, shellcheck, shfmt, (opcional) ruff, python3
-
 set -euo pipefail
 IFS=$'\n\t'
 umask 027
