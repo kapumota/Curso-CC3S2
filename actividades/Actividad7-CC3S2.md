@@ -1,453 +1,429 @@
-## **Actividad: Explorando diferentes formas de fusionar en Git**
+### **Actividad 7-Explorando estrategias de fusión en Git**
 
-### **Objetivo de aprendizaje:**  
+**Entrega:** sube **todas** las respuestas y evidencias en la carpeta **`Actividad7-CC3S2/`**.
 
-En esta actividad, exploraremos el proceso de fusionar dos ramas en Git utilizando tres métodos diferentes: fast-forward, no-fast-forward y squash. A través de los ejemplos, comprenderás cómo funcionan y cuándo es recomendable utilizar cada tipo de fusión.
+#### Preámbulo
 
+Aquí va un repaso rápido para que puedas seguir sin problemas esta actividad:
 
-#### Contexto
+* `git init`: Inicializa un repo en el directorio actual.
 
-En el mundo del desarrollo de software, Git se ha consolidado como una herramienta esencial para la gestión de versiones, permitiendo a equipos y desarrolladores individuales llevar un control preciso de los cambios en el código fuente.
+  * **Sugerencia:** fija `main` como rama por defecto:
 
-Dentro de Git, las fusiones juegan un rol fundamental al combinar el trabajo de diferentes ramas, integrando características, correcciones y mejoras al código base. 
+    ```bash
+    git config --global init.defaultBranch main
+    # o al crear el repo:
+    git init -b main
+    ```
+* `git add <archivo>`: Lleva cambios al área de staging.
+* `git commit -m "Mensaje"`: Crea un commit con lo staged.
+* `git checkout -b <rama>`: Crea y cambia a una nueva rama.
+* `git checkout <rama>`: Cambia a una rama existente.
+* `git log`: Muestra el historial (usa `--graph` para ver el DAG).
 
-Sin embargo, no todas las fusiones son iguales, y las estrategias disponibles en Git ofrecen distintos beneficios según el contexto de desarrollo. Esta actividad explora tres estrategias de fusión: **Fast-forward**, **No-fast-forward**, y **Squash**, cada una adaptada a situaciones específicas, desde desarrollos individuales hasta metodologías ágiles, CI/CD y DevOps.
+**Glosario clave**
 
-##### 1. Fast-forward: Mantener un historial limpio y lineal
+* **DAG (Directed Acyclic Graph):** representación del historial; los commits son nodos y las fusiones conectan padres.
+* **Merge commit:** commit con múltiples padres que integra ramas.
+* **Parent / Parent primario (#1):** commit(es) padre(s) del merge; el **primario** es la rama donde estabas al ejecutar `git merge`.
+* **Rama (branch):** puntero móvil a un commit.
+* **Rebase:** reescribe commits de una rama sobre otra para un historial lineal.
+* **PR (Pull Request):** solicitud de fusión en plataformas como GitHub.
 
-La fusión fast-forward en Git es la opción predeterminada y más simple cuando no se han realizado commits en la rama principal (o base) desde que se creó la rama de característica. En lugar de crear un nuevo commit de fusión, este método simplemente mueve el puntero HEAD de la rama principal al último commit de la rama de característica. Como resultado, el historial de commits permanece lineal y sin interrupciones.
+**Visualización del DAG**
+Puedes usar `gitk --all` (incluido con Git) o la interfaz web de GitHub tras hacer push.
 
-El fast-forward es ideal en desarrollos individuales o proyectos pequeños, donde el flujo de trabajo es secuencial y no se realizan múltiples contribuciones paralelas. Al evitar commits de fusión innecesarios, este enfoque mantiene el historial del proyecto limpio y fácil de seguir. Para desarrolladores que trabajan solos, la fusión fast-forward es perfecta, ya que no agrega complejidad innecesaria ni desordena el historial.
-
-Sin embargo, esta simplicidad puede convertirse en un obstáculo en proyectos colaborativos más grandes. Al no registrar explícitamente el punto de fusión entre ramas, la capacidad de entender el contexto de la integración de características se pierde. A largo plazo, en un equipo, puede ser difícil rastrear cuándo y cómo se fusionaron diferentes ramas, lo que convierte al fast-forward en una estrategia menos adecuada para proyectos con múltiples colaboradores o donde los cambios ocurren simultáneamente en varias ramas.
-
-##### 2. No-fast-forward: Preservar el contexto de los cambios
-
-A diferencia de la fusión fast-forward, la opción no-fast-forward crea un commit de fusión que preserva explícitamente el momento y el contexto en el que se integraron las ramas. Esta estrategia es fundamental en entornos de trabajo colaborativo, especialmente en proyectos grandes donde múltiples desarrolladores están trabajando simultáneamente en diferentes características o correcciones.
-
-El commit de fusión que se genera en una fusión no-fast-forward tiene dos "parent commits": uno correspondiente a la rama de origen y otro a la rama destino. Este enfoque proporciona una clara trazabilidad de los cambios y facilita la revisión del historial, lo que es crucial en equipos donde es necesario entender no solo qué cambios se hicieron, sino también cuándo y por qué se unieron a la rama principal.
-
-Para equipos grandes, la estrategia no-fast-forward es esencial, ya que permite la preservación de un registro claro de las fusiones. Es particularmente útil en proyectos donde la colaboración es constante y donde diferentes ramas de trabajo pueden tener una vida más larga. Este enfoque asegura que los desarrolladores puedan revisar el contexto de una fusión en cualquier momento, ofreciendo transparencia en el proceso de desarrollo.
-
-No obstante, el uso excesivo de commits de fusión puede desordenar el historial, dificultando su lectura. Por lo tanto, es importante que los equipos balanceen el uso de no-fast-forward con la necesidad de mantener un historial manejable, reservándolo para fusiones clave que involucren integraciones importantes.
-
-##### 3. Squash: Condensar cambios para una rama principal limpia
-
-La opción squash ofrece una estrategia diferente, orientada a mantener la limpieza del historial al integrar ramas de características. Esta técnica toma todos los commits de la rama de origen y los aplasta en un solo commit antes de fusionarlos con la rama principal. El resultado es un historial limpio y condensado, ideal para proyectos donde se prioriza la simplicidad y claridad en el código base.
-
-El uso de fusiones squash es común en metodologías ágiles, CI/CD y entornos DevOps, donde se busca integrar frecuentemente características en ciclos cortos de desarrollo. Los equipos que adoptan estas metodologías tienden a realizar pruebas, refactorizaciones y cambios iterativos dentro de sus ramas de trabajo. A través del squash, todos estos pequeños commits experimentales y de prueba se combinan en uno solo, eliminando ruido en el historial y haciendo que la rama principal se mantenga limpia y enfocada solo en los cambios finales e importantes.
-
-Sin embargo, el uso de squash tiene una desventaja significativa: al aplastar los commits, se pierde el historial detallado de los cambios individuales realizados en la rama de característica. Esto puede ser un problema si se necesita entender el proceso de desarrollo de esa característica o si los commits individuales tienen valor informativo. Aunque simplifica el historial, el squash sacrifica la trazabilidad de los pasos intermedios.
-
-Además, el squash puede generar dilemas éticos en equipos colaborativos, ya que el autor del commit consolidado puede ser diferente de quienes realizaron los commits originales. En proyectos donde es importante mantener la atribución de autoría o el contexto completo de los cambios, el squash debe usarse con prudencia. Es crucial encontrar un balance entre mantener la limpieza del historial y respetar la integridad de los commits individuales de los colaboradores.
-
-Cada una de estas estrategias de fusión tiene su lugar dentro del flujo de trabajo de Git, dependiendo del contexto del proyecto y los objetivos del equipo. El fast-forward es ideal para mantener un historial limpio en proyectos individuales o sencillos, mientras que el no-fast-forward proporciona un valioso contexto en equipos grandes donde la transparencia en las fusiones es crucial. Finalmente, el squash es una herramienta poderosa para proyectos ágiles y de DevOps, donde la limpieza del historial es una prioridad, aunque conlleva ciertos riesgos en la preservación del historial detallado.
-
-Elegir la estrategia de fusión adecuada es una decisión crítica para mantener un flujo de trabajo eficiente y un historial de Git claro y manejable, particularmente en equipos colaborativos. Comprender cuándo y cómo usar cada tipo de fusión permitirá a los desarrolladores optimizar sus prácticas de integración y asegurar que el desarrollo continúe de manera fluida y organizada.
-
-
-### Ejemplos
-
-#### 1. Fusión Fast-forward (git merge --ff)
-
-La fusión fast-forward es la forma más simple de combinar ramas en Git. Solo es posible cuando la rama base no ha recibido nuevos commits desde que se creó la rama feature.
-
-##### Pasos prácticos:
+**Nota Windows/WSL (fin de línea y permisos)**
+Para evitar "falsos cambios" y problemas de EOL/permisos:
 
 ```bash
-# Crear un nuevo repositorio
-$ mkdir prueba-fast-forward-merge
-$ cd prueba-fast-forward-merge
-$ git init
-
-# Agregar un archivo inicial en la rama principal (main)
-$ echo "# Mi Proyecto" > README.md
-$ git add README.md
-$ git commit -m "Commit inicial en main"
-
-# Crear y cambiar a una nueva rama 'add-description'
-$ git checkout -b add-description
-
-# Hacer cambios en la nueva rama y comitearlos
-$ echo "Este proyecto es un ejemplo de cómo usar Git." >> README.md
-$ git add README.md
-$ git commit -m "Agregar descripción al README.md"
+# Si trabajas en Windows/WSL:
+git config core.autocrlf input   # (o true si usas sólo Windows)
+git config core.filemode false
 ```
 
-**Pregunta:** Muestra la estructura de commits resultante.
+**Organización sugerida (repos limpios por ejercicio)**
+Para que las evidencias no se mezclen, crea un repo **por cada sección** (o limpia entre ejercicios):
 
 ```bash
-# Cambiar de vuelta a la rama 'main' y realizar la fusión fast-forward
-$ git checkout main
-$ git merge add-description
-
-# Ver el historial lineal
-$ git log --graph --oneline
+mkdir -p ~/git-fusiones/ej01 && cd ~/git-fusiones/ej01
 ```
 
-**Resultado:** El historial de tu repositorio.
+#### Objetivo de aprendizaje
+
+Comprender y aplicar **fast-forward**, **no-fast-forward** y **squash**, reconociendo ventajas/limitaciones e impacto en el historial (trabajo individual, equipos, CI/CD y DevSecOps).
+El **apéndice** amplía con variantes y controles de seguridad propios de DevOps/DevSecOps.
+
+#### Prerrequisitos
+
+* Git >= 2.30 instalado y configurado (`git config --global user.name`, `user.email`).
+* Rama por defecto: `main`.
+* Editor de texto y terminal.
 
 
-#### 2. Fusión No-fast-forward (git merge --no-ff)
+#### Formato de entrega (obligatorio)
 
-La fusión no-fast-forward crea un nuevo commit de fusión. Es útil para preservar el contexto de la fusión, especialmente en equipos donde se requiere más claridad en el historial de cambios.
+Estructura exacta del directorio a entregar:
 
-##### Pasos prácticos:
-
-```bash
-# Crear un nuevo repositorio
-$ mkdir prueba-no-fast-forward-merge
-$ cd prueba-no-fast-forward-merge
-$ git init
-
-# Agregar un archivo inicial en la rama principal (main)
-$ echo "# Mi Proyecto" > README.md
-$ git add README.md
-$ git commit -m "Commit inicial en main"
-
-# Crear y cambiar a una nueva rama 'add-feature'
-$ git checkout -b add-feature
-
-# Hacer cambios en la nueva rama y comitearlos
-$ echo "Implementando una nueva característica..." >> README.md
-$ git add README.md
-$ git commit -m "Implementar nueva característica"
+```
+Actividad7-CC3S2/
+├─ evidencias/
+│  ├─ 01-ff.log
+│  ├─ 02-no-ff.log
+│  ├─ 03-squash.log
+│  ├─ 04-conflicto.log
+│  ├─ 05-compare-fastforward.log
+│  ├─ 06-compare-noff.log
+│  ├─ 07-compare-squash.log
+│  ├─ 08-revert-merge.log
+│  ├─ 09-ff-only.log
+│  ├─ 10-rebase-ff.log
+│  ├─ 11-pre-commit-merge.log
+│  ├─ 12-octopus.log
+│  ├─ 13-subtree.log
+│  ├─ 14-x-strategy.log
+│  ├─ 15-signed-merge.log
+│  └─ capturas/  (opcional: imágenes de PRs o del DAG)
+└─ README.md  (respuestas a TODAS las preguntas)
 ```
 
-**Pregunta:** Muestra el log de commits resultante.
+> Guarda salidas con redirección, p. ej.:
+> `git log --graph --oneline --decorate --all > evidencias/01-ff.log`
 
-```bash
-# Cambiar de vuelta a la rama 'main' y realizar una fusión no-fast-forward
-$ git checkout main
-$ git merge --no-ff add-feature
-```
+#### Contexto y estrategias base
 
-Después de la edición, veamos el log ahora:
+Las fusiones integran trabajo de múltiples ramas. Elegir bien impacta **trazabilidad**, **limpieza del historial** y **auditoría** en CI/CD.
 
-```bash
-# Ver el historial
-$ git log --graph --oneline
-```
+#### Resumen de estrategias
 
-El historial de tu repositorio mostrará un commit de fusión.
+* **Fast-forward (`--ff`)**: mueve el puntero sin crear merge commit. Historial **lineal** y limpio. Ideal en trabajo individual o secuencial.
+* **No-fast-forward (`--no-ff`)**: crea **merge commit** con **dos padres** (preserva punto de integración). Útil en colaboración y auditorías.
+* **Squash (`--squash`)**: **aplana** varios commits de la feature en **uno** en `main`. Mantiene `main` limpia; **no** crea merge commit ni enlaza la rama en el DAG (se pierde detalle intermedio).
 
-
-##### 3. Fusión squash (git merge --squash)
-
-La fusión squash combina todos los cambios de una rama en un solo commit en la rama principal. Este método es útil cuando se quiere mantener un historial de commits limpio.
-
-##### Pasos prácticos:
-
-```bash
-# Crear un nuevo repositorio
-$ mkdir prueba-squash-merge
-$ cd prueba-squash-merge
-$ git init
-
-# Agregar un archivo inicial en la rama principal (main)
-$ echo "# Mi Proyecto" > README.md
-$ git add README.md
-$ git commit -m "Commit inicial en main"
-
-# Crear y cambiar a una nueva rama 'add-basic-files'
-$ git checkout -b add-basic-files
-
-# Hacer algunos cambios y comitearlos
-$ echo "# CÓMO CONTRIBUIR" >> CONTRIBUTING.md
-$ git add CONTRIBUTING.md
-$ git commit -m "Agregar CONTRIBUTING.md"
-
-$ echo "# LICENCIA" >> LICENSE.txt
-$ git add LICENSE.txt
-$ git commit -m "Agregar LICENSE.txt"
-```
-
-**Pregunta:** ¿Cuál es tu estructura de commits?
-
-```bash
-# Cambiar de vuelta a la rama 'main' y realizar la fusión squash
-$ git checkout main
-$ git merge --squash add-basic-files
-```
-
-Los commits luego se aplastan y se convierten en un solo commit:
-
-Para completar la fusión squash, realiza un commit:
-
-```bash
-$ git add .
-$ git commit -m "Agregar documentación estándar del repositorio"
-$ git log --graph --oneline
-```
-
-Esto combinará todos los cambios de la rama add-multiple-features en un solo nuevo commit en la rama main.
+> Buenas prácticas:
+>
+> * En pipelines estrictos, considerar `git merge --ff-only`.
+> * Alternativa: **"Rebase + FF"** (o "Rebase and merge") para linealidad con trazabilidad vía PR.
 
 
-#### Ejercicios
+#### Ejemplos prácticos (con evidencias)
 
-1. **Clona un repositorio Git con múltiples ramas.**  
-   Identifica dos ramas que puedas fusionar utilizando `git merge --ff`.  
-   Haz el proceso de fusión utilizando `git merge --ff`.  
-   Verifica el historial con `git log --graph --oneline`.  
+#### 1) Fusión **Fast-forward** (`git merge --ff`)
 
-   **Pregunta:** ¿En qué situaciones recomendarías evitar el uso de `git merge --ff`? Reflexiona sobre las desventajas de este método.
+**Pasos mínimos**
 
-2. **Simula un flujo de trabajo de equipo.**  
-   Trabaja en dos ramas independientes, creando diferentes cambios en cada una.  
-   Fusiona ambas ramas con `git merge --no-ff` para ver cómo se crean los commits de fusión.  
-   Observa el historial utilizando `git log --graph --oneline`.  
+1. Repo nuevo, commit inicial en `main`.
+2. `git checkout -b feature-1`, realiza un commit.
+3. `git checkout main && git merge feature-1` (FF automático).
+4. Evidencia:
 
-   **Pregunta:** ¿Cuáles son las principales ventajas de utilizar `git merge --no-ff` en un proyecto en equipo? ¿Qué problemas podrían surgir al depender excesivamente de commits de fusión?
-
-3. **Crea múltiples commits en una rama.**  
-   Haz varios cambios y commits en una rama feature.  
-   Fusiona la rama con `git merge --squash` para aplanar todos los commits en uno solo.  
-   Verifica el historial de commits antes y después de la fusión para ver la diferencia.  
-
-   **Pregunta:** ¿Cuándo es recomendable utilizar una fusión squash? ¿Qué ventajas ofrece para proyectos grandes en comparación con fusiones estándar?
-
-
-#### Resolver conflictos en una fusión non-fast-forward
-
-En algunos casos, las fusiones no son tan sencillas y pueden surgir conflictos que necesitas resolver manualmente. Este ejercicio te guiará a través del proceso de manejo de conflictos.
-
-1. Inicializa un nuevo repositorio:
    ```bash
-   mkdir prueba-merge-conflict
-   cd prueba-merge-conflict
-   git init
+   git log --graph --oneline --decorate --all --first-parent > evidencias/01-ff.log
    ```
 
-2. Crea un archivo index.html y realiza un commit en la rama main:
+**Qué observar:** historial **lineal** sin merge commits.
+
+#### 2) Fusión **No-fast-forward** (`git merge --no-ff`)
+
+**Pasos mínimos**
+
+1. Repo nuevo, commit inicial en `main`.
+2. `git checkout -b add-feature`, realiza 1–2 commits.
+3. `git checkout main && git merge --no-ff add-feature`.
+4. Evidencia:
+
    ```bash
-   echo "<html><body><h1>Proyecto inicial CC3S2</h1></body></html>" > index.html
-   git add index.html
-   git commit -m "commit inicial del  index.html en main"
+   git log --graph --oneline --decorate --all > evidencias/02-no-ff.log
    ```
 
-3. Crea y cambia a una nueva rama feature-update:
+**Qué observar:** un merge commit con **dos padres**.
+
+
+#### 3) Fusión **Squash** (`git merge --squash`)
+
+**Pasos mínimos**
+
+1. Repo nuevo, commit inicial en `main`.
+2. `git checkout -b feature-3`, realiza varios commits.
+3. `git checkout main && git merge --squash feature-3`
+4. `git add -A && git commit -m "Squash de feature-3: documentación estándar"`
+5. Evidencia:
+
    ```bash
-   git checkout -b feature-update
+   git log --graph --oneline --decorate --all > evidencias/03-squash.log
    ```
 
-4. Edita el archivo y realiza un commit en la rama feature-update:
-   ```bash
-   echo "<p>.....</p>" >> index.html
-   git add index.html
-   git commit -m "Actualiza ..."
+**Qué observar:** **no** hay merge commit; un único commit nuevo en `main`.
+**Nota:** incluye referencia manual al PR o rama (p. ej., "(#123)").
+
+### Ejercicios guiados (responde en `README.md`)
+
+#### A) Evitar (o no) `--ff`
+
+* Ejecuta una fusión FF real (ver 1).
+* **Pregunta:** ¿Cuándo **evitarías** `--ff` en un equipo y por qué?
+
+#### B) Trabajo en equipo con `--no-ff`
+
+* Crea dos ramas con cambios paralelos y **fusiónalas con `--no-ff`**.
+* **Preguntas:** ¿Qué ventajas de trazabilidad aporta? ¿Qué problemas surgen con **exceso** de merges?
+
+#### C) Squash con muchos commits
+
+* Haz 3-4 commits en `feature-3` y aplánalos con `--squash`.
+* **Preguntas:** ¿Cuándo conviene? ¿Qué se **pierde** respecto a merges estándar?
+
+
+#### Conflictos reales con **no-fast-forward**
+
+Para **garantizar** conflicto, **ambas ramas deben editar la misma línea**.
+
+1. Repo nuevo -> commit inicial con `index.html`:
+
+   ```html
+   <h1>Proyecto CC3S2</h1>
+   ```
+2. `git checkout -b feature-update`
+   Cambia **esa misma línea** a:
+
+   ```html
+   <h1>Proyecto CC3S2 (feature)</h1>
    ```
 
-5. Regresa a la rama main y realiza una edición en el mismo archivo:
-   ```bash
-   git checkout main
-   echo "<footer>Contacta aquí example@example.com</footer>" >> index.html
-   git add index.html
-   git commit -m "....index.html"
+   Commit.
+3. `git checkout main`
+   Cambia **la misma línea** a:
+
+   ```html
+   <h1>Proyecto CC3S2 (main)</h1>
    ```
 
-6. Fusiona la rama feature-update con --no-ff y observa el conflicto:
+   Commit.
+4. Fusiona:
+
    ```bash
    git merge --no-ff feature-update
    ```
 
-7. Git detectará un conflicto en index.html. Abre el archivo y resuelve el conflicto. Elimina las líneas de conflicto generadas por Git (`<<<<<<<`, `=======`, `>>>>>>>`) y crea la versión final del archivo con ambos cambios:
+   **Ver el conflicto:**
 
-   ```html
-   <html>
-     <body>
-       <h1>....</h1>
-       <p>....</p>
-       <footer>...example@example.com</footer>
-     </body>
-   </html>
-   ```
-
-8. Agrega el archivo corregido y completa la fusión:
    ```bash
-   git add index.html
-   git commit
+   git status
+   git diff
    ```
+5. Resuelve eliminando `<<<<<<< ======= >>>>>>>` e integrando coherentemente.
+6. `git add index.html && git commit` (cierra el merge).
+7. Evidencia:
 
-9. Verifica el historial para confirmar la fusión y el commit de resolución de conflicto:
    ```bash
-   git log --graph --oneline
+   git log --graph --oneline --decorate --all > evidencias/04-conflicto.log
    ```
 
-**Preguntas:**
-- ¿Qué pasos adicionales tuviste que tomar para resolver el conflicto?
-- ¿Qué estrategias podrías emplear para evitar conflictos en futuros desarrollos colaborativos?
+**Preguntas**
 
+* ¿Qué pasos adicionales hiciste para resolverlo?
+* ¿Qué prácticas (convenciones, PRs pequeñas, tests) lo evitarían?
 
-#### Ejercicio: Comparar los historiales con git log después de diferentes fusiones
+### Comparar historiales tras cada método
 
-Este ejercicio te permitirá observar las diferencias en el historial generado por fusiones fast-forward, non-fast-forward y squash.
+Genera y guarda estas vistas (**usa dos guiones `--`**):
 
-##### Pasos
+* **Fast-forward (first-parent):**
 
-1. Crea un nuevo repositorio y realiza varios commits en dos ramas:
+  ```bash
+  git log --graph --oneline --decorate --all --first-parent > evidencias/05-compare-fastforward.log
+  ```
+* **Solo merges (destaca no-ff):**
+
+  ```bash
+  git log --graph --oneline --merges --decorate > evidencias/06-compare-noff.log
+  ```
+* **Vista completa (útil tras squash):**
+
+  ```bash
+  git log --graph --oneline --decorate --all > evidencias/07-compare-squash.log
+  ```
+
+**Preguntas**
+
+* ¿Cómo se ve el DAG en cada caso?
+* ¿Qué método prefieres para: trabajo individual, equipo grande, repos con auditoría estricta?
+
+**Sugerencia visual**
+Usa `gitk --all` o sube el repo a GitHub y captura el network graph en `evidencias/capturas/`.
+
+#### Revertir una fusión (solo si **HEAD es un merge commit**)
+
+1. Asegura un **merge commit** reciente (del ejercicio `--no-ff`).
+2. Verifica que `HEAD` tiene **dos padres**:
+
    ```bash
-   mkdir prueba-compare-merge
-   cd prueba-compare-merge
-   git init
-   echo "Version 1.0" > version.txt
-   git add version.txt
-   git commit -m "...."
-   git checkout -b feature-1
-   echo "Caracteristica 1 agregada" >> version.txt
-   git add version.txt
-   git commit -m "Agregar caracteristica 1"
-   git checkout main
-   git checkout -b feature-2
-   echo "Caracteristica 2 agregada" >> version.txt
-   git add version.txt
-   git commit -m "Se agrega caracteristica 2"
+   git show -s --format=%P HEAD
    ```
+3. Revertir manteniendo la base como **mainline / parent primario (#1)**:
 
-2. Fusiona feature-1 usando fast-forward:
-   ```bash
-   git checkout main
-   git merge feature-1 --ff
-   ```
-
-3. Fusiona feature-2 usando non-fast-forward:
-   ```bash
-   git merge feature-2 --no-ff
-   ```
-
-4. Realiza una nueva rama feature-3 con múltiples commits y fusiónala con squash:
-   ```bash
-   git checkout -b feature-3
-   echo "Caracteristica 3 paso 1" >> version.txt
-   git add version.txt
-   git commit -m "Caracteristica 3 paso 1"
-   echo "Caracteristica 3 paso 2" >> version.txt
-   git add version.txt
-   git commit -m "Caracteristica 3 paso 2"
-   git checkout main
-   git merge --squash feature-3
-   git commit -m "Agregar caracteristica 3 en un commit"
-   ```
-
-5. Compara el historial de Git:
-   - Historial Fast-forward:
-     ```bash
-     git log --graph --oneline --merges --first-parent –branches
-     ```
-   - Historial Non-fast-forward:
-     ```bash
-     git log --graph --oneline –merges
-     ```
-   - Historial con Squash:
-     ```bash
-     git log --graph --oneline --merges --decorate --all
-     ```
-
-**Preguntas:**
-- ¿Cómo se ve el historial en cada tipo de fusión?
-- ¿Qué método prefieres en diferentes escenarios y por qué?
-
-
-#### Ejercicio: Usando fusiones automáticas y revertir fusiones
-
-En este ejercicio, aprenderás cómo Git puede fusionar automáticamente cambios cuando no hay conflictos y cómo revertir una fusión si cometes un error.
-
-##### Pasos
-
-1. Inicializa un nuevo repositorio y realiza dos commits en main:
-   ```bash
-   mkdir prueba-auto-merge
-   cd prueba-auto-merge
-   git init
-   echo "Linea 1" > file.txt
-   git add file.txt
-   git commit -m "Agrega linea 1"
-   echo "Linea 2" >> file.txt
-   git add file.txt
-   git commit -m "...linea 2"
-   ```
-
-2. Crea una nueva rama auto-merge y realiza otro commit en file.txt:
-   ```bash
-   git checkout -b auto-merge
-   echo "Linea 3" >> file.txt
-   git add file.txt
-   git commit -m "... linea 3"
-   ```
-
-3. Vuelve a main y realiza cambios no conflictivos en otra parte del archivo:
-   ```bash
-   git checkout main
-   echo "Footer: Fin del archivo" >> file.txt
-   git add file.txt
-   git commit -m "Add footer al archivo file.txt"
-   ```
-
-4. Fusiona la rama auto-merge con main:
-   ```bash
-   git merge auto-merge
-   ```
-
-5. Git debería fusionar los cambios automáticamente sin conflictos.
-
-6. Revertir la fusión: Si decides que la fusión fue un error, puedes revertirla:
    ```bash
    git revert -m 1 HEAD
    ```
+4. Evidencia:
 
-7. Verifica el historial:
    ```bash
-   git log --graph --oneline
+   git log --graph --oneline --decorate --all > evidencias/08-revert-merge.log
    ```
 
-**Preguntas:**
-- ¿Cuándo usarías un comando como git revert para deshacer una fusión?
-- ¿Qué tan útil es la función de fusión automática en Git?
+**Preguntas**
 
+* ¿Cuándo usar `git revert` en vez de `git reset`?
+* ¿Impacto en un repo compartido con historial público?
 
-#### Ejercicio: Fusión remota en un repositorio colaborativo
+#### (Opcional) Fusión remota con Pull Request
 
-Este ejercicio te permitirá practicar la fusión de ramas en un entorno remoto colaborativo, simulando un flujo de trabajo de equipo.
+* Crea repo, rama `colaboracion`, push y abre PR.
+* Usa "Create a merge commit" (no-ff) o "Squash and merge".
+* **Incluye captura** en `evidencias/capturas/` y comenta:
 
-##### Pasos:
+  * ¿Qué estrategia usó la plataforma?
+  * ¿Cómo aparece en el historial local tras `git pull`?
 
-1. Clona un repositorio remoto desde GitHub o crea uno nuevo:
+### Variantes útiles para DevOps/DevSecOps
+
+> **Entrega:** agrega estos archivos a `Actividad7-CC3S2/evidencias/`:
+> `09-ff-only.log`, `10-rebase-ff.log`, `11-pre-commit-merge.log`, `12-octopus.log`, `13-subtree.log`, `14-x-strategy.log`, `15-signed-merge.log`
+
+#### A) Fast-Forward **Only** (merge seguro)
+
+**Objetivo:** evitar merges implícitos; si no es FF, falla.
+**Pasos**
+
+1. Crea `feature-ffonly` desde `main`, añade 1 commit.
+2. En `main`: `git merge --ff-only feature-ffonly` (debe pasar).
+3. Para forzar un fallo didáctico: crea un commit en `main` tras crear la rama e intenta de nuevo (fallará).
+4. Evidencia:
+
    ```bash
-   git clone https://github.com/tu-usuario/nombre-del-repositorio.git
-   cd nombre-del-repositorio
+   git log --graph --oneline --decorate --all --first-parent > evidencias/09-ff-only.log
    ```
 
-2. Crea una nueva rama colaboracion y haz algunos cambios:
+#### B) **Rebase + FF** (historial lineal con PRs)
+
+**Objetivo:** linealidad sin merge commit.
+**Pasos**
+
+1. `git checkout feature-rebase` (con 2-3 commits), actualiza base:
+
    ```bash
-   git checkout -b colaboracion
-   echo "Colaboración remota" > colaboracion.txt
-   git add colaboracion.txt
-   git commit -m "...."
+   git fetch origin && git rebase origin/main
+   ```
+2. Integra:
+
+   ```bash
+   git checkout main && git merge feature-rebase
+   ```
+3. Evidencia:
+
+   ```bash
+   git log --graph --oneline --decorate --all --first-parent > evidencias/10-rebase-ff.log
    ```
 
-3. Empuja los cambios a la rama remota:
+#### C) Merge con **validación previa** (sin commitear)
+
+**Objetivo:** correr linters/tests/escáneres **antes** de sellar el merge.
+**Pasos**
+
+1. `git merge --no-commit --no-ff feature-validate`
+2. Validaciones reproducibles mínimas (elige según tu proyecto):
+
    ```bash
-   git push origin colaboracion
+   bash -n script.sh              # lint básico de shell
+   python -m pyflakes || true     # si hay Python, lint suave
+   # o tu pipeline local:
+   make test && make lint
+   ```
+3. Si todo ok: `git commit`
+4. Evidencia:
+
+   ```bash
+   git log --graph --oneline --decorate --all > evidencias/11-pre-commit-merge.log
    ```
 
-4. Simula una fusión desde la rama colaboracion en la rama main de otro colaborador. (Puedes usar la interfaz de GitHub para crear un Pull Request y realizar la fusión).
+#### D) **Octopus Merge** (varias ramas a la vez)
 
-**Preguntas:**
-- ¿Cómo cambia la estrategia de fusión cuando colaboras con otras personas en un repositorio remoto?
-- ¿Qué problemas comunes pueden surgir al integrar ramas remotas?
+**Objetivo:** integrar ramas **triviales** sin conflictos.
+**Pasos**
 
+1. Prepara `feat-a`, `feat-b` (commits pequeños, sin tocar mismas líneas).
+2. `git checkout main && git merge feat-a feat-b`
+3. Evidencia:
 
-#### Ejercicio final: flujo de trabajo completo
+   ```bash
+   git log --graph --oneline --merges --decorate > evidencias/12-octopus.log
+   ```
 
-Configura un proyecto simulado:
+#### E) **Subtree** (integrar subproyecto conservando historial)
 
-- Crea un proyecto con tres ramas: main, feature1, y feature2.
-- Realiza varios cambios en feature1 y feature2 y simula colaboraciones paralelas.
-- Realiza fusiones utilizando diferentes métodos:
-  - Fusiona feature1 con main utilizando `git merge --ff`.
-  - Fusiona feature2 con main utilizando `git merge --no-ff`.
-  - Haz una rama adicional llamada feature3 y aplasta sus commits utilizando `git merge --squash`.
+**Objetivo:** vendorizar/incrustar un repo externo en un subdirectorio.
+**Pasos**
 
-Analiza el historial de commits:
+1. Opción liviana (recomendado): usa un repo mínimo propio para no descargar mucho:
 
-- Revisa el historial para entender cómo los diferentes métodos de fusión afectan el árbol de commits.
-- Compara los resultados y discute con tus compañeros de equipo cuál sería la mejor estrategia de fusión para proyectos más grandes.
+   ```bash
+   git subtree add --prefix=vendor/demo https://github.com/tu-usuario/repo-minimo.git main
+   ```
+2. Sincroniza:
+
+   ```bash
+   git subtree pull --prefix=vendor/demo https://github.com/tu-usuario/repo-minimo.git main
+   ```
+3. Evidencia:
+
+   ```bash
+   git log --graph --oneline --decorate --all > evidencias/13-subtree.log
+   ```
+
+#### F) Sesgos de resolución y normalización (algoritmo ORT)
+
+**Objetivo:** demostrar opciones del merge resolver.
+**Pasos**
+
+* Sólo en conflictos:
+
+  ```bash
+  git merge -X ours  feature-x
+  git merge -X theirs feature-x
+  ```
+* Sensibilidad a renombrados:
+
+  ```bash
+  git merge -X find-renames=90% feature-rename
+  ```
+* EOL mixtos:
+
+  ```bash
+  git merge -X renormalize feature-eol
+  ```
+
+**Evidencia:**
+
+```bash
+git log --graph --oneline --decorate --all > evidencias/14-x-strategy.log
+```
+
+*(En `README.md` explica qué opción usaste y por qué.)*
+
+#### G) **Firmar** merges/commits (auditoría y cumplimiento)
+
+**Objetivo:** trazabilidad criptográfica.
+**Pasos**
+
+1. Configura firma (GPG o Sigstore). **Asegúrate de que el email de la firma coincide con `git config user.email`** para que la plataforma valide la firma.
+2. Merge firmado:
+
+   ```bash
+   git merge --no-ff --gpg-sign feature-signed
+   ```
+3. Verifica y guarda:
+
+   ```bash
+   git log --show-signature -1 > evidencias/15-signed-merge.log
+   ```
+
