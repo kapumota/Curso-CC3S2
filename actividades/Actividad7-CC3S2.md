@@ -45,7 +45,7 @@ Cada una de estas estrategias de fusión tiene su lugar dentro del flujo de trab
 
 Elegir la estrategia de fusión adecuada es una decisión crítica para mantener un flujo de trabajo eficiente y un historial de Git claro y manejable, particularmente en equipos colaborativos. Comprender cuándo y cómo usar cada tipo de fusión permitirá a los desarrolladores optimizar sus prácticas de integración y asegurar que el desarrollo continúe de manera fluida y organizada.
 
----
+
 ### Ejemplos
 
 #### 1. Fusión Fast-forward (git merge --ff)
@@ -182,7 +182,6 @@ $ git log --graph --oneline
 
 Esto combinará todos los cambios de la rama add-multiple-features en un solo nuevo commit en la rama main.
 
----
 
 #### Ejercicios
 
