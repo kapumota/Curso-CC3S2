@@ -1,7 +1,7 @@
 ### Prueba de entrada
 
 **Objetivo:** comprobar habilidades mínimas en CLI Linux/WSL, Bash, Git, Python y nociones básicas de HTTP/DNS/TLS.  
-**Duración estimada:** 4 h (entrega en 3 días).  
+**Duración estimada:** 4 h (entrega en 3 días). Lunes 8 setiembre 13:00 horas.
 **Entrega:** subir **este directorio** `Prueba_entrada_CC3S2/` como repositorio público en GitHub (o dentro de un repo como subcarpeta).  
 **Permitido:** documentación oficial. **Prohibido:** IA generativa y colaboración.  
 
@@ -65,7 +65,6 @@ Ramas (`feature/msg`), **merge FF**, **cherry-pick** de fix y **rebase** corto. 
 **3.3 Conceptos y pipeline (2 pts)**  
 En `network_answers.txt` (~150 palabras): ¿qué es HTTP?, 80 vs 443, por qué TLS.  
 En `deploy_scenario.txt` (~200 palabras): flujo mínimo "código -> pruebas -> despliegue" y una herramienta por paso.
-
 
 #### Rúbrica resumida (20 pts)
 
