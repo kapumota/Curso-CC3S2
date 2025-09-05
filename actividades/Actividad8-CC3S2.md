@@ -1,6 +1,6 @@
-## **Actividad: Rebase, Cherry-Pick y CI/CD en un entorno ágil**
+### **Actividad: Rebase, Cherry-Pick y CI/CD en un entorno ágil**
 
-### Objetivo de aprendizaje:  
+#### Objetivo de aprendizaje:  
 
 Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un historial de commits limpio y manejable en proyectos colaborativos.  También explorarás cuándo y por qué utilizar estos comandos en lugar de los merges regulares.
 
@@ -35,14 +35,14 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
     **Pregunta:** Presenta el historial de ramas obtenida hasta el momento.
 
 
-   Ahora, digamos que se han agregado nuevos commits a main mientras trabajabas en new-feature:
+   Ahora, digamos que se han agregado nuevos commits a `main` mientras trabajabas en `new-feature`:
 
    ```bash
    # Cambiar de nuevo a 'main' y agregar nuevos commits
    $ git checkout main
-   $ echo "Updates to the project." >> Updates.md
+   $ echo "Actualiza el proyecto." >> Updates.md
    $ git add Updates.md
-   $ git commit -m "Update main"
+   $ git commit -m "Actualiza main"
    ```
 
    Tu gráfico de commits ahora diverge (comprueba esto)
@@ -66,7 +66,7 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
    $ git checkout main
    $ git merge new-feature
    ```
-   Cuando se realiza una fusión *fast-forward*, las HEADs de las ramas main y new-feature serán los commits correspondientes.
+   Cuando se realiza una fusión *fast-forward*, las HEADs de las ramas `main` y `new-feature` serán los commits correspondientes.
 
 
 #### Parte 2: **git cherry-pick para la integración selectiva de commit**
@@ -75,10 +75,10 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
 
    `git cherry-pick` te permite seleccionar commits individuales de una rama y aplicarlos en otra. Esto es útil cuando necesitas integrar una característica o corrección sin hacer merge de toda la rama.
 
-   Imagina que tienes dos ramas, main y feature. Te das cuenta de que uno o dos commits de la rama feature deberían moverse a main, pero no estás listo para fusionar toda la rama. El comando `git cherry-pick` te permite hacer precisamente eso.
+   Imagina que tienes dos ramas, `main` y `feature`. Te das cuenta de que uno o dos commits de la rama feature deberían moverse a `main`, pero no estás listo para fusionar toda la rama. El comando `git cherry-pick` te permite hacer precisamente eso.
 
-   Puedes hacer cherry-pick de los cambios de un commit específico en la rama feature y aplicarlos en la rama main.
-   Esta acción creará un nuevo commit en la rama main.
+   Puedes hacer cherry-pick de los cambios de un commit específico en la rama feature y aplicarlos en la rama `main`.
+   Esta acción creará un nuevo commit en la rama `main`.
 
 
 3. **Escenario de ejemplo:**
@@ -126,7 +126,7 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
    ```bash
    $ git log --graph --oneline
    ```
-   Después de que hayas realizado con éxito el cherry-pick del commit, se agregará un nuevo commit a tu rama actual (main en este ejemplo) y contendrá los cambios del commit cherry-picked.  
+   Después de que hayas realizado con éxito el cherry-pick del commit, se agregará un nuevo commit a tu rama actual (`main` en este ejemplo) y contendrá los cambios del commit cherry-picked.  
 
    Ten en cuenta que el nuevo commit tiene los mismos cambios pero un valor de hash de commit diferente. !Comprueba esto!.
 
@@ -148,7 +148,7 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
    **Pregunta**: ¿Cómo crees que el uso de git rebase ayuda a mejorar las prácticas de DevOps, especialmente en la implementación continua (CI/CD)? Discute los beneficios de mantener un historial lineal en el contexto de una entrega continua de código y la automatización de pipelines.
 
 3. **Impacto del git cherry-pick en un equipo Scrum**  
-   **Pregunta**: Un equipo Scrum ha finalizado un sprint, pero durante la integración final a la rama principal (main) descubren que solo algunos commits específicos de la rama de una funcionalidad deben aplicarse a producción. ¿Cómo podría ayudar git cherry-pick en este caso? Explica los beneficios y posibles complicaciones.
+   **Pregunta**: Un equipo Scrum ha finalizado un sprint, pero durante la integración final a la rama principal (`main`) descubren que solo algunos commits específicos de la rama de una funcionalidad deben aplicarse a producción. ¿Cómo podría ayudar git cherry-pick en este caso? Explica los beneficios y posibles complicaciones.
 
 
 #### **Ejercicios prácticos**
@@ -162,10 +162,10 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
 
    **Instrucciones:**
 
-   - Crea un repositorio y haz algunos commits en la rama main.
-   - Crea una rama feature, agrega nuevos commits, y luego realiza algunos commits adicionales en main.
-   - Realiza un rebase de feature sobre main.
-   - Finalmente, realiza una fusión fast-forward de feature con main.
+   - Crea un repositorio y haz algunos commits en la rama `main`.
+   - Crea una rama `feature`, agrega nuevos commits, y luego realiza algunos commits adicionales en `main`.
+   - Realiza un rebase de feature sobre `main`.
+   - Finalmente, realiza una fusión fast-forward de feature con `main`.
 
    **Preguntas:**
 
@@ -205,10 +205,10 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
 
    **Instrucciones:**
 
-   - Crea un repositorio con una rama main y una rama feature.
-   - Haz varios commits en la rama feature, pero solo selecciona uno o dos commits específicos que consideres listos para producción.
-   - Realiza un cherry-pick de esos commits desde feature a main.
-   - Verifica que los commits cherry-picked aparezcan en main.
+   - Crea un repositorio con una rama `main` y una rama `feature`.
+   - Haz varios commits en la rama `feature`, pero solo selecciona uno o dos commits específicos que consideres listos para producción.
+   - Realiza un cherry-pick de esos commits desde `feature` a `main`.
+   - Verifica que los commits cherry-picked aparezcan en `main`.
 
    **Preguntas:**
 
@@ -238,175 +238,7 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
    $ git cherry-pick <hash_del_commit2>
    ```
 
----
-
-#### **Git, Scrum y Sprints**
-
-#### **Fase 1: Planificación del sprint (sprint planning)**
-
-**Ejercicio 1: Crear ramas de funcionalidades (feature branches)**
-
-En esta fase del sprint, los equipos Scrum deciden qué historias de usuario van a trabajar. Cada historia de usuario puede representarse como una rama de funcionalidad.
-
-**Objetivo:** Crear ramas para cada historia de usuario y asegurar que el trabajo se mantenga aislado.
-
-**Instrucciones:**
-
-1. Crea un repositorio en Git.
-2. Crea una rama `main` donde estará el código base.
-3. Crea una rama por cada historia de usuario asignada al sprint, partiendo de la rama `main`.
-
-**Comandos:**
-```bash
-$ mkdir scrum-project
-$ cd scrum-project
-$ git init
-$ echo "# Proyecto Scrum" > README.md
-$ git add README.md
-$ git commit -m "Commit inicial en main"
-
-# Crear ramas de historias de usuario
-$ git checkout -b feature-user-story-1
-$ git checkout -b feature-user-story-2
-```
-
-**Pregunta:** ¿Por qué es importante trabajar en ramas de funcionalidades separadas durante un sprint?
-
-
-#### **Fase 2: Desarrollo del sprint (sprint execution)**
-
-**Ejercicio 2: Integración continua con git rebase**
-
-A medida que los desarrolladores trabajan en sus respectivas historias de usuario, pueden ocurrir cambios en main. Para mantener un historial lineal y evitar conflictos más adelante, se usa `git rebase` para integrar los últimos cambios de main en las ramas de funcionalidad antes de finalizar el sprint.
-
-**Objetivo:** Mantener el código de la rama de funcionalidad actualizado con los últimos cambios de main durante el sprint.
-
-**Instrucciones:**
-
-1. Haz algunos commits en main.
-2. Realiza un rebase de la rama `feature-user-story-1` para actualizar su base con los últimos cambios de main.
-
-**Comandos:**
-```bash
-# Simula cambios en la rama main
-$ git checkout main
-$ echo "Actualización en main" > updates.md
-$ git add updates.md
-$ git commit -m "Actualizar main con nuevas funcionalidades"
-
-# Rebase de la rama feature-user-story-1 sobre main
-$ git checkout feature-user-story-1
-$ git rebase main
-```
-
-**Pregunta:** ¿Qué ventajas proporciona el rebase durante el desarrollo de un sprint en términos de integración continua?
-
-
-#### **Fase 3: Revisión del sprint (sprint review)**
-
-**Ejercicio 3: Integración selectiva con git cherry-pick**
-
-En esta fase, es posible que algunas funcionalidades estén listas para ser mostradas a los stakeholders, pero otras aún no están completamente implementadas. Usar `git cherry-pick` puede permitirte seleccionar commits específicos para mostrar las funcionalidades listas, sin hacer merge de ramas incompletas.
-
-**Objetivo:** Mover commits seleccionados de una rama de funcionalidad (`feature-user-story-2`) a `main` sin integrar todos los cambios.
-
-**Instrucciones:**
-
-1. Realiza algunos commits en `feature-user-story-2`.
-2. Haz cherry-pick de los commits que estén listos para mostrarse a los stakeholders durante la revisión del sprint.
-
-**Comandos:**
-```bash
-$ git checkout feature-user-story-2
-$ echo "Funcionalidad lista" > feature2.md
-$ git add feature2.md
-$ git commit -m "Funcionalidad lista para revisión"
-
-$ echo "Funcionalidad en progreso" > progress.md
-$ git add progress.md
-$ git commit -m "Funcionalidad aún en progreso"
-
-# Ahora selecciona solo el commit que esté listo
-$ git checkout main
-$ git cherry-pick <hash_del_commit_de_feature-lista>
-```
-
-**Pregunta:** ¿Cómo ayuda `git cherry-pick` a mostrar avances de forma selectiva en un sprint review?
-
-
-#### **Fase 4: Retrospectiva del sprint (sprint retrospective)**
-
-**Ejercicio 4: Revisión de conflictos y resolución**
-
-Durante un sprint, pueden surgir conflictos al intentar integrar diferentes ramas de funcionalidades. Es importante aprender cómo resolver estos conflictos y discutirlos en la retrospectiva.
-
-**Objetivo:** Identificar y resolver conflictos de fusión con `git merge` al intentar integrar varias ramas de funcionalidades al final del sprint.
-
-**Instrucciones:**
-
-1. Realiza cambios en `feature-user-story-1` y `feature-user-story-2` que resulten en conflictos.
-2. Intenta hacer merge de ambas ramas con main y resuelve los conflictos.
-
-**Comandos:**
-```bash
-$ git checkout feature-user-story-1
-$ echo "Cambio en la misma línea" > conflicted-file.md
-$ git add conflicted-file.md
-$ git commit -m "Cambio en feature 1"
-
-$ git checkout feature-user-story-2
-$ echo "Cambio diferente en la misma línea" > conflicted-file.md
-$ git add conflicted-file.md
-$ git commit -m "Cambio en feature 2"
-
-# Intentar hacer merge en main
-$ git checkout main
-$ git merge feature-user-story-1
-$ git merge feature-user-story-2
-```
-
-**Pregunta**: ¿Cómo manejas los conflictos de fusión al final de un sprint? ¿Cómo puede el equipo mejorar la comunicación para evitar conflictos grandes?
-
-
-#### **Fase 5: Fase de desarrollo, automatización de integración continua (CI) con git rebase**
-
-**Ejercicio 5: Automatización de rebase con hooks de Git**
-
-En un entorno CI, es común automatizar ciertas operaciones de Git para asegurar que el código se mantenga limpio antes de que pase a la siguiente fase del pipeline. Usa los hooks de Git para automatizar el rebase cada vez que se haga un push a una rama de funcionalidad.
-
-**Objetivo:** Implementar un hook que haga automáticamente un rebase de `main` antes de hacer push en una rama de funcionalidad, asegurando que el historial se mantenga limpio.
-
-**Instrucciones:**
-
-1. Configura un hook `pre-push` que haga un rebase automático de la rama `main` sobre la rama de funcionalidad antes de que el push sea exitoso.
-2. Prueba el hook haciendo push de algunos cambios en la rama `feature-user-story-1`.
-
-**Comandos:**
-```bash
-# Dentro de tu proyecto, crea un hook pre-push
-$ nano .git/hooks/pre-push
-
-# Agrega el siguiente script para automatizar el rebase
-#!/bin/bash
-git fetch origin main
-git rebase origin/main
-
-# Haz el archivo ejecutable
-$ chmod +x .git/hooks/pre-push
-
-# Simula cambios y haz push
-$ git checkout feature-user-story-1
-$ echo "Cambios importantes" > feature1.md
-$ git add feature1.md
-$ git commit -m "Cambios importantes en feature 1"
-$ git push origin feature-user-story-1
-```
-
-**Pregunta**: ¿Qué ventajas y desventajas observas al automatizar el rebase en un entorno de CI/CD?
-
----
-
-### **Navegando conflictos y versionado en un entorno devOps**
+#### **Navegando conflictos y versionado en un entorno devOps**
 
 **Objetivo:**  
 Gestionar conflictos en Git, realizar fusiones complejas, utilizar herramientas para comparar y resolver conflictos, aplicar buenas prácticas en el manejo del historial de versiones  y usar el versionado semántico en un entorno de integración continua (CI).
@@ -434,7 +266,6 @@ Los conflictos ocurren cuando dos ramas modifican la misma línea de un archivo 
 
 - `git checkout --ours <file-path>`: Conserva los cambios de tu rama.  
 - `git checkout --theirs <file-path>`: Conserva los cambios de la rama fusionada.
-
 
 #### **Herramientas para gestionar fusiones**
 
@@ -501,7 +332,6 @@ Los conflictos ocurren cuando dos ramas modifican la misma línea de un archivo 
   $ git bisect reset
   ```
 
-
 ##### **git clean y stash**
 
 1. `git clean`: Elimina archivos y directorios no rastreados.
@@ -535,7 +365,6 @@ $ git tag -a v1.0 -m "Initial stable release"
 $ git tag v2.4.4 <commit>
 ```
 
----
 
 #### **Ejemplo:**
 
@@ -563,14 +392,14 @@ $ git tag v2.4.4 <commit>
      ```bash
      $ git branch feature-branch  # Crear una nueva rama
      ```
-   - **Paso 6**: Haz checkout a la rama feature-branch y realiza un cambio en el archivo `archivo_colaborativo.txt`.
+   - **Paso 6**: Haz checkout a la rama `feature-branch` y realiza un cambio en el archivo `archivo_colaborativo.txt`.
      ```bash
      $ git checkout feature-branch
      $ echo "Este es un cambio en la feature-branch" >> archivo_colaborativo.txt
      $ git add .
      $ git commit -m "Cambios en feature-branch"
      ```
-   - **Paso 7**: Regresa a la rama main y realiza otro cambio en la misma línea del archivo `archivo_colaborativo.txt`.
+   - **Paso 7**: Regresa a la rama `main` y realiza otro cambio en la misma línea del archivo `archivo_colaborativo.txt`.
      ```bash
      $ git checkout main
      $ echo "Este es un cambio en la rama main" >> archivo_colaborativo.txt
@@ -580,7 +409,7 @@ $ git tag v2.4.4 <commit>
 
 2. **Fusión y resolución de conflictos**
 
-   - **Paso 1**: Intenta fusionar feature-branch en main. Se espera que surjan conflictos de fusión.
+   - **Paso 1**: Intenta fusionar `feature-branch` en `main`. Se espera que surjan conflictos de fusión.
      ```bash
      $ git merge feature-branch
      ```
@@ -627,7 +456,7 @@ $ git tag v2.4.4 <commit>
 
 6. **Versionado semántico y etiquetado**
 
-   - **Paso 1**: Aplica versionado semántico al proyecto utilizando tags para marcar versiones importantes.
+   - **Paso 1**: Aplica versionado semántico al proyecto utilizando **tags** para marcar versiones importantes.
      ```bash
      $ git tag -a v1.0.0 -m "Primera versión estable"
      $ git push origin v1.0.0
@@ -678,7 +507,7 @@ $ git tag v2.4.4 <commit>
    **Contexto**: Tu equipo de desarrollo utiliza herramientas gráficas para resolver conflictos de manera colaborativa. Algunos desarrolladores prefieren herramientas como vimdiff o Visual Studio Code. En medio de un sprint, varios archivos están en conflicto y los desarrolladores prefieren trabajar en un entorno visual para resolverlos.
 
    **Pregunta**:  
-   Explica cómo configurarías y utilizarías `git mergetool` en tu equipo para integrar herramientas gráficas que faciliten la resolución de conflictos. ¿Qué impacto tiene el uso de `git mergetool` en un entorno de trabajo ágil con CI/CD, y cómo aseguras que todos los miembros del equipo mantengan consistencia en las resoluciones?
+   Explica cómo configurarías y utilizarías `git mergetool` en tu equipo para integrar herramientas gráficas que faciliten la resolución de conflictos. ¿Qué impacto tiene el uso de `git mergetool` en un entorno de trabajo ágil con CI/CD, y cómo aseguras que todos los miembros del equipo mantengan consistencia en las resoluciones?.
 
 5. **Ejercicio para git reset**
 
@@ -708,11 +537,10 @@ $ git tag v2.4.4 <commit>
    **Pregunta**:  
    Diseña un archivo `.gitignore` que excluya archivos innecesarios en un entorno ágil de desarrollo. Explica por qué es importante mantener este archivo actualizado en un equipo colaborativo que utiliza CI/CD y cómo afecta la calidad y limpieza del código compartido en el repositorio.
 
----
 
 #### **Ejercicios adicionales**
 
-##### **Ejercicio 1: Resolución de conflictos en un entorno ágil**
+#### **Ejercicio 1: Resolución de conflictos en un entorno ágil**
 
 **Contexto:**  
 Estás trabajando en un proyecto ágil donde múltiples desarrolladores están enviando cambios a la rama principal cada día. Durante una integración continua, se detectan conflictos de fusión entre las ramas de dos equipos que están trabajando en dos funcionalidades críticas. Ambos equipos han modificado el mismo archivo de configuración del proyecto.
@@ -721,7 +549,7 @@ Estás trabajando en un proyecto ágil donde múltiples desarrolladores están e
 - ¿Cómo gestionarías la resolución de este conflicto de manera eficiente utilizando Git y manteniendo la entrega continua sin interrupciones? ¿Qué pasos seguirías para minimizar el impacto en la CI/CD y asegurar que el código final sea estable?
 
 
-##### **Ejercicio 2: Rebase vs. Merge en integraciones ágiles**
+#### **Ejercicio 2: Rebase vs. Merge en integraciones ágiles**
 
 **Contexto:**  
 En tu equipo de desarrollo ágil, cada sprint incluye la integración de varias ramas de características. Algunos miembros del equipo prefieren realizar merge para mantener el historial completo de commits, mientras que otros prefieren rebase para mantener un historial lineal.
@@ -730,7 +558,7 @@ En tu equipo de desarrollo ágil, cada sprint incluye la integración de varias 
 - ¿Qué ventajas y desventajas presenta cada enfoque (merge vs. rebase) en el contexto de la metodología ágil? ¿Cómo impacta esto en la revisión de código, CI/CD, y en la identificación rápida de errores?
 
 
-##### **Ejercicio 3: Git Hooks en un flujo de trabajo CI/CD ágil**
+#### **Ejercicio 3: Git Hooks en un flujo de trabajo CI/CD ágil**
 
 **Contexto:**  
 Tu equipo está utilizando Git y una pipeline de CI/CD que incluye tests unitarios, integración continua y despliegues automatizados. Sin embargo, algunos desarrolladores accidentalmente comiten código que no pasa los tests locales o no sigue las convenciones de estilo definidas por el equipo.
@@ -738,7 +566,7 @@ Tu equipo está utilizando Git y una pipeline de CI/CD que incluye tests unitari
 **Pregunta:**  
 - Diseña un conjunto de Git Hooks que ayudaría a mitigar estos problemas, integrando validaciones de estilo y tests automáticos antes de permitir los commits. Explica qué tipo de validaciones implementarías y cómo se relaciona esto con la calidad del código y la entrega continua en un entorno ágil.
 
-##### **Ejercicio 4: Estrategias de branching en metodologías ágiles**
+#### **Ejercicio 4: Estrategias de branching en metodologías ágiles**
 
 **Contexto:**  
 Tu equipo de desarrollo sigue una metodología ágil y está utilizando Git Flow para gestionar el ciclo de vida de las ramas. Sin embargo, a medida que el equipo ha crecido, la gestión de las ramas se ha vuelto más compleja, lo que ha provocado retrasos en la integración y conflictos de fusión frecuentes.
@@ -746,8 +574,7 @@ Tu equipo de desarrollo sigue una metodología ágil y está utilizando Git Flow
 **Pregunta:**  
 - Explica cómo adaptarías o modificarías la estrategia de branching para optimizar el flujo de trabajo del equipo en un entorno ágil y con integración continua. Considera cómo podrías integrar feature branches, release branches y hotfix branches de manera que apoyen la entrega continua y minimicen conflictos.
 
-
-##### **Ejercicio 5: Automatización de reversiones con git en CI/CD**
+#### **Ejercicio 5: Automatización de reversiones con git en CI/CD**
 
 **Contexto:**  
 Durante una integración continua en tu pipeline de CI/CD, se detecta un bug crítico después de haber fusionado varios commits a la rama principal. El equipo necesita revertir los cambios rápidamente para mantener la estabilidad del sistema.
@@ -755,7 +582,6 @@ Durante una integración continua en tu pipeline de CI/CD, se detecta un bug cr�
 **Pregunta:**  
 - ¿Cómo diseñarías un proceso automatizado con Git y CI/CD que permita revertir cambios de manera eficiente y segura? Describe cómo podrías integrar comandos como `git revert` o `git reset` en la pipeline y cuáles serían los pasos para garantizar que los bugs se reviertan sin afectar el desarrollo en curso.
 
---- 
 **Entrega:**  
 - Al finalizar, debes hacer push a su repositorio remoto con los cambios realizados y etiquetar el commit final.
 
