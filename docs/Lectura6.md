@@ -493,4 +493,4 @@ La respuesta a incidentes en Git implica mitigar errores o vulnerabilidades con 
 [Incidente detectado] --> [Revert/Parche] --> [PR documentado]
 ```
 
-**Práctica:** Preferir revert (auditable) sobre reset en ramas compartidas; enlazar incidentes a PRs/commits para forensics.
+- **Práctica:** Preferir revert (auditable) sobre reset en ramas compartidas; enlazar incidentes a PRs/commits para forensics.
