@@ -4,9 +4,66 @@
 
 Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un historial de commits limpio y manejable en proyectos colaborativos.  También explorarás cuándo y por qué utilizar estos comandos en lugar de los merges regulares.
 
+**Entrega:** sube **todas** las respuestas y evidencias en la carpeta **`Actividad8-CC3S2/`**.
+
+Para la entrega mínima en la carpeta `Actividad8-CC3S2/`, incluye lo siguiente:
+
+1. **Repositorios locales** (en subcarpetas):
+   - `prueba-git-rebase/`, `prueba-cherry-pick/`, `scrum-workflow/`, `ci-cd-workflow/`, `proyecto-colaborativo/` con:
+     - Archivos generados (`README.md`, `NewFeature.md`, `CONTRIBUTING.md`, etc.).
+     - `.gitignore` configurado.
+     - Historial de commits (`git log --graph --oneline` exportado o capturas).
+     - Tags de versionado semántico (`v1.0.0`).
+
+2. **Evidencias de comandos**:
+   - Archivo `comandos_ejecutados.md` con comandos Git ejecutados (`git rebase`, `git cherry-pick`, `git merge`, `git reset`, `git revert`, `git stash`, etc.) y sus resultados.
+
+3. **Respuestas teóricas y prácticas**:
+   - `respuestas_teoricas.md`: Respuestas a las preguntas de discusión y ejercicios teóricos (diferencias entre `merge` y `rebase`, impacto en DevOps, etc.).
+   - `respuestas_practicas.md`: Respuestas a preguntas de ejercicios prácticos (efectos del rebase, uso de cherry-pick en CI/CD).
+   - `respuestas_adicionales.md`: Respuestas a ejercicios adicionales (uso de `git checkout --ours/--theirs`, `git diff`, `git mergetool`, etc.).
+
+4. **Resolución de conflictos**:
+   - `resolucion_conflictos.md`: Detalle de pasos para resolver conflictos, con ejemplos de marcadores y comandos (`git checkout --ours`, `git mergetool`).
+
+5. **Diagramas de ramas**:
+   - Archivos de texto o capturas con diagramas de ramas para `git rebase` y `git cherry-pick` (usando `git log --graph --oneline` o herramientas gráficas).
+
+6. **Reflexión**:
+   - Sección en `respuestas_teoricas.md` sobre la utilidad de los comandos en DevOps y CI/CD.
+
+7. **Repositorio remoto**:
+   - Enlace al repositorio remoto en `README.md`, con commits etiquetados (`git tag -a v1.0.0`).
+
+8. **README.md**:
+   - Descripción de la actividad, instrucciones para navegar los archivos y enlace al repositorio remoto.
+
+**Estructura sugerida**:
+```
+Actividad8-CC3S2/
+├── README.md
+├── prueba-git-rebase/
+├── prueba-cherry-pick/
+├── scrum-workflow/
+├── ci-cd-workflow/
+├── proyecto-colaborativo/
+├── comandos_ejecutados.md
+├── respuestas_teoricas.md
+├── respuestas_practicas.md
+├── respuestas_adicionales.md
+├── resolucion_conflictos.md
+└── (diagramas de ramas)
+```
+
+**Notas**:
+- Archivos legibles en Markdown.
+- Evidencias claras (capturas o exportaciones de comandos).
+- Respuestas concisas pero completas.
+- Repositorio remoto accesible con tags aplicados.
+
 #### **Parte 1: git rebase para mantener un historial lineal**
 
-1. **Introducción a Rebase:**
+1. **Introducción a rebase:**
 
    El rebase mueve tus commits a una nueva base, dándote un historial lineal y limpio. En lugar de fusionar ramas y mostrar un "commit de merge", el rebase integra los cambios aplicándolos en la parte superior de otra rama.
 
@@ -19,7 +76,7 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
      $ mkdir prueba-git-rebase
      $ cd prueba-git-rebase
      $ git init
-     $ echo "# Mi Proyecto de Rebase" > README.md
+     $ echo "# Mi Proyecto de rebase" > README.md
      $ git add README.md
      $ git commit -m "Commit inicial en main"
      ```
@@ -240,15 +297,6 @@ Aprender a usar los comandos `git rebase` y `git cherry-pick` para mantener un h
 
 #### **Navegando conflictos y versionado en un entorno devOps**
 
-**Objetivo:**  
-Gestionar conflictos en Git, realizar fusiones complejas, utilizar herramientas para comparar y resolver conflictos, aplicar buenas prácticas en el manejo del historial de versiones  y usar el versionado semántico en un entorno de integración continua (CI).
-
-**Herramientas:**
-
-- Git  
-- Un entorno de desarrollo (Visual Studio Code, terminal, etc.)  
-- Un repositorio en GitHub o GitLab (opcional, puede ser local)
-
 **Contexto:**  
 En un entorno de desarrollo colaborativo, los conflictos son inevitables cuando varios desarrolladores trabajan en la misma base de código. Resolver estos conflictos es crucial para mantener un flujo de trabajo eficiente en DevOps.
 
@@ -294,15 +342,15 @@ Los conflictos ocurren cuando dos ramas modifican la misma línea de un archivo 
 
 - **git reset**: Este comando permite retroceder en el historial de commits. Existen tres tipos:
 
-  1. **Soft Reset**: Mueve el HEAD sin cambiar los archivos:
+  - **Soft Reset**: Mueve el HEAD sin cambiar los archivos:
      ```bash
      $ git reset --soft <commit>
      ```
-  2. **Mixed Reset**: Mueve el HEAD y quita archivos del staging, pero mantiene los cambios:
+  - **Mixed Reset**: Mueve el HEAD y quita archivos del staging, pero mantiene los cambios:
      ```bash
      $ git reset --mixed <commit>
      ```
-  3. **Hard Reset**: Elimina todos los cambios no guardados y resetea el directorio de trabajo:
+  - **Hard Reset**: Elimina todos los cambios no guardados y resetea el directorio de trabajo:
      ```bash
      $ git reset --hard <commit>
      ```
