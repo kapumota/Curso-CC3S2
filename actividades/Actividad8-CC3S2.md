@@ -29,7 +29,7 @@ Para la entrega mínima en la carpeta `Actividad8-CC3S2/`, incluye lo siguiente:
 5. **Diagramas de ramas**:
    - Archivos de texto o capturas con diagramas de ramas para `git rebase` y `git cherry-pick` (usando `git log --graph --oneline` o herramientas gráficas).
 
-6. **Reflexión**:
+6. **Respuestas teóricas**:
    - Sección en `respuestas_teoricas.md` sobre la utilidad de los comandos en DevOps y CI/CD.
 
 7. **Repositorio remoto**:
@@ -630,8 +630,3 @@ Durante una integración continua en tu pipeline de CI/CD, se detecta un bug cr�
 **Pregunta:**  
 - ¿Cómo diseñarías un proceso automatizado con Git y CI/CD que permita revertir cambios de manera eficiente y segura? Describe cómo podrías integrar comandos como `git revert` o `git reset` en la pipeline y cuáles serían los pasos para garantizar que los bugs se reviertan sin afectar el desarrollo en curso.
 
-**Entrega:**  
-- Al finalizar, debes hacer push a su repositorio remoto con los cambios realizados y etiquetar el commit final.
-
-**Evaluación:**  
-- El dominio de los comandos Git será evaluado, junto con la correcta resolución de conflictos, uso de herramientas de fusión, y comprensión de versionado semántico.
