@@ -336,7 +336,7 @@ rama A --> [Fusión sin commit extra] --> rama B
 
 - **Integración:** Ejecutar en los **PR** que toquen **submódulos** o **archivos de dependencias** para detectar vulnerabilidades conocidas (**CVEs**) y problemas de licencia. Anotar el PR con **paquete afectado**, **versión**, **severidad**, **ruta de dependencia** y **enlace a la asesoría**, y ofrece **remediaciones sugeridas**. Bloquear la fusión cuando haya hallazgos **críticos o altos** y exige **actualización**, **parche** o **excepción temporal** con caducidad y justificación. Vigilar dependencias **transitivas**, verifica **integridad** y **fijación de versiones**, genera **SBOM** y registra artefactos. Complementar con bots de actualización automática como **Dependabot** o **Renovate** y métricas de **tiempo de remediación**.
 
-#### 28. Secrets Management
+#### 28. Gestión de secretos (Secrets management)
 
 Secrets Management maneja credenciales sensibles de forma segura, evitando su exposición en Git.
 
@@ -346,9 +346,9 @@ Secrets Management maneja credenciales sensibles de forma segura, evitando su ex
 - **Respuesta a incidentes:** Ante exposición de secretos, contiene y corrige de inmediato. **Revocar y rotar** claves, tokens de API, llaves SSH y credenciales de CI. **Invalidar** sesiones y firmas de webhooks. **Escanear** el repositorio completo, issues y artefactos para hallar otras filtraciones. **Limpiar el historial** con BFG o filter-repo, crea una referencia limpia y coordina con mirrors y forks para evitar reintroducciones. **Registrar el incidente** con severidad, línea de tiempo, responsables y acciones correctivas. **Notificar** a equipos afectados y a terceros cuando aplique. **Reforzar controles** preventivos y añade reglas de detección en CI y pre-commit.
 - **Inyección segura:** No guardar secretos en Git ni en imágenes. **Gestionar** credenciales en un vault confiable y **emitir** credenciales de vida corta con identidades de workload basadas en OIDC. **Inyectar** secretos en runtime mediante variables, volúmenes o sidecars con **rotación automática**. **Restringir** acceso con RBAC mínimo necesario, **auditar** uso, **cifrar** en tránsito y en reposo, y referencia solo **nombres** de secretos en IaC y pipelines.
 
-#### 29. Bash Scripting en Git
+#### 29. Scripts de Bash en Git
 
-Bash Scripting automatiza tareas en Git mediante scripts, comunes en hooks y CI/CD, ejecutando validaciones o integraciones.
+Un script de Bash automatiza tareas en Git mediante scripts, comunes en hooks y CI/CD, ejecutando validaciones o integraciones.
 
 ```
 [Evento Git] --> [Script Bash ejecutado] --> [Validación o acción]
@@ -357,7 +357,7 @@ Bash Scripting automatiza tareas en Git mediante scripts, comunes en hooks y CI/
 - **Calidad:** Usar opciones seguras como set -euo pipefail, validar con herramientas como ShellCheck, generar salidas claras.
 - **Portabilidad:** Preferir orquestación en CI (YAML) para políticas independientes del entorno.
 
-#### 30. Pre-commit Hook
+#### 30. Pre-commit hook
 
 El pre-commit hook valida cambios antes de un commit, ideal para linters, detección de secretos y SAST ligero.
 
@@ -367,7 +367,7 @@ El pre-commit hook valida cambios antes de un commit, ideal para linters, detecc
 
 - **Ejemplo:** Escanear secretos con herramientas como git-secrets o validar formato con [Prettier](https://prettier.io/).
 
-#### 31. Post-merge Hook
+#### 31. Post-merge hook
 
 El post-merge hook se ejecuta tras una fusión, útil para builds, notificaciones o escaneos DAST.
 
@@ -377,7 +377,7 @@ El post-merge hook se ejecuta tras una fusión, útil para builds, notificacione
 
 - **Uso:** Integrar con CI para validar integridad post-fusión.
 
-#### 32. Pre-push Hook
+#### 32. Pre-push hook
 
 El pre-push hook valida cambios antes de un push al repositorio remoto.
 
@@ -387,7 +387,7 @@ El pre-push hook valida cambios antes de un push al repositorio remoto.
 
 - **Aplicación:** Pruebas unitarias, chequeos de firmas o cumplimiento (compliance) en DevSecOps.
 
-#### 33. Algoritmo de Hashing en Git (SHA)
+#### 33. Algoritmo de hashing en Git (SHA)
 
 Git usa SHA-1 (migrando a SHA-256) para generar IDs únicos de objetos, asegurando integridad.
 
@@ -432,7 +432,7 @@ CI integra cambios frecuentemente al repositorio principal, ejecutando builds y 
 
 - **Seguridad:** Incluir SAST/SCA como checks obligatorios.
 
-#### 37. Entrega Continua (CD)
+#### 37. Entrega continua (CD)
 
 CD automatiza o permite despliegues a producción tras validaciones exitosas.
 
@@ -473,7 +473,7 @@ Un artefacto es un output de CI/CD, como binarios o reportes, almacenado para re
 
 * **DevSecOps:** Generar y publicar **SBOM**, **provenance** y **reportes de seguridad** por cada build. Prohibir imágenes o paquetes con etiqueta **`latest`** para mantener **inmutabilidad** y usa **versiones fijas** y **digests por SHA**. **Firma** artefactos y **atestaciones** y enlázalos al **SHA del commit** o al **tag firmado**. Guardar todo en el **registry** con retención y control de acceso. En el pipeline y en la **admisión a producción** verifica firmas, digests, políticas y ausencia de vulnerabilidades críticas y **bloquea** si no cumplen. Registrar evidencias y vincular al **PR** y a la **release** para auditoría.
 
-#### 41. Conventional commits
+#### 41. Commit convencionales (Conventional commits)
 
 **Conventional Commits** es un estándar para redactar mensajes de commit que facilita la generación automática de *changelogs* y el versionado semántico (SemVer).
 
