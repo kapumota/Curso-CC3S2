@@ -107,11 +107,11 @@ git pull --ff-only
 #### 7) Rebase, cherry-pick y estrategias de historia
 
 **Rebase** toma una secuencia de commits y los reaplica sobre otra base, creando nuevos hashes. Esto permite mantener historias lineales que simplifican auditorías y bisect. 
-En ramas de vida corta es habitual rebasar contra el troncal antes de integrar.  La modalidad interactiva facilita reordenar, combinar con squash o fixup, reescribir mensajes y editar commits. 
+En ramas de vida corta es habitual rebasar contra la rama principal antes de integrar.  La modalidad interactiva facilita reordenar, combinar con squash o fixup, reescribir mensajes y editar commits. 
 Como regla de oro en colaboración, evitar reescribir historia ya publicada.
 
 ```bash
-# Mantener una rama al día con el troncal sin mezclar commits de fusión
+# Mantener una rama al día con la rama principal sin mezclar commits de fusión
 git fetch origin
 git rebase origin/main
 
