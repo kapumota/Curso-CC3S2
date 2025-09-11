@@ -1,4 +1,4 @@
-### Introducción a Git
+### Introducción a Git para devops
 
 #### 1) Arquitectura distribuida y modelo operativo
 
