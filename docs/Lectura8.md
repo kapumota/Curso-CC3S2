@@ -80,7 +80,6 @@ git log --graph --oneline
 ```
 
 El log mostrará un commit de fusión con dos padres, lo que embebe el contexto de integración y facilita auditorías de "qué y cuándo se juntó".   
-
 #### 4) Squash merge: consolidación atómica y revertible
 `git merge --squash` reúne todos los commits de la rama de origen en un único conjunto de cambios listo para confirmar en la rama de destino. 
 Es útil cuando una *feature* acumuló muchos commits de **trabajo intermedio** (lo que a veces llamamos "de taller": WIP, pruebas, pequeños ajustes y refactors) y se quiere integrar sin llenar el historial. 
