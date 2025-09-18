@@ -1079,7 +1079,7 @@ Cada iteración del proceso RGR se basa en la anterior, permitiendo construir un
 
 #### Ejercicio
 
-Desarrolla las 6 iteraciones de Desarrollo Guiado por Pruebas (TDD) (Red-Green-Refactor) aplicadas a la clase `UserManager`, incluyendo casos de mocks, stubs, fakes, spies e inyección de dependencias. Cada iteración presenta un escenario diferente para ilustrar cómo podrías usar estas técnicas. 
+Desarrolla las 6 iteraciones Red-Green-Refactor aplicadas a la clase `UserManager`, incluyendo casos de mocks, stubs, fakes, spies e inyección de dependencias. Cada iteración presenta un escenario diferente para ilustrar cómo podrías usar estas técnicas. 
 
 
 #### Iteración 1: Agregar usuario (básico)
