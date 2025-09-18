@@ -2,7 +2,7 @@
 # tests/test_carrito.py
 
 import pytest
-from src.carrito import Carrito, Producto
+from src.carrito import Carrito
 from src.factories import ProductoFactory
 
 def test_agregar_producto_nuevo():
@@ -15,10 +15,10 @@ def test_agregar_producto_nuevo():
     # Arrange
     carrito = Carrito()
     producto = ProductoFactory(nombre="Laptop", precio=1000.00)
-    
+
     # Act
     carrito.agregar_producto(producto)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 1
@@ -37,10 +37,10 @@ def test_agregar_producto_existente_incrementa_cantidad():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Mouse", precio=50.00)
     carrito.agregar_producto(producto, cantidad=1)
-    
+
     # Act
     carrito.agregar_producto(producto, cantidad=2)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 1
@@ -58,10 +58,10 @@ def test_remover_producto():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Teclado", precio=75.00)
     carrito.agregar_producto(producto, cantidad=3)
-    
+
     # Act
     carrito.remover_producto(producto, cantidad=1)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 1
@@ -79,10 +79,10 @@ def test_remover_producto_completo():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Monitor", precio=300.00)
     carrito.agregar_producto(producto, cantidad=2)
-    
+
     # Act
     carrito.remover_producto(producto, cantidad=2)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 0
@@ -99,10 +99,10 @@ def test_actualizar_cantidad_producto():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Auriculares", precio=150.00)
     carrito.agregar_producto(producto, cantidad=1)
-    
+
     # Act
     carrito.actualizar_cantidad(producto, nueva_cantidad=5)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 1
@@ -120,10 +120,10 @@ def test_actualizar_cantidad_a_cero_remueve_producto():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Cargador", precio=25.00)
     carrito.agregar_producto(producto, cantidad=3)
-    
+
     # Act
     carrito.actualizar_cantidad(producto, nueva_cantidad=0)
-    
+
     # Assert
     items = carrito.obtener_items()
     assert len(items) == 0
@@ -142,10 +142,10 @@ def test_calcular_total():
     producto2 = ProductoFactory(nombre="Escáner", precio=150.00)
     carrito.agregar_producto(producto1, cantidad=2)  # Total 400
     carrito.agregar_producto(producto2, cantidad=1)  # Total 150
-    
+
     # Act
     total = carrito.calcular_total()
-    
+
     # Assert
     assert total == 550.00
 
@@ -161,10 +161,10 @@ def test_aplicar_descuento():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Tablet", precio=500.00)
     carrito.agregar_producto(producto, cantidad=2)  # Total 1000
-    
+
     # Act
     total_con_descuento = carrito.aplicar_descuento(10)
-    
+
     # Assert
     assert total_con_descuento == 900.00
 
@@ -179,7 +179,7 @@ def test_aplicar_descuento_limites():
     carrito = Carrito()
     producto = ProductoFactory(nombre="Smartphone", precio=800.00)
     carrito.agregar_producto(producto, cantidad=1)
-    
+
     # Act y Assert
     with pytest.raises(ValueError):
         carrito.aplicar_descuento(150)
