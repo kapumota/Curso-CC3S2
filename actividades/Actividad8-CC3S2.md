@@ -1,4 +1,4 @@
-### Actividad: Red-Green-Refactor
+### Actividad 8: Red-Green-Refactor
 
 El proyecto se desarrollará de forma incremental utilizando el proceso RGR (Red, Green, Refactor) y pruebas unitarias con pytest para asegurar la correcta implementación de cada funcionalidad.
 
@@ -929,113 +929,7 @@ class ShoppingCart:
 
 #### **Código final acumulativo**
 
-##### **shopping_cart.py**
-
-```python
-class ShoppingCart:
-    def __init__(self, payment_gateway=None):
-        self.items = {}
-        self.discount = 0  # Porcentaje de descuento
-        self.payment_gateway = payment_gateway  # Inyección de dependencia
-    
-    def add_item(self, name, quantity, unit_price):
-        if name in self.items:
-            self.items[name]["quantity"] += quantity
-        else:
-            self.items[name] = {"quantity": quantity, "unit_price": unit_price}
-    
-    def remove_item(self, name):
-        if name in self.items:
-            del self.items[name]
-    
-    def calculate_total(self):
-        total = sum(item["quantity"] * item["unit_price"] for item in self.items.values())
-        if self.discount > 0:
-            total *= (1 - self.discount / 100)
-        return round(total, 2)  # Redondear a 2 decimales
-    
-    def apply_discount(self, discount_percentage):
-        if 0 <= discount_percentage <= 100:
-            self.discount = discount_percentage
-        else:
-            raise ValueError("El porcentaje de descuento debe estar entre 0 y 100.")
-    
-    def process_payment(self, amount):
-        if not self.payment_gateway:
-            raise ValueError("No payment gateway provided.")
-        try:
-            success = self.payment_gateway.process_payment(amount)
-            return success
-        except Exception as e:
-            # Manejar excepciones según sea necesario
-            raise e
-```
-
-##### **test_shopping_cart.py**
-
-```python
-import pytest
-from unittest.mock import Mock
-from shopping_cart import ShoppingCart
-
-def test_add_item():
-    cart = ShoppingCart()
-    cart.add_item("apple", 2, 0.5)  # nombre, cantidad, precio unitario
-    assert cart.items == {"apple": {"quantity": 2, "unit_price": 0.5}}
-
-def test_remove_item():
-    cart = ShoppingCart()
-    cart.add_item("apple", 2, 0.5)
-    cart.remove_item("apple")
-    assert cart.items == {}
-
-def test_calculate_total():
-    cart = ShoppingCart()
-    cart.add_item("apple", 2, 0.5)
-    cart.add_item("banana", 3, 0.75)
-    total = cart.calculate_total()
-    assert total == 2*0.5 + 3*0.75  # 2*0.5 + 3*0.75 = 1 + 2.25 = 3.25
-
-def test_apply_discount():
-    cart = ShoppingCart()
-    cart.add_item("apple", 2, 0.5)
-    cart.add_item("banana", 3, 0.75)
-    cart.apply_discount(10)  # Descuento del 10%
-    total = cart.calculate_total()
-    expected_total = (2*0.5 + 3*0.75) * 0.9  # Aplicando 10% de descuento
-    assert total == round(expected_total, 2)  # Redondear a 2 decimales
-
-def test_process_payment():
-    payment_gateway = Mock()
-    payment_gateway.process_payment.return_value = True
-    
-    cart = ShoppingCart(payment_gateway=payment_gateway)
-    cart.add_item("apple", 2, 0.5)
-    cart.add_item("banana", 3, 0.75)
-    cart.apply_discount(10)
-    
-    total = cart.calculate_total()
-    result = cart.process_payment(total)
-    
-    payment_gateway.process_payment.assert_called_once_with(total)
-    assert result == True
-
-def test_process_payment_failure():
-    payment_gateway = Mock()
-    payment_gateway.process_payment.side_effect = Exception("Payment failed")
-    
-    cart = ShoppingCart(payment_gateway=payment_gateway)
-    cart.add_item("apple", 2, 0.5)
-    cart.apply_discount(10)
-    
-    total = cart.calculate_total()
-    
-    with pytest.raises(Exception) as exc_info:
-        cart.process_payment(total)
-    
-    assert str(exc_info.value) == "Payment failed"
-```
-
+Puedes revisar la versión completa aquí en el [Laboratorio3](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio3) del curso.
 
 #### **Ejecutar las pruebas**
 
