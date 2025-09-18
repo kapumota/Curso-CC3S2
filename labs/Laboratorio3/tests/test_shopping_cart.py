@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import Mock
+import pytest
 from src.shopping_cart import ShoppingCart
 
 
@@ -13,7 +13,7 @@ def test_remove_item():
     cart = ShoppingCart()
     cart.add_item("apple", 2, 0.5)
     cart.remove_item("apple")
-    assert cart.items == {}
+    assert not cart.items
 
 def test_calculate_total():
     cart = ShoppingCart()
@@ -34,30 +34,29 @@ def test_apply_discount():
 def test_process_payment():
     payment_gateway = Mock()
     payment_gateway.process_payment.return_value = True
-    
+
     cart = ShoppingCart(payment_gateway=payment_gateway)
     cart.add_item("apple", 2, 0.5)
     cart.add_item("banana", 3, 0.75)
     cart.apply_discount(10)
-    
+
     total = cart.calculate_total()
     result = cart.process_payment(total)
-    
+
     payment_gateway.process_payment.assert_called_once_with(total)
-    assert result == True
+    assert result is True
 
 def test_process_payment_failure():
     payment_gateway = Mock()
     payment_gateway.process_payment.side_effect = Exception("Pago fallado")
-    
+
     cart = ShoppingCart(payment_gateway=payment_gateway)
     cart.add_item("apple", 2, 0.5)
     cart.apply_discount(10)
-    
+
     total = cart.calculate_total()
-    
+
     with pytest.raises(Exception) as exc_info:
         cart.process_payment(total)
-    
-    assert str(exc_info.value) == "Pago fallado"
 
+    assert str(exc_info.value) == "Pago fallado"
