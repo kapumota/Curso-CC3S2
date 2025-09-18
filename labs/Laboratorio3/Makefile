@@ -1,45 +1,40 @@
 # Declaración de targets que no corresponden a archivos reales
 .PHONY: help test cov lint rgr red green refactor
+PYTHON ?= python
+PYTEST := $(PYTHON) -m pytest -q -c pytest.ini
+PYLINT := $(PYTHON) -m pylint -j 0
+PYLINT_FLAGS := --disable=C0114,C0115,C0116
 
-# Muestra una lista de los comandos disponibles y su descripción
 help:
 	@echo "Targets:"
 	@echo "  make test      # Ejecuta todas las pruebas (AAA + RGR) con pytest"
-	@echo "  make cov       # Ejecuta las pruebas con un resumen de cobertura"
-	@echo "  make lint      # Analiza el código fuente y las pruebas con pylint"
-	@echo "  make rgr       # Alias: ejecuta las pruebas rápidamente (usado en ciclos Red/Green)"
-	@echo "  make red       # Paso 1 de RGR: asegura que al menos una prueba falle (retorna código de salida no cero)"
-	@echo "  make green     # Paso 2 de RGR: ejecuta las pruebas hasta que pasen (estado verde)"
-	@echo "  make refactor  # Paso 3 de RGR: ejecuta las pruebas después de refactorizar (deben seguir en verde)"
+	@echo "  make cov       # Ejecuta las pruebas con resumen de cobertura"
+	@echo "  make lint      # Analiza src/ y tests/ con pylint (sin globs)"
+	@echo "  make rgr       # Alias rápido para el ciclo Red/Green"
+	@echo "  make red       # Asegura que al menos una prueba falle (estado RED)"
+	@echo "  make green     # Ejecuta pruebas hasta que pasen (estado GREEN)"
+	@echo "  make refactor  # Ejecuta pruebas tras refactor (deben seguir en verde)"
 
-# Ejecuta todas las pruebas automáticamente, buscando archivos test_*.py en el repositorio
 test:
-	@pytest -q
+	@$(PYTEST)
 
-# Ejecuta las pruebas y genera un informe de cobertura, mostrando las líneas no cubiertas
 cov:
-	@pytest --cov=. --cov-report=term-missing
+	@$(PYTHON) -m pytest --cov=. --cov-report=term-missing -c pytest.ini
 
-# Analiza el código fuente y las pruebas con pylint, ignorando advertencias de docstrings para mantener un enfoque pragmático en TDD
 lint:
-	@pylint --disable=C0114,C0115,C0116 *.py test_*.py || true
+	@$(PYLINT) $(PYLINT_FLAGS) src tests
 
-# Alias para ejecutar las pruebas rápidamente, útil durante los ciclos Red/Green/Refactor
 rgr: test
 
-# Paso "red" de RGR: verifica que al menos una prueba falle (código de salida no cero).
-# Si todas las pruebas pasan, muestra un mensaje indicando que se debe escribir una prueba fallida primero.
 red:
-	@if pytest -q; then \
-		echo 'Todas las pruebas están en verde — ¡escribe primero una prueba que falle (RED)!'; exit 1; \
+	@if $(PYTEST); then \
+		echo 'Todas las pruebas estan en verde, escribe primero una prueba que falle (RED)!'; exit 1; \
 	else \
-		echo 'Bien, estás en RED. Implementa lo mínimo para pasar, luego haz verde.'; \
+		echo 'Bien, estas en RED. Implementa lo minimo para pasar, luego haz verde.'; \
 	fi
 
-# Paso "green" de RGR: ejecuta las pruebas hasta que todas pasen, mostrando un mensaje de confirmación
 green:
-	@pytest -q && echo 'VERDE, refactoriza de manera segura.'
+	@$(PYTEST) && echo 'VERDE, refactoriza de manera segura.'
 
-# Paso "refactor" de RGR: ejecuta las pruebas tras refactorizar, asegurando que sigan pasando
 refactor:
-	@pytest -q && echo 'REFACTORIZACIÓN, mantén el diseño limpio; las pruebas siguen en verde.'
+	@$(PYTEST) && echo 'REFACTORIZACION, mantiene las pruebas siguen en verde.'
