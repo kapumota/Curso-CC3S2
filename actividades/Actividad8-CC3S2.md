@@ -877,7 +877,7 @@ class ShoppingCart:
     
     def process_payment(self, amount):
         if not self.payment_gateway:
-            raise ValueError("No payment gateway provided.")
+            raise ValueError("No se proporciona pasarela de pago.")
         return self.payment_gateway.process_payment(amount)
 ```
 
@@ -917,7 +917,7 @@ class ShoppingCart:
     
     def process_payment(self, amount):
         if not self.payment_gateway:
-            raise ValueError("No payment gateway provided.")
+            raise ValueError("No se proporciona pasarela de pago.")
         try:
             success = self.payment_gateway.process_payment(amount)
             return success
