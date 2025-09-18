@@ -1,4 +1,4 @@
-### **Actividad 7-Explorando estrategias de fusión en Git**
+### **Actividad 7: Explorando estrategias de fusión en Git**
 
 **Entrega:** sube **todas** las respuestas y evidencias en la carpeta **`Actividad7-CC3S2/`**.
 
