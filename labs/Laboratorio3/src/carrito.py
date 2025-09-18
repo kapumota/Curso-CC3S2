@@ -1,6 +1,6 @@
 # src/carrito.py
 
-class Producto:
+class Producto:  # pylint: disable=too-few-public-methods
     def __init__(self, nombre, precio):
         self.nombre = nombre
         self.precio = precio
