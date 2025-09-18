@@ -1,8 +1,9 @@
+# pylint: disable=too-few-public-methods
 # src/factories.py
 import factory
-from .carrito import Producto
+from src.carrito import Producto
 
-class ProductoFactory(factory.Factory):
+class ProductoFactory(factory.Factory):  # pylint: disable=too-few-public-methods
     class Meta:
         model = Producto
 
