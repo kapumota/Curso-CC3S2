@@ -4,14 +4,14 @@ El proyecto se desarrollará de forma incremental utilizando el proceso RGR (Red
 
 #### El patrón Arrange-Act-Assert
 
-El patrón **Arrange-Act-Assert (AAA)** organiza las pruebas unitarias en tres pasos claros: preparar el escenario (**Arrange**), ejecutar el comportamiento (**Act**) y verificar el resultado (**Assert**). Las pruebas son el primer uso real del código: lo invocan como en la aplicación, capturan resultados y validan expectativas, dando retroalimentación inmediata sobre diseño y usabilidad del API. Los nombres descriptivos de clases y métodos de prueba cuentan la "historia” del comportamiento esperado (p. ej., `TestUsername` y `test_converts_to_lowercase`).
+El patrón **Arrange-Act-Assert (AAA)** organiza las pruebas unitarias en tres pasos claros: preparar el escenario (**Arrange**), ejecutar el comportamiento (**Act**) y verificar el resultado (**Assert**). Las pruebas son el primer uso real del código: lo invocan como en la aplicación, capturan resultados y validan expectativas, dando retroalimentación inmediata sobre diseño y usabilidad del API. Los nombres descriptivos de clases y métodos de prueba cuentan la "historia" del comportamiento esperado (p. ej., `TestUsername` y `test_converts_to_lowercase`).
 
 Para que las pruebas sean realmente útiles, se aplican los principios **FIRST**:
 
 * **F**ast: ejecución muy rápida para ciclos TDD cortos.
 * **I**solated: independientes entre sí, sin dependencias de orden o estado.
 * **R**epeatable: deterministas, sin factores externos (tiempo/red/red DB); se apoya en *stubs/mocks* cuando haga falta.
-* **S**elf-verifying: automatizadas, reportan "aprobado/fallado” sin inspección manual.
+* **S**elf-verifying: automatizadas, reportan "aprobado/fallado" sin inspección manual.
 * **T**imely: se escriben antes del código productivo (núcleo de TDD).
 
 Buena práctica: **una aserción por prueba**. Esto facilita entender fallos y hace más mantenible la suite. En TDD, ver pruebas rojas volverse verdes (RGR) aporta confianza y guía el diseño, promoviendo código limpio y robusto.
@@ -41,17 +41,76 @@ Actividad8-CC3S2/
 ├── requirements.txt
 ├── src/
 │   ├── __init__.py
-│   └── shopping_cart.py
+│   ├── shopping_cart.py
+│   ├── carrito.py
+│   └── factories.py
 ├── tests/
 │   ├── __init__.py
 │   └── test_shopping_cart.py
-└── Evidencias/
+└── evidencias/
     ├── rgr.txt
     ├── diff_refactor.md
     ├── resumen_cobertura.md
-    └── decisiones.md
-
+    ├── decisiones.md
+    └── analisis.md
 ```
+
+> **Antes de correr:**
+>
+> ```bash
+> mkdir -p out evidencias
+> ```
+
+#### Observaciones y configuración
+
+* **Markers de pytest** (si usas `@pytest.mark.smoke` y `@pytest.mark.regression`), declara en `pytest.ini`:
+
+  ```ini
+  [pytest]
+  addopts = -ra
+  testpaths = tests
+  markers =
+      smoke: fast smoke tests
+      regression: extended regression suite
+  ```
+
+* **Mocks**: si no usarás `pytest-mock`, emplea `unittest.mock`:
+
+  ```python
+  from unittest.mock import Mock
+
+  def test_pago_exitoso():
+      from src.shopping_cart import ShoppingCart
+      cart = ShoppingCart(); cart.add_item("x", 10.0)
+      pg = Mock(); pg.charge.return_value = True
+      assert cart.process_payment(pg) is True
+  ```
+
+  (Alternativa: añade `pytest-mock` a `requirements.txt`.)
+
+* **Quality gate de cobertura** (falla si no alcanzan el mínimo):
+
+  ```bash
+  pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term-missing --cov-fail-under=90 --junitxml=out/junit.xml
+  pytest --cov=src --cov-report=term-missing > out/coverage.txt
+  ```
+
+* **Semillas globales opcionales** (no toca `src/`):
+
+  ```python
+  # tests/conftest.py
+  import random
+  from faker import Faker
+  import pytest
+
+  @pytest.fixture(autouse=True)
+  def _stable_seeds():
+      random.seed(123)
+      try:
+          Faker().seed_instance(123)
+      except Exception:
+          pass
+  ```
 
 Puedes revisar la versión completa aquí en el [Laboratorio3](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio3) del curso.
 
@@ -118,7 +177,7 @@ make lint
 Para ejecutar las pruebas, asegúrate de tener `pytest` instalado y ejecuta el siguiente comando en tu terminal:
 
 ```bash
-pytest test_shopping_cart.py
+make test
 ```
 
 Todas las pruebas deberían pasar, confirmando que la funcionalidad `ShoppingCart` funciona correctamente después de las cinco iteraciones del proceso RGR.
@@ -126,7 +185,7 @@ Todas las pruebas deberían pasar, confirmando que la funcionalidad `ShoppingCar
 
 ### **Uso de mocks y stubs**
 
-Hemos incorporamos el uso de **mocks** para simular el comportamiento de un servicio externo de procesamiento de pagos (`payment_gateway`). Esto se logra mediante la inyección de dependencias, donde el `payment_gateway` se pasa como un parámetro al constructor de `ShoppingCart`. Esto permite que durante las pruebas, podamos sustituir el gateway real por un **mock**, evitando llamadas reales a servicios externos y permitiendo controlar sus comportamientos (como simular pagos exitosos o fallidos).
+Hemos incorporado el uso de **mocks** para simular el comportamiento de un servicio externo de procesamiento de pagos (`payment_gateway`). Esto se logra mediante la inyección de dependencias, donde el `payment_gateway` se pasa como un parámetro en `process_payment(payment_gateway)` (inyección por método). Esto permite que durante las pruebas, podamos sustituir el gateway real por un **mock**, evitando llamadas reales a servicios externos y permitiendo controlar sus comportamientos (como simular pagos exitosos o fallidos).
 
 - **Mock**: Un objeto que simula el comportamiento de objetos reales de manera controlada. En este caso, `payment_gateway` es un mock que simula el método `process_payment`.
 
@@ -134,7 +193,7 @@ Hemos incorporamos el uso de **mocks** para simular el comportamiento de un serv
 
 #### **Inyección de dependencias**
 
-La inyección de dependencias es un patrón de diseño que permite que una clase reciba sus dependencias desde el exterior en lugar de crearlas internamente. En nuestro ejemplo, `ShoppingCart` recibe `payment_gateway` como un parámetro durante su inicialización. Esto facilita el uso de mocks durante las pruebas y mejora la modularidad y flexibilidad del código.
+La inyección de dependencias es un patrón de diseño que permite que una clase reciba sus dependencias desde el exterior en lugar de crearlas internamente. En este proyecto, `ShoppingCart` recibe `payment_gateway` por parámetro en `process_payment(payment_gateway)` (inyección por método), así puedes pasar mocks/stubs en pruebas. Esto facilita el uso de mocks durante las pruebas y mejora la modularidad y flexibilidad del código.
 
 #### **Manejo de excepciones**
 
@@ -151,54 +210,422 @@ Cada iteración del proceso RGR se basa en la anterior, permitiendo construir un
 - **Aislamiento**: Al utilizar mocks para el `payment_gateway`, aislamos las pruebas de la clase `ShoppingCart` de dependencias externas, asegurando que las pruebas sean fiables y rápidas.
   
 - **Cobertura de casos de uso**: Además de probar los escenarios exitosos (`test_process_payment`), también cubrimos casos de fallo (`test_process_payment_failure`) para asegurar que el sistema maneje adecuadamente los errores.
-#### Qué debes presentar
 
-Para evidenciar **AAA (Arrange-Act-Assert)** y **RGR (Red-Green-Refactor)** con trazabilidad y reproducibilidad, el estudiante debe entregar:
 
-1) **Repositorio y versión**
-- URL del repositorio y la carpeta llamada Actividad8-CC3S2 y **hash del commit** evaluado.
-- Instrucciones mínimas para reproducir: comandos usados (`python -m venv ...`, `pip install -r requirements.txt`, `make rgr`, etc.).
 
-2) **Red-Green-Refactor documentado**
-- **Red**: prueba nueva que falla. Adjuntar salida de `make red` (o `pytest`) mostrando al menos un **FAIL** y el **mensaje de aserción** esperado.
-- **Green**: cambio mínimo para pasar. Adjuntar salida de `make green` con **tests en verde**.
-- **Refactor**: limpieza del diseño sin cambiar comportamiento. Adjuntar salida de `make refactor` en verde y un **diff antes/después** (fragmentos relevantes).
+### Ejercicios
 
-3) **AAA en las pruebas**
-- Señalar, por cada prueba creada o modificada, las secciones **Arrange**, **Act** y **Assert** (comentarios o docstring).
-- Justificar brevemente **qué contrato** verifica cada aserción (qué garantiza del carrito o de los productos).
+#### Reglas generales
 
-4) **Resultados automatizados**
-- **Pruebas**: salida de `make test` (resumen de passed/failed/xfail, tiempo).
-- **Cobertura**: salida de `make cov` y breve comentario de los **módulos no cubiertos** y planes de mejora.
-- **Linter**: salida de `make lint` con observaciones relevantes y cómo se atendieron o justificaron.
+* **No cambies** `src/carrito.py`, `src/shopping_cart.py`, `src/factories.py`, `Makefile`, `pytest.ini` ni `requirements.txt`.
+* Agrega solo nuevos archivos bajo `tests/` y carpetas `evidencias/` y `out/`.
+* Usa el estilo **AAA** (coméntalo como `# Arrange`, `# Act`, `# Assert`).
+* Ejecución base:
 
-5) **Diseño y decisiones**
-- Explicar **qué deuda** técnica se redujo en el refactor (nombres, duplicación, acoplamientos, responsabilidades).
-- Indicar **casos borde** contemplados (ej.: cantidades negativas, stocks, precios cero, cupones inválidos) y dónde se prueban.
+  ```bash
+     pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term-missing --cov-fail-under=90 --junitxml=out/junit.xml
+     pytest --cov=src --cov-report=term-missing > out/coverage.txt
+  ```
+* Entrega en **evidencias**: `out/junit.xml`, `out/coverage.txt`, `evidencias/run.txt` (salidas), `evidencias/analisis.md` (3-5 líneas por ejercicio con tablas/notas).
 
-6) **Evidencia ejecutable**
-- Registrar una sesión corta del flujo (`make red -> make green -> make refactor -> make rgr`) en texto o captura.
-- Incluir archivos generados si aplica (por ejemplo, `htmlcov/` comprimido) o referencias claras a cómo producirlos.
+#### El patrón AAA
 
-> Entregables sugeridos en el repositorio:
-> - `Evidencias/rgr.txt` (salidas de comandos clave).
-> - `Evidencias/diff_refactor.md` (antes/después con comentarios).
-> - `Evidencias/resumen_cobertura.md` (breve análisis de gaps).
-> - `Evidencias/decisiones.md` (justificación de diseño y casos borde).
+#### A1. Descuentos parametrizados
 
-#### Contenido de evidencias
+Crea `tests/test_descuentos_parametrizados.py` con casos que verifiquen el total para descuentos 0 %, 1 %, 33.33 %, 50 %, 99.99 %, 100 %, sobre subtotales con y sin centavos. Redondea solo en los **asserts**. En `evidencias/analisis.md`, añade una tabla "entrada -> total esperado".
 
-* **`Evidencias/rgr.txt`**: salidas (con fecha/hora local) de:
+**Pistas:**
+
+```python
+# tests/test_descuentos_parametrizados.py
+import pytest
+from src.carrito import Carrito, ItemCarrito, Producto
+
+@pytest.mark.parametrize(
+    "precio,cantidad,descuento,esperado",
+    [
+        (10.00, 1, 0.00, 10.00),
+        (10.00, 1, 0.01, 9.90),
+        (10.01, 1, 0.3333, 6.67),  # ajusta 'esperado' si el contrato indica otro redondeo
+        (100.00, 1, 0.5, 50.00),
+        (1.00, 1, 0.9999, 0.00),
+        (50.00, 1, 1.00, 0.00),
+    ],
+)
+def test_descuento_total(precio, cantidad, descuento, esperado):
+    # Arrange
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("p", precio), cantidad))
+    c.aplicar_descuento(descuento)
+    # Act
+    total = c.total()
+    # Assert
+    assert round(total, 2) == pytest.approx(esperado, abs=0.01)
+```
+
+
+#### A2. Idempotencia de actualización de cantidades
+
+Verifica que establecer varias veces la **misma** cantidad no cambia el total ni el número de ítems.
+
+**Pistas:**
+
+```python
+# tests/test_idempotencia_cantidades.py
+from src.carrito import Carrito, ItemCarrito, Producto
+
+def test_actualizacion_idempotente():
+    # Arrange
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("x", 3.25), 2))
+    total1 = c.total()
+    # Act
+    for _ in range(5):
+        c.actualizar_cantidad("x", 2)
+    total2 = c.total()
+    # Assert
+    assert total1 == total2
+    assert sum(i.cantidad for i in c.items) == 2
+```
+
+#### A3. Fronteras de precio y valores inválidos
+
+Cubre precios frontera (`0.01`, `0.005`, `0.0049`, `9999999.99`) y precios no válidos (`0`, negativos). Si el comportamiento no está definido por el SUT, usa `xfail` con razón.
+
+**Pistas:**
+
+```python
+# tests/test_precios_frontera.py
+import pytest
+from src.carrito import Carrito, ItemCarrito, Producto
+
+@pytest.mark.parametrize("precio", [0.01, 0.005, 0.0049, 9999999.99])
+def test_precios_frontera(precio):
+    # Arrange
+    c = Carrito()
+    # Act
+    c.agregar(ItemCarrito(Producto("p", precio), 1))
+    # Assert
+    assert c.total() >= 0  # ajusta si el contrato define otra cosa
+
+@pytest.mark.xfail(reason="Contrato no definido para precio=0 o negativo")
+@pytest.mark.parametrize("precio_invalido", [0.0, -1.0])
+def test_precios_invalidos(precio_invalido):
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("p", precio_invalido), 1))
+```
+
+#### A4. Redondeos acumulados vs. final
+
+Crea casos donde redondear por ítem difiere de redondear al final. Documenta en `evidencias/analisis.md` una mini-tabla "suma por ítem / redondeo final / diferencia".
+
+**Pistas:**
+
+```python
+# tests/test_redondeo_acumulado.py
+from src.carrito import Carrito, ItemCarrito, Producto
+
+def test_redondeo_acumulado_vs_final():
+    # Arrange
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("a", 0.3333), 3))
+    c.agregar(ItemCarrito(Producto("b", 0.6667), 3))
+    # Act
+    total = c.total()
+    suma_por_item = sum(i.producto.precio * i.cantidad for i in c.items)
+    # Assert
+    assert round(total, 2) == round(suma_por_item, 2)
+```
+
+#### RGR sin tocar el SUT
+
+#### B1. Rojo (falla esperada)- precisión financiera
+
+Escribe un test que **xfail** por precisión binaria con `float`. Copia el traceback a `evidencias/run.txt` y anota el impacto (2-3 líneas).
+
+**Pistas:**
+
+```python
+# tests/test_rgr_precision_rojo.py
+import pytest
+from src.shopping_cart import ShoppingCart
+
+@pytest.mark.xfail(reason="Float binario puede introducir error en dinero")
+def test_total_precision_decimal():
+    # Arrange
+    cart = ShoppingCart()
+    cart.add_item("x", 0.1); cart.add_item("x", 0.2)
+    # Act / Assert
+    assert cart.total() == 0.30  # 0.1 + 0.2 != 0.3 exactamente en binario
+```
+
+#### B2. Verde (exclusión documentada)
+
+Convierte el test anterior a `skip` con una razón explícita (no se corrige en esta versión). Explica en `evidencias/analisis.md`.
+
+**Pistas:**
+
+```python
+# tests/test_rgr_precision_verde.py
+import pytest
+
+@pytest.mark.skip(reason="Contrato: precisión binaria no se corrige en esta versión")
+def test_total_precision_decimal_skip():
+    # mismo setup del rojo; excluido para mantener el pipeline estable
+    ...
+```
+
+#### B3. Refactor de suites
+
+Reorganiza casos en dos clases: `TestPrecisionMonetaria` y `TestPasarelaPagoContratos` para legibilidad, sin duplicar lógica. Documenta la reorganización en `evidencias/analisis.md`.
+
+**Pistas:**
+
+```python
+# tests/test_refactor_suites.py
+import pytest
+from unittest.mock import Mock
+from src.shopping_cart import ShoppingCart
+
+
+class TestPrecisionMonetaria:
+    def test_suma_pequenas_cantidades(self):
+        # Arrange
+        cart = ShoppingCart()
+        cart.add_item("x", 0.05)
+        cart.add_item("x", 0.05)
+        # Act
+        total = cart.total()
+        # Assert
+        assert round(total, 2) == 0.10
+
+
+class TestPasarelaPagoContratos:
+    def test_pago_exitoso(self):
+        # Arrange
+        cart = ShoppingCart()
+        cart.add_item("x", 10.0)
+        pg = Mock()
+        pg.charge.return_value = True
+        # Act
+        resultado = cart.process_payment(pg)
+        # Assert
+        assert resultado is True
+        pg.charge.assert_called_once()
+
+```
+
+#### TDD + DevOps
+
+#### C1. Contratos de pasarela de pago con `mock`
+
+Cubre: pago exitoso (`True`), excepción transitoria (timeout) **sin reintento automático del SUT**, y rechazo definitivo (`False`). En `evidencias/analisis.md`, agrega tabla "evento -> expectativa".
+
+**Pistas:**
+
+```python
+# tests/test_pasarela_pago_contratos.py
+import pytest
+from unittest.mock import Mock
+from src.shopping_cart import ShoppingCart
+
+
+def test_pago_exitoso():
+    # Arrange
+    cart = ShoppingCart()
+    cart.add_item("x", 10.0)
+    pg = Mock()
+    pg.charge.return_value = True
+    # Act
+    resultado = cart.process_payment(pg)
+    # Assert
+    assert resultado is True
+    pg.charge.assert_called_once()
+
+
+def test_pago_timeout_sin_reintento_automatico():
+    # Arrange
+    cart = ShoppingCart()
+    cart.add_item("x", 10.0)
+    pg = Mock()
+    pg.charge.side_effect = TimeoutError("timeout")
+    # Act / Assert
+    with pytest.raises(TimeoutError):
+        cart.process_payment(pg)
+    # El SUT no debe reintentar automáticamente
+    assert pg.charge.call_count == 1
+
+    # (Opcional) Reintento manual desde el test para documentar el contrato
+    pg.charge.side_effect = None
+    pg.charge.return_value = True
+    assert pg.charge() is True  # reintento manual exitoso
+
+
+def test_pago_rechazo_definitivo():
+    # Arrange
+    cart = ShoppingCart()
+    cart.add_item("x", 10.0)
+    pg = Mock()
+    pg.charge.return_value = False
+    # Act
+    resultado = cart.process_payment(pg)
+    # Assert
+    assert resultado is False
+    pg.charge.assert_called_once()
+
+```
+
+#### C2. Marcadores de humo y regresión
+
+Marca tres pruebas críticas como `@pytest.mark.smoke` y la batería extendida como `@pytest.mark.regression`. Guarda ambas salidas en `evidencias/run.txt` y comenta su utilidad en CI.
+
+**Pistas:**
+
+```python
+# tests/test_markers.py
+import pytest
+from src.carrito import Carrito, ItemCarrito, Producto
+
+@pytest.mark.smoke
+def test_smoke_agregar_y_total():
+    c = Carrito(); c.agregar(ItemCarrito(Producto("x", 1.0), 1))
+    assert c.total() == 1.0
+
+@pytest.mark.regression
+def test_regression_descuento_redondeo():
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("x", 10.0), 1))
+    c.aplicar_descuento(0.15)
+    assert round(c.total(), 2) == 8.50
+```
+
+Ejecución selectiva:
+
+```bash
+pytest -m smoke -q
+pytest -m regression -q
+```
+
+#### C3. Umbral de cobertura como *quality gate*
+
+Ejecuta con `--cov-fail-under=90`. Si falla, lista en `evidencias/analisis.md` las áreas a fortalecer y pega `term-missing` en `out/coverage.txt`.
+
+**Pistas:**
+
+```bash
+pytest --cov=src --cov-report=term-missing --cov-fail-under=90 || true
+```
+
+#### C4. MREs para defectos
+
+Para cada `xfail` o fallo real, adjunta un **Minimal Reproducible Example** (4-6 líneas) y documenta pasos y expectativa en `evidencias/analisis.md`.
+
+**Pistas:**
+
+```python
+# tests/test_mre_precision.py
+from src.shopping_cart import ShoppingCart
+
+def test_mre_precision():
+    c = ShoppingCart(); c.add_item("x", 0.1); c.add_item("x", 0.2)
+    assert round(c.total(), 2) == 0.30  # documenta el síntoma
+```
+
+####  Observabilidad y estabilidad
+
+#### D1. Estabilidad con datos aleatorios controlados
+
+Fija semillas para `random` y `faker` y demuestra que dos corridas producen el mismo total. Registra ambas salidas en `evidencias/run.txt`.
+
+**Pistas:**
+
+```python
+# tests/test_estabilidad_semillas.py
+import random
+from faker import Faker
+from src.factories import ProductoFactory
+from src.carrito import Carrito, ItemCarrito
+
+def test_estabilidad_semillas(capsys):
+    # 1- corrida
+    random.seed(123)
+    faker = Faker(); faker.seed_instance(123)
+    p = ProductoFactory()
+    c = Carrito(); c.agregar(ItemCarrito(p, 2))
+    print(c.total())
+    out1 = capsys.readouterr().out
+
+    # 2- corrida (mismas semillas)
+    random.seed(123)
+    faker.seed_instance(123)
+    p2 = ProductoFactory()
+    c2 = Carrito(); c2.agregar(ItemCarrito(p2, 2))
+    print(c2.total())
+    out2 = capsys.readouterr().out
+
+    assert out1 == out2
+```
+
+
+#### D2. Invariantes de inventario
+
+Valida el invariante: "agregar N, remover N -> total=0 e items=0; agregar N, actualizar a 0 -> estado equivalente". Resume en `evidencias/analisis.md` por qué previene regresiones.
+
+**Pistas:**
+
+```python
+# tests/test_invariantes_inventario.py
+from src.carrito import Carrito, ItemCarrito, Producto
+
+def test_invariante_agregar_remover_y_actualizar():
+    # Arrange
+    c = Carrito()
+    c.agregar(ItemCarrito(Producto("x", 5.0), 3))
+    t1 = c.total()
+    # Act
+    c.remover("x")
+    c.agregar(ItemCarrito(Producto("x", 5.0), 3))
+    c.actualizar_cantidad("x", 0)
+    # Assert
+    assert c.total() == 0.0
+    assert sum(i.cantidad for i in c.items) == 0
+    assert t1 == 15.0  # sanity check del estado inicial
+```
+
+#### D3. Contrato de mensajes de error
+
+Valida que mensajes de excepción contengan contexto accionable (nombre de producto, cantidad inválida). Si el SUT no lo provee, marca `xfail` con el texto deseado y explícitalo en `evidencias/analisis.md`.
+
+**Pistas:**
+
+```python
+# tests/test_mensajes_error.py
+import pytest
+from src.carrito import Carrito
+
+@pytest.mark.xfail(reason="Esperamos mensaje con pista accionable")
+def test_mensaje_error_contiene_contexto():
+    c = Carrito()
+    with pytest.raises(ValueError) as e:
+        c.actualizar_cantidad("inexistente", 1)
+    assert "inexistente" in str(e.value)
+```
+#### Contenido de evidencias en el repositorio
+
+* **`evidencias/rgr.txt`**: salidas (con fecha/hora local) de:
 
   * `make red` (muestra **FAIL** y mensaje de aserción esperado),
   * `make green` (suite en verde),
   * `make refactor` (verde tras refactor),
   * `make rgr` (validación rápida).
-* **`Evidencias/diff_refactor.md`**: fragmentos antes/después con breve justificación (nombres, duplicación, responsabilidades, acoplamientos).
-* **`Evidencias/resumen_cobertura.md`**: reporte de `make cov` + módulos/ramas no cubiertos y plan breve para subir cobertura.
-* **`Evidencias/decisiones.md`**:
+* **`evidencias/diff_refactor.md`**: fragmentos antes/después con breve justificación (nombres, duplicación, responsabilidades, acoplamientos).
+* **`evidencias/resumen_cobertura.md`**: reporte de `make cov` + módulos/ramas no cubiertos y plan breve para subir cobertura.
+* **`evidencias/decisiones.md`**:
 
   * Contratos verificados por cada prueba (qué garantiza del carrito/pagos),
   * Variables y **efecto observable** (p. ej., `DISCOUNT_RATE`, `TAX_RATE`),
   * Casos borde considerados y dónde se prueban.
+
+* Nuevos archivos de prueba dentro de `tests/` (no borres los existentes).
+* `out/junit.xml`, `out/coverage.txt`.
+* `evidencias/run.txt` y `evidencias/analisis.md` con tablas, MREs y comentarios breves.
