@@ -2,7 +2,9 @@
 
 Los Git hooks son scripts que Git ejecuta en momentos clave del flujo de trabajo (por ejemplo, antes de un commit o después de un merge). 
 Incorporar validaciones con regex asegura calidad, consistencia y seguridad. 
-Hooks se versionan en `.githooks/` y un Makefile simplifica la instalación y la verificación de la herramienta.
+Hooks se versionan en `.githooks/` y un Makefile simplifica la instalación y la verificación de la herramienta. 
+
+Aquí se explica cómo usar expresiones regulares dentro de Git hooks para imponer calidad, consistencia y seguridad en el repositorio, con instalación simple vía `core.hooksPath` y un Makefile. Primero se normalizan finales de línea con `.gitattributes` para evitar problemas de CRLF/LF entre sistemas.
 
 ### Configuración inicial de hooks
 
@@ -25,6 +27,8 @@ Usa `make install-hooks` para copiar y dar permisos (ver Makefile). Para normali
 Alternativa: `git config core.autocrlf input` en Linux/macOS.
 
 ### Pre‑commit: Filtrado de archivos, formatos y seguridad
+
+El **pre-commit** filtra solo los archivos en *staging* y aplica validaciones rápidas y portables (uso de `-z`/`-0`). Exige extensiones permitidas, detecta posibles secretos con un patrón que cubre claves comunes (Bearer, AWS, GitHub) y excluye rutas ruidosas y binarios. Complementa el guardia regex con **gitleaks** sobre el contenido *staged* para detección robusta. En calidad de código, prioriza **ruff** (con *fallback* a flake8) para Python y **eslint** opcional para JS/TS, de modo que el costo se limite a lo cambiado.
 
 Valida extensiones, detecta secretos y ejecuta linters solo en archivos modificados o añadidos:
 
@@ -84,6 +88,8 @@ Usa `-z` y `-0` para portabilidad en macOS/BSD.
 
 ### Commit‑msg: Convenciones de mensajes y tickets de seguridad
 
+El **commit-msg** aplica **Conventional Commits** en la primera línea y restringe su longitud a 72 caracteres (medición *Unicode-safe*). Si el tipo es `fix` o `security`, exige un ticket `SEC-XXXX` en esa misma línea, reforzando trazabilidad y gobernanza de parches. 
+
 Valida solo la primera línea según **Conventional Commits**:
 
 ```bash
@@ -122,6 +128,8 @@ fi
 - Usa `grep -E` para portabilidad.
 
 ### Post‑merge: Limpieza, notificaciones y auto-corrección
+
+El **post-merge** no bloquea: corrige espacios finales (preferentemente con ruff), detecta marcadores de conflictos, y audita dependencias Python (pip-audit/safety) o Node (npm audit), dejando reportes para revisión. 
 
 Notifica y corrige sin bloquear:
 
@@ -173,7 +181,9 @@ fi
 
 ### Automatización de ejecución y reportes
 
-Genera reportes con logs organizados por timestamp:
+Un script de **reportes** genera una ejecución autocontenida con *timestamp*: corre pruebas (pytest), SAST (bandit), auditoría de dependencias y secretos (gitleaks), recoge errores/advertencias, calcula hashes SHA-256 de artefactos y mantiene un índice histórico. 
+
+Otro script de **CI local** valida el nombre de rama, ejecuta pruebas, SAST, auditorías y secretos, y puede replicarse con `act` en un workflow de GitHub Actions.
 
 ```bash
 # En scripts/generate-report.sh
@@ -413,6 +423,8 @@ jobs:
 
 ### Aplicación en el patrón Arrange‑Act‑Assert
 
+Las **pruebas de seguridad con regex** siguen AAA y el principio **FIRST**: patrones anclados y acotados para evitar *ReDoS*, casos aislados y aserciones claras. Se ilustra un ciclo **Red-Green-Refactor** para reducir falsos positivos en detección de secretos, pasando de una coincidencia laxa a una expresión anclada y documentada.
+
 Pruebas de seguridad con regex seguras:
 
 ```python
@@ -500,7 +512,10 @@ gitleaks detect --source src --no-git --report-path gitleaks-report.json --repor
 ```
 ### Monitoreo de seguridad local
 
-Analiza logs con rotación y severidad:
+El **monitoreo local** de logs aplica listas negras y blancas, clasifica severidad (OK/ALERTA/CRÍTICO) y rota archivos, persistiendo el estado para incluirlo en reportes. La configuración se centraliza en `pyproject.toml` (ruff/pytest/bandit) y `.editorconfig` (EOL, espacios finales). El **Makefile** expone una UX coherente (`install-hooks`, `lint`, `test`, `sast`, `deps-audit`, `scan-secrets`, `ci-local`, `report`, `doctor`). 
+
+Finalmente, se sugiere integrar todo con el framework **pre-commit** para caching y ejecución consistente de `ruff`, `bandit` y `gitleaks`.
+
 
 ```bash
 # En scripts/monitor-logs.sh
@@ -569,8 +584,18 @@ end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
 ```
+Este material define una columna vertebral DevSecOps "local first" para un proyecto Python, donde la calidad, la seguridad y la experiencia de desarrollo se integran desde el repositorio. 
+
+La configuración centralizada en `pyproject.toml` unifica estilo, pruebas y análisis estático: Ruff fija un largo de línea de 88, excluye "fixtures" y activa selectores `E/F/W/I` más **S** para reglas de seguridad. Pytest estandariza la ejecución con `--maxfail=1` y expone el marcador `security` para aislar pruebas de seguridad. Bandit excluye directorios no productivos. 
+
+En paralelo, `.editorconfig` impone normalización transversal (LF, recorte de espacios y salto final), evitando "diffs" ruidosos y asegurando consistencia entre IDEs y sistemas operativos.
 
 ### Makefile para UX
+
+Sobre esa base, el **Makefile** ofrece una UX de un solo comando por tarea frecuente, con shell robusto (`set -euo pipefail`) y *targets* autoexplicativos: `install-hooks` establece `.githooks/` como ruta de hooks y los deja ejecutables. `lint` ejecuta Ruff; `test` dispara Pytest con parámetros coherentes con el `pyproject`. `sast` prioriza archivos *staged* y, si no hay cambios, recurre a un escaneo recursivo de `src`, generando `sast-report.txt`.  `deps-audit` elige inteligentemente entre `pip-audit` y `safety`; `scan-secrets` integra Gitleaks tanto sobre cambios *staged* como sobre `src`. `doctor` audita prerequisitos; `ci-local` y `report` empaquetan la tubería local y la generación de artefactos. 
+
+Con `help` se documenta a sí mismo, favoreciendo descubribilidad.
+
 
 ```make
 # En Makefile
@@ -652,6 +677,14 @@ help: ## Muestra esta ayuda
 ```
 
 ### Hilo rojo DevSecOps local
+
+El "hilo rojo" arranca con una historia de usuario de autenticación y criterios de aceptación que conectan negocio con controles técnicos: acceso con credenciales válidas, error explícito con contraseña incorrecta y rechazo de entradas maliciosas (XSS y SQL injection). Ese contrato guía los *gates* previos al commit y las pruebas. El **hook pre-commit** inspecciona los archivos *staged* y falla si detecta patrones de secretos (tokens, credenciales, claves), ejecuta Bandit selectivamente y corta el commit ante severidades altas o críticas. Así, los defectos de seguridad se detienen en la frontera más barata: antes de que lleguen a la rama.
+
+Las **pruebas AAA** para seguridad modelan entradas con expresiones regulares: una "whitelist" de identificadores seguros y una "blacklist" de patrones peligrosos (SQL, `<script>`). El *Arrange* define los insumos, el *Act* evalúa la condición de seguridad y el *Assert* contrasta con el resultado esperado. Este enfoque convierte amenazas típicas en casos reproducibles, alineando pruebas y *acceptance criteria*.
+
+La **pipeline local** orquesta `test`, `sast`, `deps-audit` y `scan-secrets` en un script idempotente que finaliza con estado claro ("Pipeline completado"). Esta secuencia refleja *shift-left security*: primero correcciones funcionales, después análisis de código, luego vulnerabilidades de dependencias y, finalmente, secretos. Para operación, un **monitor de logs** simple examina `app.log` y alerta ante trazas que indiquen SQL o XSS (con excepciones explícitas como `SELECT option`), facilitando detección temprana de abuso o validaciones insuficientes sin depender aún de un SIEM.
+
+Finalmente, se propone consolidar todo con el framework **pre-commit**: Ruff y Bandit via repos oficiales, más un hook local de Gitleaks. Esta capa añade *caching* y ejecución homogénea en cada estación de trabajo con `pip install pre-commit` y `pre-commit install`, reduciendo tiempos y variabilidad. En conjunto, la lectura muestra cómo traducir requisitos de negocio en controles automáticos y repetibles, con configuraciones declarativas, *targets* amigables y *gates* de seguridad que bloquean riesgos en origen.
 
 #### 1. Historia de usuario:
 
