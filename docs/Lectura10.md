@@ -420,7 +420,6 @@ jobs:
             gitleaks detect --source src --no-git --report-path gitleaks-report.json --report-format json
           fi
 ```
-
 ### Aplicación en el patrón Arrange‑Act‑Assert
 
 Las **pruebas de seguridad con regex** siguen AAA y el principio **FIRST**: patrones anclados y acotados para evitar *ReDoS*, casos aislados y aserciones claras. Se ilustra un ciclo **Red-Green-Refactor** para reducir falsos positivos en detección de secretos, pasando de una coincidencia laxa a una expresión anclada y documentada.
