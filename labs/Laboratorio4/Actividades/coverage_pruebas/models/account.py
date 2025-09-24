@@ -1,5 +1,5 @@
 """
-Clase Account
+Clase Account para el ejercicio
 """
 
 import logging
@@ -11,10 +11,8 @@ from models import db
 
 logger = logging.getLogger()
 
-
 class DataValidationError(Exception):
     """Se utiliza para errores de validación de datos al deserializar"""
-
 
 class Account(db.Model):
     """Clase que representa una Cuenta"""
