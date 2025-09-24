@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from stack import Stack
 
-
 class TestStack(TestCase):
     """Casos de prueba para la Pila"""
 
