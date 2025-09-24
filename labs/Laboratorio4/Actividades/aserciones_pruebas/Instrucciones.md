@@ -1,12 +1,12 @@
 ### Escribir aserciones en pruebas con pytest
 
-En esta actividad aprenderás cómo escribir aserciones de pruebas utilizando pytest y otros complementos actualizados.
+En esta actividad aprenderás cómo escribir aserciones de pruebas utilizando *pytest* y otros complementos actualizados.
 
 **Objetivos de aprendizaje**
 
 Después de completar esta actividad, serás capaz de:
 
-- Ejecutar casos de prueba con pytest
+- Ejecutar casos de prueba con *pytest**
 - Identificar los casos de prueba que fallan
 - Escribir pruebas unitarias utilizando aserciones
 - Generar informes de cobertura usando pytest-cov
