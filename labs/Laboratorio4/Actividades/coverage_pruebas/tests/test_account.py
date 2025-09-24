@@ -13,7 +13,6 @@ from models.account import Account, DataValidationError
 # Variable global para almacenar los datos del fixture
 ACCOUNT_DATA = {}
 
-
 @pytest.fixture(scope="module", autouse=True)
 def setup_database():
     """Configura la base de datos antes y después de todas las pruebas"""
