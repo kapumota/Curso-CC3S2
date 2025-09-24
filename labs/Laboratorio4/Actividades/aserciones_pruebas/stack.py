@@ -1,6 +1,5 @@
 from typing import Any
 
-
 class Stack:
     """Implementa una estructura de datos de Pila"""
 
