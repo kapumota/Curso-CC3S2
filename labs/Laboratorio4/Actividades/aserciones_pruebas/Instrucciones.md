@@ -1,4 +1,4 @@
-### Actividad: Escribir aserciones en pruebas con pytest
+### Escribir aserciones en pruebas con pytest
 
 En esta actividad aprenderás cómo escribir aserciones de pruebas utilizando pytest y otros complementos actualizados.
 
