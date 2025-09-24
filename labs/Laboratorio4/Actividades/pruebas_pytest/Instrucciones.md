@@ -1,4 +1,4 @@
-### Actividad: Ejecutar pruebas con pytest
+### Ejecutar pruebas con pytest
 
 En esta actividad, aprenderás cómo utilizar herramientas fundamentales para ejecutar pruebas unitarias en Python utilizando el framework pytest y otros complementos más actuales.
 
