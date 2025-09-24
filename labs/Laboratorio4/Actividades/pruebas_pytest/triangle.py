@@ -1,3 +1,4 @@
+## Ejemplo simple
 def area_of_a_triangle(base: float, height: float) -> float:
     """Calcula el área de un triángulo"""
 
