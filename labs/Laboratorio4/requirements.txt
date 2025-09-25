@@ -1,0 +1,21 @@
+# dependencias que pueden causar problemas
+Werkzeug==2.1.2
+SQLAlchemy==1.4.46
+
+# Dependencias para todo las actividades
+Flask==2.1.2
+Flask-SQLAlchemy==2.5.1
+requests==2.31.0
+
+# Probando las dependencias
+pytest==8.3.3
+pytest-cov==5.0.0
+coverage==7.6.1
+factory-boy==3.3.0
+pylint==3.2.7
+
+# Linter (lo que falta agregar)
+ruff
+black
+autoflake
+
