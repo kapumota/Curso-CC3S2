@@ -1,8 +1,8 @@
 ### Mocking de objetos
 
-Mocking es un proceso para crear objetos que imitan el comportamiento de objetos reales. Puede ser muy útil cuando tu código llama a otro sistema del cual depende y que podría no estar disponible durante las pruebas. Entender el mocking es crítico para asegurarse de que solo estás probando tu propio código, no el sistema de otra persona.
+**Mocking** es un proceso para crear objetos que imitan el comportamiento de objetos reales. Puede ser muy útil cuando tu código llama a otro sistema del cual depende y que podría no estar disponible durante las pruebas. Entender el mocking es crítico para asegurarse de que solo estás probando tu propio código, no el sistema de otra persona.
 
-En esta actividad vamos a usar tanto patching como mocking para simular las llamadas reales al servicio de Internet Movie Database (IMDb) durante las pruebas. También utilizaremos fixtures de prueba para proporcionarnos respuestas válidas que hubiéramos recibido del servicio de IMDb si realmente lo hubiéramos llamado. De esta manera, podemos controlar lo que se devuelve del servicio sin tener que realizar una llamada real a él.
+En esta actividad vamos a usar tanto **patching** como **mocking** para simular las llamadas reales al servicio de Internet Movie Database (IMDb) durante las pruebas. También utilizaremos fixtures de prueba para proporcionarnos respuestas válidas que hubiéramos recibido del servicio de IMDb si realmente lo hubiéramos llamado. De esta manera, podemos controlar lo que se devuelve del servicio sin tener que realizar una llamada real a él.
 
 #### Estableciendo fixtures de prueba
 
@@ -89,10 +89,8 @@ class TestIMDbDatabase:
         """Configuración inicial para cargar los datos de IMDb"""
         self.imdb_data = imdb_data
 
-    ######################################################################
     #  Casos de prueba
-    ######################################################################
-
+   
     @patch('test_imdb.IMDb.search_titles')
     def test_search_by_title(self, imdb_mock):
         """Prueba de búsqueda por título"""
@@ -302,9 +300,7 @@ class TestIMDbDatabase:
         """Configuración inicial para cargar los datos de IMDb"""
         self.imdb_data = imdb_data
 
-    ######################################################################
     #  Casos de prueba
-    ######################################################################
 
     @patch('models.imdb.requests.get')
     def test_search_titles_success(self, mock_get):
@@ -403,9 +399,8 @@ class TestIMDbDatabase:
         assert resultados["rottenTomatoes"] == 5
 ```
 
+Estamos viendo el patrón con el mocking. Primero, se usa el decorador `@patch()` para envolver el caso de prueba con un parche que cambiará el comportamiento de una llamada a función que eventualmente se llamará durante la prueba. Luego, se agrega un nuevo parámetro a la llamada del método de prueba que representa el objeto parcheado. Finalmente, se usa ese parámetro para parchear ya sea el `return_value` o `side_effect` que cambiará el comportamiento de la función parcheada.
 
-Esperamos que estés viendo el patrón con el mocking. Primero, usas el decorador `@patch()` para envolver tu caso de prueba con un parche que cambiará el comportamiento de una llamada a función que eventualmente se llamará durante la prueba. Luego, agregas un nuevo parámetro a la llamada del método de prueba que representa el objeto parcheado. Finalmente, usas ese parámetro para parchear ya sea el `return_value` o `side_effect` que cambiará el comportamiento de la función parcheada.
+También vimos cómo usar objetos Mock para imitar otras clases como la clase `Response`, para controlar cómo se comportan y qué retornan. Incluso mockeamos la función `json()` en la clase `Response` mockeada para controlar lo que retornaba.
 
-También aprendiste cómo usar objetos Mock para imitar otras clases como la clase `Response`, para controlar cómo se comportan y qué retornan. Incluso mockeaste la función `json()` en la clase `Response` mockeada para controlar lo que retornaba.
-
-Tu próximo desafío es aplicar estas técnicas en tus proyectos para mockear cualquier dependencia externa durante las pruebas, de manera que puedas estar seguro de que estás probando el comportamiento de tu propio código, y no el servicio de otra persona.
+Aplicar estas técnicas en tus proyectos para mockear cualquier dependencia externa durante las pruebas, de manera que puedas estar seguro de que estás probando el comportamiento de tu propio código, y no el servicio de otra persona.
