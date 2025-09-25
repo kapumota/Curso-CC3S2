@@ -8,7 +8,6 @@ from http import HTTPStatus
 import pytest
 from counter import COUNTERS, app
 
-
 @pytest.fixture(autouse=True)
 def clean_counters():
     """
@@ -18,7 +17,6 @@ def clean_counters():
     """
     COUNTERS.clear()
 
-
 @pytest.fixture
 def client():
     """
@@ -26,7 +24,6 @@ def client():
     Esto permite hacer requests a la app sin levantar un servidor real.
     """
     return app.test_client()
-
 
 def test_create_a_counter(client):
     """Debe crear un contador y retornar 201 CREATED."""
@@ -36,7 +33,6 @@ def test_create_a_counter(client):
     data = response.get_json()
     assert "test_counter" in data
     assert data["test_counter"] == 0
-
 
 def test_duplicate_counter(client):
     """Debe devolver 409 CONFLICT al intentar crear un contador duplicado."""
@@ -64,7 +60,6 @@ def test_update_counter(client):
     # Asumimos que incrementa de 0 a 1
     assert data["update_me"] == 1
 
-
 def test_read_counter(client):
     """Debe leer un contador con GET y retornar 200 OK."""
     # 1. Crear un contador
@@ -77,7 +72,6 @@ def test_read_counter(client):
     data = response.get_json()
     # Debería estar en 0 justo después de crearlo
     assert data["read_me"] == 0
-
 
 def test_delete_counter(client):
     """Debe eliminar un contador con DELETE y retornar 204 NO CONTENT."""
