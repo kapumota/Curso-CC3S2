@@ -1,7 +1,6 @@
 """
 Casos de prueba para el mocking
 """
-
 import json
 import os
 import sys
@@ -14,7 +13,6 @@ from unittest.mock import Mock, patch
 
 from models import IMDb
 from requests import Response
-
 
 # Fixture para cargar los datos de IMDb desde un archivo JSON
 @pytest.fixture(scope="session")
@@ -36,9 +34,7 @@ class TestIMDbDatabase:
         """Configuración inicial para cargar los datos de IMDb"""
         self.imdb_data = imdb_data
 
-    ######################################################################
     #  Casos de prueba
-    ######################################################################
 
     @patch("models.imdb.requests.get")
     def test_search_titles_success(self, mock_get):
