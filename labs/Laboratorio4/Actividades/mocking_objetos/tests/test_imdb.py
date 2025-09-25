@@ -4,7 +4,6 @@ Casos de prueba para el mocking
 import json
 import os
 import sys
-
 import pytest
 
 # Agregar el directorio raíz al sys.path
