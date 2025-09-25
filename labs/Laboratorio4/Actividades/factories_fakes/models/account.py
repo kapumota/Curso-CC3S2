@@ -1,7 +1,6 @@
 """
 Clase Account
 """
-
 import logging
 
 from sqlalchemy import Boolean, Column, Date, Integer, String
@@ -59,9 +58,7 @@ class Account(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    ##################################################
     # Métodos de clase
-    ##################################################
 
     @classmethod
     def all(cls) -> list:
