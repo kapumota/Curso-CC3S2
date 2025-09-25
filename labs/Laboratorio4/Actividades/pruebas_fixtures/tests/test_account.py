@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-
 import pytest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -9,7 +8,6 @@ from models import db
 from models.account import Account
 
 ACCOUNT_DATA = {}
-
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_database():
@@ -19,7 +17,6 @@ def setup_database():
     yield
     # Se ejecuta después de todas las pruebas
     db.session.close()
-
 
 class TestAccountModel:
     """Modelo de Pruebas de Cuenta"""
@@ -46,10 +43,7 @@ class TestAccountModel:
         """Eliminar la sesión después de cada prueba"""
         db.session.remove()
 
-    ######################################################################
     #  Casos de prueba
-    ######################################################################
-
     def test_create_an_account(self):
         """Probar la creación de una sola cuenta"""
         data = ACCOUNT_DATA[0]  # obtener la primera cuenta
