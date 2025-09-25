@@ -1,19 +1,15 @@
 """
-Clase Account
+Clase Account en el ejemplo
 """
 
 import logging
-
 from sqlalchemy.sql import func
-
 from models import db
 
 logger = logging.getLogger()
 
-
 class DataValidationError(Exception):
     """Utilizada para errores de validación de datos al deserializar"""
-
 
 class Account(db.Model):
     """Clase que representa una Cuenta"""
@@ -56,9 +52,7 @@ class Account(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    ##################################################
     # Métodos de clase
-    ##################################################
 
     @classmethod
     def all(cls) -> list:
