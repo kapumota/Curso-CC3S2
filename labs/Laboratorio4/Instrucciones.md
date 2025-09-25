@@ -58,7 +58,6 @@ Para **trabajar con este proyecto**, podrías seguir estos pasos:
    ```
    - Este comando elimina directorios de caché (`__pycache__`, `.pytest_cache`), reportes HTML de cobertura (directorios `htmlcov` y `htmlcov_*`) y borra los datos previos de cobertura.
 
----
 
 #### 2. ¿Qué resultados puedes esperar?
 
