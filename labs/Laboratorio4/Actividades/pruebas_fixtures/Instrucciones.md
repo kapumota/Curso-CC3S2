@@ -1,10 +1,6 @@
-### Actividad: Revisión de fixtures en pruebas
-
-En esta actividad, aprenderás a utilizar los diferentes fixtures de prueba que están disponibles en el paquete `pytest`.
+### Revisión de fixtures de pruebas
 
 Los **fixtures** permiten establecer y limpiar el estado antes y después de las pruebas, facilitando la preparación del entorno de pruebas.
-
-Durante la actividad, elegirás el lugar adecuado para agregar código. Por ejemplo, puedes necesitar agregar código que se ejecute una vez antes de todas las pruebas de una clase, o antes y después de cada prueba.
 
 #### Ejemplo de fixtures en pruebas con pytest:
 
@@ -30,16 +26,15 @@ class TestExample:
         # Se ejecuta después de cada prueba
         print("Limpiando el entorno de prueba")
 ```
-
-En esta actividad, verás las diferentes formas en que los fixtures pueden ser utilizados para preparar y limpiar el estado antes y después de las pruebas, utilizando métodos de clase y de instancia dentro de una clase de pruebas.
+Veremos las diferentes formas en que los fixtures pueden ser utilizados para preparar y limpiar el estado antes y después de las pruebas, utilizando métodos de clase y de instancia dentro de una clase de pruebas.
 
 ### **Paso 1: Inicializar la base de datos**
 
-En este paso, configurarás un fixture de prueba para conectar y desconectar de la base de datos. Esto solo debe hacerse una vez antes de todas las pruebas y una vez después de todas las pruebas.
+En este paso, configuraremos un *fixture* de prueba para conectar y desconectar de la base de datos. Esto solo debe hacerse una vez antes de todas las pruebas y una vez después de todas las pruebas.
 
 #### Tu Tarea
 
-Piensa en qué fixtures son más adecuados para conectar a la base de datos antes de todas las pruebas y desconectar después de todas las pruebas. En este caso, usaremos un fixture a nivel de módulo para realizar esta operación.
+Piensa en qué *fixtures* son más adecuados para conectar a la base de datos antes de todas las pruebas y desconectar después de todas las pruebas. En este caso, usaremos un fixture a nivel de módulo para realizar esta operación.
 
 El siguiente código de SQLAlchemy te ayudará a hacerlo:
 
@@ -76,7 +71,7 @@ pytest
 
 ### **Paso 2: Cargar datos de prueba**
 
-En este paso, cargarás algunos datos de prueba que serán usados durante las pruebas. Esto solo necesita hacerse una vez antes de todas las pruebas de la clase de pruebas.
+En este paso, cargaremos algunos datos de prueba que serán usados durante las pruebas. Esto solo necesita hacerse una vez antes de todas las pruebas de la clase de pruebas.
 
 #### Tu Tarea
 
@@ -125,7 +120,7 @@ pytest
 
 ### **Paso 3: Escribir un caso de prueba para crear una cuenta**
 
-Ahora que has configurado los fixtures y cargado los datos de prueba, puedes escribir tu primer caso de prueba. Crearás una cuenta utilizando el diccionario `ACCOUNT_DATA`.
+Ahora que hemos configurado los fixtures y cargado los datos de prueba, puedes escribir tu primer caso de prueba. Crearás una cuenta utilizando el diccionario `ACCOUNT_DATA`.
 
 #### Tu Tarea
 
@@ -235,8 +230,7 @@ Ejecuta `pytest` para asegurarte de que tus pruebas pasan:
 pytest
 ```
 
-
-De esta forma, has aprendido a utilizar los diferentes tipos de fixtures disponibles en `pytest` para preparar y limpiar el estado antes y después de las pruebas, tanto a nivel de módulo como a nivel de clase y de método.
+De esta forma, hemos aprendido a utilizar los diferentes tipos de fixtures disponibles en `pytest` para preparar y limpiar el estado antes y después de las pruebas, tanto a nivel de módulo como a nivel de clase y de método.
 
 Recuerda que:
 
