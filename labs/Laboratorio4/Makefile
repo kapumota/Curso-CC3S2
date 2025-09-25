@@ -7,7 +7,7 @@ ACTIVITY ?= aserciones_pruebas
 ACTIVITIES = aserciones_pruebas coverage_pruebas factories_fakes objects_mocking \
              practica_tdd pruebas_fixtures pruebas_pytest
 
-# Banderas comunes para pytest (puedes ampliarlas)
+# Flags comunes para pytest (puedes ampliarlas)
 PYTEST_FLAGS ?= -q
 PY_WARNINGS  ?= ignore::DeprecationWarning
 
