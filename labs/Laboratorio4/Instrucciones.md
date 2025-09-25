@@ -87,7 +87,7 @@ Para **trabajar con este proyecto**, podrías seguir estos pasos:
    - Abre el archivo `index.html` dentro del directorio correspondiente para visualizar el reporte de cobertura de forma gráfica.
 
 4. **Problemas de estilo (Lint)**:
-   - Si existen errores de estilo o sintaxis, `flake8` mostrará mensajes indicando el archivo, la línea y la naturaleza del error, como:
+   - Si existen errores de estilo o sintaxis, se mostrará mensajes indicando el archivo, la línea y la naturaleza del error, como:
      ```
      ./Actividades/aserciones_pruebas/stack.py:10:1: E302 expected 2 blank lines, found 1
      ```
