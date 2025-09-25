@@ -2,7 +2,6 @@
 status.py
 Contiene constantes para los códigos de estado HTTP más comunes.
 """
-
 HTTP_200_OK = 200
 HTTP_201_CREATED = 201
 HTTP_204_NO_CONTENT = 204
