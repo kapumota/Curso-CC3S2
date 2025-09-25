@@ -172,5 +172,5 @@ Extender la funcionalidad del modelo y a su vez, la cobertura de pruebas.
      - Verifiquen que se lance una excepción si el email tiene formato incorrecto.
      - Comprueben que no se lance excepción cuando los datos sean correctos.
 
-3. **Actualizar la Cobertura:**  
+3. **Actualizar la cobertura:**  
    - Ejecuta nuevamente `make test` y `make coverage_individual` para verificar que el nuevo método está completamente cubierto por pruebas.
