@@ -1,4 +1,4 @@
-### Actividad: Práctica del ciclo TDD
+### Práctica del ciclo TDD
 
 #### 1. Estructura de los archivos de ejemplo
 
