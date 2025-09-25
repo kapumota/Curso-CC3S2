@@ -14,7 +14,6 @@ import factory
 from factory.fuzzy import FuzzyChoice, FuzzyDate
 from models.account import Account
 
-
 class AccountFactory(factory.Factory):
     """Crea cuentas falsas"""
 
