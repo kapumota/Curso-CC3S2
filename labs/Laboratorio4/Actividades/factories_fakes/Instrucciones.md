@@ -4,16 +4,6 @@ A menudo necesitas datos falsos(fakes) para realizar pruebas. Por supuesto, pued
 
 En esta actividad, veremos cómo usar un paquete de Python popular llamado **FactoryBoy** para proporcionar datos falsos para las pruebas.
 
-
-### Objetivos de aprendizaje
-
-Después de completar este laboratorio, serás capaz de:
-
-- Entender cómo crear una clase Factory.
-- Utilizar la clase Faker y atributos Fuzzy para proporcionar datos de prueba realistas.
-- Escribir casos de prueba que usen clases Factory para proporcionar datos de prueba.
-
-
 #### Paso 1: Ejecutar pytest
 
 Antes de realizar cualquier cambio en el código, quieres asegurarte de que todos los casos de prueba están pasando. De lo contrario, podrías encontrarte con casos de prueba fallidos más adelante y no sabrás si los causaste al fallar o si ya estaban fallando antes de cambiar algo.
@@ -332,6 +322,5 @@ TOTAL                   51      0   100%
 ============================== 8 passed in 0.5s ===============================
 ```
 
-Esperamos que ahora tengas una buena comprensión de cómo construir una Factory para tus clases utilizando **Faker** y atributos **Fuzzy**. También has aprendido cómo usar una clase Factory en tus casos de prueba para proporcionar datos de prueba ilimitados.
 
 Intenta aplicar lo que has aprendido en tus proyectos personales.  En cualquier lugar donde hayas creado datos estáticos para probar tu código, puedes sustituirlos por factories dinámicas para hacer las pruebas más robustas.
