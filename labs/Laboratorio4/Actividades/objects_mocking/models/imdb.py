@@ -10,7 +10,6 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-
 class IMDb:
     """Acceso a la base de datos de películas de Internet Movie Database"""
 
