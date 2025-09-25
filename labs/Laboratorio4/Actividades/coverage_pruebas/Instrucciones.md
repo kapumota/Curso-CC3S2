@@ -1,4 +1,4 @@
-### Actividad: Cobertura de pruebas
+### Cobertura de pruebas
 
 
 #### 1. Introducción a la cobertura de código
@@ -112,49 +112,7 @@ Aumentar la cobertura de pruebas escribiendo tests que exploren casos adicionale
 4. **Prueba del método especial `__repr__`:**
    - Verificar que el formato del string sea exactamente el esperado.
 
-#### Ejercicio 3: Ampliación y optimización del Makefile
-
-**Objetivo:**  
-Automatizar no solo la ejecución de pruebas y generación de reportes, sino también otros procesos comunes en el ciclo de desarrollo.
-
-**Propuestas de targets adicionales:**
-
-1. **`make lint`:**  
-   - Ejecuta herramientas de análisis estático (por ejemplo, `flake8` o `black`) para asegurar la calidad del código.  
-   - Ejemplo de target (ya incluido en tu Makefile):
-     ```make
-     .PHONY: lint
-     lint:
-     	@echo "Ejecutando flake8..."
-     	flake8 .
-     ```
-
-2. **`make test_all`:**  
-   - Ejecuta las pruebas en todas las actividades/módulos del proyecto.
-   - Este target ya está implementado, pero podrías ampliarlo para que también genere reportes de cobertura consolidados.
-
-3. **Target para reporte consolidado de cobertura:**  
-   - Puedes crear un nuevo target que combine los reportes individuales en uno solo. Por ejemplo:
-     ```make
-     .PHONY: coverage_all
-     coverage_all:
-     	@echo "Generando reporte consolidado de cobertura..."
-     	coverage erase
-     	@for activity in $(ACTIVITIES); do \
-     	   echo "Ejecutando pruebas en $$activity para cobertura consolidada"; \
-     	   cd Actividades/$$activity && PYTHONWARNINGS="ignore::DeprecationWarning" coverage run --source=. -m pytest . && cd - >/dev/null; \
-     	done
-     	coverage combine
-     	coverage report -m
-     	coverage html -d htmlcov_consolidado
-     ```
-   - Este target recorre cada actividad, ejecuta las pruebas y luego utiliza `coverage combine` para unir los datos.
-
-4. **`make clean`:**  
-   - Asegúrate de que el target `clean` elimina todos los archivos temporales, caches y reportes generados, para mantener el proyecto limpio.
-
-
-#### Ejercicio 4: Integración y pruebas con una base de datos temporal
+#### Ejercicio 3: Integración y pruebas con una base de datos temporal
 
 **Objetivo:**  
 Implementar pruebas de integración utilizando una base de datos temporal para evitar interferir con datos reales.
@@ -187,10 +145,10 @@ Implementar pruebas de integración utilizando una base de datos temporal para e
    - Ejecuta de nuevo todas las pruebas y asegúrate de que no se están escribiendo datos en `test.db`, sino en una base en memoria que se destruye al finalizar.
 
 
-### Ejercicio 5: Refactorización y adición de funcionalidades
+### Ejercicio 4: Refactorización y adición de funcionalidades
 
 **Objetivo:**  
-Extender la funcionalidad del modelo y, a su vez, la cobertura de pruebas.
+Extender la funcionalidad del modelo y a su vez, la cobertura de pruebas.
 
 **Propuesta:**
 
@@ -216,5 +174,3 @@ Extender la funcionalidad del modelo y, a su vez, la cobertura de pruebas.
 
 3. **Actualizar la Cobertura:**  
    - Ejecuta nuevamente `make test` y `make coverage_individual` para verificar que el nuevo método está completamente cubierto por pruebas.
-
-
