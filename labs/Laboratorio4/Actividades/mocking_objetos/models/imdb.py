@@ -5,7 +5,6 @@ Implementa las APIs SearchTitle, Reviews y Ratings
 
 import logging
 from typing import Any, Dict
-
 import requests
 
 logger = logging.getLogger(__name__)
