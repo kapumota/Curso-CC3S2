@@ -14,7 +14,6 @@ from factories import AccountFactory
 from models import db
 from models.account import Account, DataValidationError
 
-
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
     """Configura la base de datos antes de las pruebas"""
