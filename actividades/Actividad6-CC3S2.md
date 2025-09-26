@@ -1,9 +1,5 @@
 ## **Actividad 6**: Introducción a Git conceptos básicos y operaciones esenciales
 
-### Objetivo de aprendizaje
-
-Familiarizarse con los conceptos básicos de Git y realizar operaciones esenciales, como la configuración inicial, creación de repositorios, preparación y confirmación de cambios, visualización de historial, y gestión de ramas.
-
 #### Entregable
 
 * En la **raíz de tu repositorio**, crea la **`Actividad6-CC3S2/`** y sube ahí **todas las evidencias de tus respuestas**.
