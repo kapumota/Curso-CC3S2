@@ -224,7 +224,7 @@ class FakeSecretsProvider:
                 self.secrets[key] = self.secrets[key] + "_rotated"  # Simulación simple
 ```
 
-En un pipeline DevSecOps con Gi, un stage de test podría ejecutar:
+En un pipeline DevSecOps con **Gi**, un stage de test podría ejecutar:
 
 ```yaml
 test_security:
