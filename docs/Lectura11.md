@@ -8,8 +8,6 @@ La ejecución con `pytest` parte de convenciones simples: archivos `test_*.py`, 
 * `-x` y `--maxfail=1` favorecen el ciclo RGR (Red-Green-Refactor) al cortar en el primer fallo.
 * `-ra` resume *skips*, *xfail* y causas, útil para vigilancia de deuda técnica.
 
-En pipelines DevSecOps, el *job* de pruebas puede incluir **gates** (umbral de cobertura, conteo de `xfail` tolerados, ausencia de *print* con secretos) y **matrices** (sistemas operativos, versiones de Python, *feature flags*). Aislar red real, reloj y disco es esencial: idealmente, una suite unitaria no realiza IO salvo en pruebas de integración controladas.
-
 ### Aserciones
 
 Las aserciones de `pytest` son legibles: `assert expr`. El *assertion rewriting* muestra *diffs* ricos en estructuras. En seguridad y confiabilidad conviene afirmar:
@@ -103,33 +101,6 @@ TDD (Red-Green-Refactor) se potencia con *patching* para **aislar dependencias**
 * **Refactor**: limpiar nombres, extraer funciones puras, consolidar *fixtures* y *factories*, fortalecer validaciones y mejorar observabilidad.
 
 En un patrón realista tipo "cliente IMDb", una prueba `@patch("models.imdb.requests.get")` valida ruta, *params*, `timeout`, cabeceras seguras, y mapeos de JSON. Los casos negativos fuerzan `Timeout`, `HTTPError`, `JSONDecodeError` y comprueban errores controlados y *logs* redactados.
-
-
-### Patching en *middlewares* de seguridad (WSGI/ASGI) y fallos criptográficos
-
-Validar que *middlewares* agregan cabeceras seguras y manejan errores sin filtrar secretos.
-
-* **WSGI (Flask/Gunicorn)**: *patch* del *middleware* `SecurityHeaders.__call__` para devolver cabeceras `CSP` y `HSTS`, y un caso negativo donde falten para exigir *fallback* seguro.
-* **ASGI (Starlette/FastAPI)**: *patch* al método `dispatch` de un *AuthzMiddleware* con `autospec=True` para forzar excepción y verificar que el manejador responde `500` sin mensajes crudos ni secretos en el cuerpo.
-* **Criptografía**: *patch* de `ssl.create_default_context`, `jwt.decode` (forzar `InvalidSignatureError`/`ExpiredSignatureError`), y validación de que el servicio responde `401`/`403` y registra auditoría sin filtrar *tokens*.
-
-### Evitar efectos secundarios en *patching* holístico
-
-Cuando se *patchean* varias capas (red, reloj, fs, entorno), conviene centralizarlo en *fixtures* con `yield` y *scopes* adecuados, usar `monkeypatch` para limpieza automática, y un *autouse fixture* "de humo" que compruebe que la red real permanece bloqueada. Regla de oro: *patch* **donde se usa**, no donde se define, para evitar inconsistencias de importación.
-
-### Autospec en APIs REST/gRPC y validación con OpenAPI
-
-* **REST**: `create_autospec(requests.Session, instance=True)` para obligar a incluir `timeout`, `headers`, `json`. Validar respuestas mock contra el **esquema OpenAPI** (por ejemplo, con un validador) como *oracle* de contrato.
-* **gRPC**: `create_autospec(MyServiceStub, instance=True)` para verificar métodos, *metadata* y *deadlines*. El contrato proviene de los *protos*; en TDD, una prueba roja primero compara una respuesta inválida contra el esquema.
-
-### Inspección de flujos asíncronos (aiohttp/HTTPX) y colas de mensajes
-
-* **Async HTTP**: *patch* de `AsyncClient.get` para simular `Timeout` y luego `200`, verificar *retries*, `call_args_list` y `timeout`.
-* **Colas (RabbitMQ/Kafka/SQS)**: *autospec* de productores/consumidores para aserciones de `ack/nack`, *dead-letter*, orden y **idempotency key** en *headers*. Inspeccionar secuencias con `call_args_list` y validar políticas de reintentos.
-
-### Automatizar la revisión de marcas (xfail/skip)
-
-Un pequeño *script* en CI puede ejecutar `pytest -q -ra`, **parsear el resumen** y comparar los recuentos con un *baseline*. Si aumentan `xfail` o `skip` sin justificación, fallar el *job* y generar enlaces a *issues*. Uso de `skipif` **dinámico**: capacidades del entorno (SO, disponibilidad de emuladores como Localstack), flags de características, o presencia de binarios.
 
 ### Ejemplo completo de TDD para microservicio con OAuth2 (Red -> Green -> Refactor)
 
