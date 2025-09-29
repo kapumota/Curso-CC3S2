@@ -32,7 +32,7 @@ def clean_tables():
 
 
 class TestAccountModel:
-    """Pruebas para el Modelo Account"""
+    """Pruebas para el modelo Account"""
 
     def test_crear_todas_las_cuentas(self):
         """Prueba la creación de múltiples Cuentas"""
@@ -42,15 +42,15 @@ class TestAccountModel:
         assert len(Account.all()) == 10
 
     def test_crear_una_cuenta(self):
-        """Prueba la creación de una Cuenta usando datos conocidos"""
+        """Prueba la creación de una cuenta usando datos conocidos"""
         account = AccountFactory()
         account.create()
         assert len(Account.all()) == 1
 
     def test_repr(self):
         """Prueba la representación de una cuenta"""
-        account = AccountFactory(name="Foo")
-        assert str(account) == "<Account 'Foo'>"
+        account = AccountFactory(name="Kapu")
+        assert str(account) == "<Account 'Kapu'>"
 
     def test_to_dict(self):
         """Prueba la serialización de una cuenta a un diccionario"""
@@ -73,7 +73,7 @@ class TestAccountModel:
         assert account.disabled == data["disabled"]
 
     def test_actualizar_una_cuenta(self):
-        """Prueba la actualización de una Cuenta usando datos conocidos"""
+        """Prueba la actualización de una cuenta usando datos conocidos"""
         account = AccountFactory()
         account.create()
         assert account.id is not None
@@ -90,7 +90,7 @@ class TestAccountModel:
             account.update()
 
     def test_eliminar_una_cuenta(self):
-        """Prueba la eliminación de una Cuenta usando datos conocidos"""
+        """Prueba la eliminación de una cuenta usando datos conocidos"""
         account = AccountFactory()
         account.create()
         assert len(Account.all()) == 1
