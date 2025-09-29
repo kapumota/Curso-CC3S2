@@ -32,7 +32,7 @@ Veremos las diferentes formas en que los fixtures pueden ser utilizados para pre
 
 En este paso, configuraremos un *fixture* de prueba para conectar y desconectar de la base de datos. Esto solo debe hacerse una vez antes de todas las pruebas y una vez después de todas las pruebas.
 
-#### Tu Tarea
+#### Tu tarea
 
 Piensa en qué *fixtures* son más adecuados para conectar a la base de datos antes de todas las pruebas y desconectar después de todas las pruebas. En este caso, usaremos un fixture a nivel de módulo para realizar esta operación.
 
@@ -73,7 +73,7 @@ pytest
 
 En este paso, cargaremos algunos datos de prueba que serán usados durante las pruebas. Esto solo necesita hacerse una vez antes de todas las pruebas de la clase de pruebas.
 
-#### Tu Tarea
+#### Tu tarea
 
 En la carpeta `tests/fixtures`, hay un archivo llamado `account_data.json` que contiene los datos de prueba.
 
@@ -92,7 +92,7 @@ Dentro de la clase de pruebas `TestAccountModel`, utiliza el método `setup_clas
 
 ```python
 class TestAccountModel:
-    """Modelo de Pruebas de Cuenta"""
+    """Modelo de pruebas de cuenta"""
 
     @classmethod
     def setup_class(cls):
@@ -122,7 +122,7 @@ pytest
 
 Ahora que hemos configurado los fixtures y cargado los datos de prueba, puedes escribir tu primer caso de prueba. Crearás una cuenta utilizando el diccionario `ACCOUNT_DATA`.
 
-#### Tu Tarea
+#### Tu tarea
 
 La clase `Account` tiene un método `create()` que puede usarse para agregar una cuenta a la base de datos, y un método `all()` que devuelve todas las cuentas.
 
@@ -155,7 +155,7 @@ pytest
 
 Después de verificar que se puede crear una sola cuenta, ahora escribirás una prueba que cree todas las cuentas del diccionario `ACCOUNT_DATA`.
 
-#### Tu Tarea
+#### Tu tarea
 
 Usa un bucle `for` para cargar todos los datos del diccionario `ACCOUNT_DATA`, luego usa el método `Account.all()` para recuperarlas y asegúrate de que el número de cuentas devuelto es igual al número de cuentas en los datos de prueba.
 
