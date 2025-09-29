@@ -47,9 +47,7 @@ class TestAccountModel:
         """Eliminar la sesión después de cada prueba"""
         db.session.remove()
 
-    ######################################################################
     # Casos de prueba básicos
-    ######################################################################
 
     def test_create_an_account(self):
         """Probar la creación de una sola cuenta"""
@@ -65,9 +63,7 @@ class TestAccountModel:
             account.create()
         assert len(Account.all()) == len(ACCOUNT_DATA)
 
-    ######################################################################
     #  Nuevos casos de prueba para cobertura
-    ######################################################################
 
     def test_to_dict(self):
         """Probar la serialización de Account a diccionario."""
