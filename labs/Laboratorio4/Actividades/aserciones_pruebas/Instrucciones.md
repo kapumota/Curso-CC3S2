@@ -2,8 +2,6 @@
 
 En esta actividad aprenderás cómo escribir aserciones de pruebas utilizando *pytest* y otros complementos actualizados.
 
-**Objetivos de aprendizaje**
-
 Después de completar esta actividad, serás capaz de:
 
 - Ejecutar casos de prueba con *pytest**
