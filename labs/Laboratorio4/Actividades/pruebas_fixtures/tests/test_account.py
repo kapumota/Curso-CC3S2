@@ -19,7 +19,7 @@ def setup_database():
     db.session.close()
 
 class TestAccountModel:
-    """Modelo de Pruebas de Cuenta"""
+    """Modelo de pruebas de cuenta"""
 
     @classmethod
     def setup_class(cls):
