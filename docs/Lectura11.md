@@ -1,27 +1,97 @@
 ### Ejecución de pruebas con pytest
 
-La ejecución con `pytest` parte de convenciones simples: archivos `test_*.py`, clases `Test*` y funciones `test_*`. Para integrarlo en DevSecOps, se estandarizan comandos (típicamente encapsulados en un Makefile o *workflow* CI):
+La ejecución con `pytest` parte de convenciones simples: archivos `test_*.py`, clases `Test*` y funciones `test_*`. Para integrarlo en DevSecOps, se estandarizan comandos (típicamente encapsulados en un Makefile o *workflow* CI)
 
-* `pytest -q` para salidas compactas y reproducibles.
-* `pytest -vv` para máxima verbosidad y explicación de parametrizaciones.
-* `pytest -k "expresión"` para ejecutar subconjuntos (por nombre, etiqueta o patrón).
-* `-x` y `--maxfail=1` favorecen el ciclo RGR (Red-Green-Refactor) al cortar en el primer fallo.
-* `-ra` resume *skips*, *xfail* y causas, útil para vigilancia de deuda técnica.
+* `pytest -q` para salidas compactas y reproducibles
+* `pytest -vv` para máxima verbosidad y explicación de parametrizaciones
+* `pytest -k "expresión"` para ejecutar subconjuntos (por nombre, etiqueta o patrón)
+* `-x` y `--maxfail=1` favorecen el ciclo RGR (Red-Green-Refactor) al cortar en el primer fallo
+* `-ra` resume *skips*, *xfail* y causas, útil para vigilancia de deuda técnica
+
+En un entorno DevSecOps, estas opciones se combinan con herramientas como GitHub Actions, GitLab CI/CD o Jenkins para automatizar la ejecución de pruebas en cada *commit*, *pull request* o despliegue. Por ejemplo, un *workflow* puede usar `pytest -q` para pruebas rápidas en entornos de desarrollo y `pytest -vv` para generar reportes detallados en auditorías de seguridad. 
+
+La integración con herramientas de análisis estático (como Bandit para Python) y escaneos de vulnerabilidades (como Snyk o Dependabot) complementa las pruebas funcionales, asegurando que el código no solo sea correcto, sino también seguro y robusto.
 
 ### Aserciones
 
-Las aserciones de `pytest` son legibles: `assert expr`. El *assertion rewriting* muestra *diffs* ricos en estructuras. En seguridad y confiabilidad conviene afirmar:
+Las aserciones de `pytest` son legibles: `assert expr`. El *assertion rewriting* muestra *diffs* ricos en estructuras. En seguridad y confiabilidad conviene afirmar
 
-* Códigos de estado y *timeouts*: `assert 200 <= resp.status_code < 300` y `assert kwargs["timeout"] <= 2`.
-* Cabeceras seguras: `Strict-Transport-Security`, `Content-Security-Policy`, `X-Content-Type-Options`.
-* Invariantes de formatos sensibles: API keys, IDs, UUIDs, *slugs*.
-* Comportamientos ante errores: que no se filtren secretos en *tracebacks* ni en *logs*.
+* Códigos de estado y *timeouts*: `assert 200 <= resp.status_code < 300` y `assert kwargs["timeout"] <= 2`
+* Cabeceras seguras: `Strict-Transport-Security`, `Content-Security-Policy`, `X-Content-Type-Options`
+* Invariantes de formatos sensibles: API keys, IDs, UUIDs, *slugs*
+* Comportamientos ante errores: que no se filtren secretos en *tracebacks* ni en *logs*
 
 Las aserciones deben ser específicas y separadas por intención (autenticación, autorización, validación de entradas, manejo de errores, observabilidad), para que un fallo indique con precisión la clase de riesgo.
+
+**Assertion rewriting**
+
+El *assertion rewriting* es una característica clave de `pytest` que mejora la legibilidad y la depuración de las aserciones. Cuando se ejecuta una aserción como `assert a == b`, `pytest` reescribe el código en tiempo de ejecución para capturar los valores de las expresiones y generar mensajes de error detallados. 
+
+Por ejemplo, si `assert response.json() == expected_dict` falla, `pytest` no solo indica que la aserción falló, sino que muestra una comparación detallada (*diff*) entre los valores reales y esperados, destacando diferencias en estructuras complejas como diccionarios o listas. En DevSecOps, esto es especialmente útil para validar respuestas de APIs, donde un pequeño cambio en un campo puede indicar una vulnerabilidad (por ejemplo, una cabecera de seguridad ausente o un campo expuesto incorrectamente). Para aprovechar al máximo el *assertion rewriting*, se recomienda evitar aserciones genéricas como `assert True` y usar comparaciones explícitas que permitan a `pytest` generar *diffs* útiles.
+
+#### Aserciones en DevSecOps
+
+En el contexto de DevSecOps, las aserciones no solo verifican la funcionalidad, sino que también garantizan la seguridad y la robustez del sistema. Por ejemplo, al probar una API, se pueden incluir aserciones para verificar que las respuestas no exponen información sensible (como tokens en encabezados o datos de usuarios en errores). También se pueden usar aserciones para validar que el sistema respeta políticas de seguridad, como tiempos de espera estrictos (`timeout`) o configuraciones de CORS correctas. 
+
+La granularidad en las aserciones es crucial: en lugar de una sola aserción que valide una respuesta completa, se deben usar múltiples aserciones para verificar aspectos específicos (por ejemplo, `assert "Content-Security-Policy" in response.headers` y `assert response.headers["Content-Security-Policy"] == "default-src 'self'"`). Esto facilita la trazabilidad de fallos y reduce el riesgo de pasar por alto vulnerabilidades.
 
 ### Datos de prueba
 
 Los datos de prueba deben ser **deterministas y representativos**. Además de *happy path*, incluir **casos hostiles**: entradas Unicode complejas, *payloads* con inyección, rutas con `../`, JSON profundamente anidados, límites de tamaño y valores fuera de rango. Es común modelarlos como *fixtures* que devuelven diccionarios, rutas (`tmp_path`), estructuras de directorio o *payloads* JSON. Para redes y criptografía se prefieren **dobles de prueba** (mocks/stubs/fakes) y **relojes falsos** para reproducibilidad.
+
+**Happy path**
+
+El *happy path* (camino feliz) se refiere a los casos de prueba que verifican el comportamiento esperado del sistema bajo condiciones ideales, es decir, cuando todas las entradas son válidas y el sistema funciona correctamente. Por ejemplo, en una API de autenticación, el *happy path* incluiría un caso donde un usuario proporciona credenciales correctas y recibe un token de acceso válido con un código de estado 200. En DevSecOps, los casos de *happy path* son esenciales para garantizar que el sistema cumple con los requisitos funcionales, pero no son suficientes. 
+Deben complementarse con casos de borde y pruebas de seguridad que simulen ataques o condiciones anómalas. Por ejemplo, un caso de *happy path* podría ser `assert login("user", "valid_password") == {"token": "abc123"}`, mientras que un caso hostil probaría `assert login("user", "'; DROP TABLE users;") raises InvalidCredentials`.
+
+**Datos de prueba en DevSecOps**
+
+Los datos de prueba en un entorno DevSecOps deben ser cuidadosamente diseñados para cubrir tanto el *happy path* como escenarios de ataque. Esto incluye
+
+* **Entradas maliciosas**: Probar inyecciones SQL, XSS, o comandos en entradas de usuario (por ejemplo, `<script>alert('xss')</script>` o `; rm -rf /`).
+* **Casos de borde**: Valores nulos, cadenas vacías, números extremadamente grandes o negativos, y estructuras JSON malformadas.
+* **Datos representativos**: Simular datos reales que el sistema manejará en producción, como nombres con caracteres internacionales (Unicode), direcciones complejas o payloads de gran tamaño.
+* **Datos sensibles**: Verificar que el sistema no expone información como claves API, contraseñas o datos personales en respuestas o logs.
+
+Las *fixtures* de `pytest` son ideales para gestionar datos de prueba. Por ejemplo, una *fixture* puede generar un diccionario con datos válidos para el *happy path* y otro con datos maliciosos para pruebas de seguridad. Ejemplo
+
+```python
+import pytest
+
+@pytest.fixture
+def valid_user():
+    return {"username": "testuser", "password": "secure123"}
+
+@pytest.fixture
+def malicious_user():
+    return {"username": "testuser; DROP TABLE users;", "password": "<script>alert('xss')</script>"}
+```
+
+Estas *fixtures* permiten reutilizar datos de prueba consistentes y deterministas en múltiples pruebas, mejorando la mantenibilidad y la reproducibilidad.
+
+**Dobles de prueba y relojes falsos**
+
+Los **dobles de prueba** (mocks, stubs, fakes) son objetos simulados que reemplazan dependencias externas, como bases de datos, APIs o servicios de red, para aislar el código bajo prueba. En DevSecOps, los dobles son cruciales para probar escenarios de red o criptografía sin depender de sistemas externos, lo que garantiza pruebas rápidas y deterministas. Por ejemplo, un *mock* puede simular una respuesta de una API externa con un código de estado 503 para probar el manejo de errores.
+
+Los **relojes falsos** (*fake clocks*) se utilizan para controlar el tiempo en las pruebas, especialmente en sistemas que dependen de timestamps, como tokens JWT o verificaciones de expiración. Por ejemplo, la librería `freezegun` permite simular fechas específicas
+
+```python
+from freezegun import freeze_time
+import datetime
+
+def test_token_expiration():
+    with freeze_time("2025-01-01"):
+        token = generate_token()
+        assert token.expires_at == datetime.datetime(2025, 1, 1, 0, 30)
+```
+
+En DevSecOps, los relojes falsos son esenciales para probar escenarios de seguridad relacionados con el tiempo, como la expiración de sesiones, la rotación de claves o la validación de certificados. Por ejemplo, se puede simular un tiempo futuro para verificar que un token ha expirado y que el sistema lo rechaza correctamente, evitando vulnerabilidades como el uso de tokens caducados.
+
+**Relojes falsos en DevSecOps**
+
+En un contexto de seguridad, los relojes falsos también ayudan a probar la robustez de sistemas ante manipulaciones temporales. Por ejemplo, un atacante podría intentar manipular el tiempo del sistema para explotar tokens no expirados. Las pruebas con relojes falsos permiten simular estos escenarios y verificar que el sistema responde correctamente. 
+
+Además, los relojes falsos aseguran que las pruebas sean reproducibles, ya que el comportamiento no depende del tiempo real del sistema.
 
 ###  Código de cobertura
 
