@@ -119,7 +119,32 @@ Este enfoque integral no solo mejora la cobertura de código, sino que también 
 
 ###  Mocks vs Stubs
 
-**Stubs** devuelven respuestas prefabricadas sin verificar interacciones; **mocks** permiten inspeccionar llamadas, argumentos y orden. En fronteras con red, reloj, disco o criptografía, los mocks ayudan a afirmar que el código **cumple contratos de uso** (URL, *params*, *headers*, `timeout`, *retries*). Un stub basta si solo importa el *payload*; un mock es imprescindible si necesitas asegurar el **cómo** se invoca una dependencia. En un cliente HTTP estilo "IMDb", por ejemplo, `@patch("models.imdb.requests.get")` permite simular `200`, `404`, `500`, *timeout* y validar cabeceras o tiempo de espera.
+**Stubs** devuelven respuestas prefabricadas sin verificar interacciones **mocks** permiten inspeccionar llamadas, argumentos y orden. En fronteras con red, reloj, disco o criptografía, los mocks ayudan a afirmar que el código **cumple contratos de uso** (URL, *params*, *headers*, `timeout`, *retries*). Un stub basta si solo importa el *payload* un mock es imprescindible si necesitas asegurar el **cómo** se invoca una dependencia. En un cliente HTTP estilo "IMDb", por ejemplo, `@patch("models.imdb.requests.get")` permite simular `200`, `404`, `500`, *timeout* y validar cabeceras o tiempo de espera.
+
+En el contexto de **DevSecOps**, los mocks y stubs son esenciales para integrar la seguridad en el ciclo de desarrollo y pruebas. Los **stubs** proporcionan datos simulados para probar flujos de aplicación sin interactuar con sistemas reales, lo que reduce riesgos al evitar conexiones a entornos externos potencialmente inseguros durante las pruebas. Por ejemplo, un stub puede simular una respuesta de una API externa para probar el manejo de datos sensibles sin exponer credenciales reales.
+
+Por otro lado, los **mocks** son cruciales para verificar que las interacciones con dependencias externas (como APIs, bases de datos o servicios criptográficos) respeten **controles de seguridad**. Por ejemplo, en una aplicación que interactúa con una API externa, un mock puede validar que se envían encabezados de autenticación correctos (como tokens OAuth), que los parámetros de la solicitud no contienen datos sensibles expuestos (como PII o contraseñas) y que se respetan configuraciones de seguridad como tiempos de espera (*timeout*) y límites de reintentos (*retries*) para evitar ataques de denegación de servicio.
+
+**Inyección de dependencias e inversión de control**
+
+La **inyección de dependencias** (IoD) y la **inversión de control** (IoC) son patrones clave en DevSecOps para facilitar pruebas seguras y mantenibles. La **inyección de dependencias** consiste en proporcionar a un componente sus dependencias externas (como un cliente HTTP o un servicio de base de datos) desde el exterior, en lugar de que el componente las cree internamente. Esto permite reemplazar dependencias reales por stubs o mocks durante las pruebas, reduciendo la superficie de ataque al evitar conexiones a sistemas reales que podrían ser vulnerables o no estar disponibles.
+
+Por ejemplo, en un cliente HTTP que consulta una API de IMDb, puedes inyectar un cliente HTTP simulado en lugar de uno real. Esto se logra mediante un contenedor de IoC, que gestiona la creación y configuración de objetos, permitiendo al desarrollador especificar si se usará un cliente real o un mock/stub en función del entorno (desarrollo, pruebas, producción).
+
+La **inversión de control** lleva este concepto más allá al delegar el control del flujo de la aplicación a un marco o contenedor. En DevSecOps, esto es crítico para garantizar que las pruebas unitarias y de integración sean seguras y consistentes. Por ejemplo, un contenedor IoC puede configurar un mock para simular un servicio criptográfico (como una librería para firmas digitales) y verificar que las claves utilizadas cumplen con estándares de seguridad (como longitud mínima o algoritmos aprobados por NIST).
+
+**Aplicación en DevSecOps**
+
+En un pipeline de DevSecOps, los mocks y stubs se integran en las pruebas automatizadas para validar no solo la funcionalidad, sino también la seguridad del código. Por ejemplo:
+
+- **Pruebas de seguridad en APIs**: Usar mocks para simular respuestas de APIs externas y verificar que el código maneja correctamente casos de error (como `401 Unauthorized` o `429 Too Many Requests`) sin exponer datos sensibles en los logs o respuestas al usuario.
+- **Validación de configuraciones seguras**: Con mocks, puedes asegurarte de que el código respeta configuraciones de seguridad, como tiempos de espera cortos para evitar bucles infinitos o reintentos excesivos que podrían ser explotados en un ataque DDoS.
+- **Pruebas de cumplimiento**: Los mocks permiten simular interacciones con servicios que manejan datos regulados (como GDPR o HIPAA) para garantizar que el código no envía información sensible sin cifrar o que respeta los contratos de uso definidos.
+- **Reducción de riesgos en entornos de prueba**: Al usar stubs y mocks, se evita la necesidad de conectarse a servicios reales durante las pruebas, lo que reduce la exposición a vulnerabilidades en entornos no productivos.
+
+En el ejemplo del cliente HTTP para IMDb, podrías usar un mock con `@patch("models.imdb.requests.get")` para simular un ataque de inyección de datos en una respuesta `500` y verificar que el código no propaga información sensible en los errores. También podrías usar un stub para simular una respuesta válida con datos de películas, asegurando que el código parsea el *payload* sin introducir vulnerabilidades como inyecciones SQL o XSS.
+
+En resumen, los mocks y stubs, combinados con IoD e IoC, permiten a los equipos de DevSecOps crear pruebas robustas que no solo validan la lógica de negocio, sino que también garantizan que el código cumple con principios de seguridad, minimiza riesgos y facilita la auditoría en pipelines de CI/CD.
 
 ###  Factory & fakes mocking
 
