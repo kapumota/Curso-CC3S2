@@ -12,7 +12,7 @@ class DataValidationError(Exception):
     """Utilizada para errores de validación de datos al deserializar"""
 
 class Account(db.Model):
-    """Clase que representa una Cuenta"""
+    """Clase que representa una cuenta"""
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
