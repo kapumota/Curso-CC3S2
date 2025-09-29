@@ -2,11 +2,11 @@
 
 La ejecución con `pytest` parte de convenciones simples: archivos `test_*.py`, clases `Test*` y funciones `test_*`. Para integrarlo en DevSecOps, se estandarizan comandos (típicamente encapsulados en un Makefile o *workflow* CI)
 
-* `pytest -q` para salidas compactas y reproducibles
-* `pytest -vv` para máxima verbosidad y explicación de parametrizaciones
-* `pytest -k "expresión"` para ejecutar subconjuntos (por nombre, etiqueta o patrón)
-* `-x` y `--maxfail=1` favorecen el ciclo RGR (Red-Green-Refactor) al cortar en el primer fallo
-* `-ra` resume *skips*, *xfail* y causas, útil para vigilancia de deuda técnica
+* `pytest -q` para salidas compactas y reproducibles.
+* `pytest -vv` para máxima verbosidad y explicación de parametrizaciones.
+* `pytest -k "expresión"` para ejecutar subconjuntos (por nombre, etiqueta o patrón).
+* `-x` y `--maxfail=1` favorecen el ciclo RGR (Red-Green-Refactor) al cortar en el primer fallo.
+* `-ra` resume *skips*, *xfail* y causas, útil para vigilancia de deuda técnica.
 
 En un entorno DevSecOps, estas opciones se combinan con herramientas como GitHub Actions, GitLab CI/CD o Jenkins para automatizar la ejecución de pruebas en cada *commit*, *pull request* o despliegue. Por ejemplo, un *workflow* puede usar `pytest -q` para pruebas rápidas en entornos de desarrollo y `pytest -vv` para generar reportes detallados en auditorías de seguridad. 
 
@@ -93,14 +93,29 @@ En un contexto de seguridad, los relojes falsos también ayudan a probar la robu
 
 Además, los relojes falsos aseguran que las pruebas sean reproducibles, ya que el comportamiento no depende del tiempo real del sistema.
 
-###  Código de cobertura
+### Código de cobertura
 
-La cobertura (con `coverage.py` y `pytest-cov`) sirve como indicador de **alcance**. Sugerencias:
+La cobertura de código es una métrica clave en el desarrollo de software, ya que permite identificar qué partes del código han sido ejecutadas durante las pruebas automatizadas. Sin embargo, una alta cobertura no garantiza la calidad del software; es crucial complementarla con pruebas bien diseñadas que cubran casos límite, condiciones excepcionales y flujos críticos.
 
-* `pytest --cov=mi_paquete --cov-report=term-missing:skip-covered --cov-fail-under=85`.
-* Prestar atención a **ramas de error y de seguridad** (validaciones, *fallbacks*, *circuit breakers*).
-* Reporte HTML publicado como artefacto de CI.
-* Métrica separada de **cobertura de módulos sensibles** (`auth`, `security`, `crypto`, *middleware*).
+- **Uso de `coverage.py` y `pytest-cov`:** Estas herramientas son ampliamente utilizadas en Python para medir la cobertura de pruebas unitarias, de integración y funcionales. La opción `--cov-report=term-missing:skip-covered` genera un reporte en consola que omite los módulos completamente cubiertos, destacando solo las áreas con líneas no probadas. La bandera `--cov-fail-under=85` establece un umbral mínimo de cobertura del 85%, fallando el proceso si no se alcanza.
+
+- **Ramas de error y seguridad:** Es fundamental incluir pruebas que validen el manejo de errores (excepciones, entradas inválidas) y aspectos de seguridad, como la gestión de sesiones en módulos de autenticación (`auth`), el uso seguro de algoritmos en `crypto` o la protección contra ataques en *middleware*. Los *fallbacks* (mecanismos de recuperación ante fallos) y *circuit breakers* (para evitar fallos en cascada en sistemas distribuidos) deben estar cubiertos por pruebas específicas para garantizar la robustez del sistema.
+
+- **Reporte HTML en CI:** Publicar el reporte HTML generado por `coverage.py` como un artefacto en pipelines de integración continua (CI), como GitHub Actions o Jenkins, permite a los equipos visualizar fácilmente las áreas de código no probadas. Esto fomenta la colaboración y mejora la trazabilidad durante las revisiones de código.
+
+- **Módulos sensibles y DevSecOps:** Los módulos relacionados con seguridad (`auth`, `security`, `crypto`, *middleware*) requieren un enfoque especial en un entorno DevSecOps. Esto implica no solo medir la cobertura, sino también realizar análisis estáticos de código, pruebas de penetración y auditorías de seguridad. Una métrica separada para estos módulos ayuda a priorizar su calidad, ya que un fallo en ellos puede tener consecuencias críticas, como brechas de seguridad o pérdida de datos.
+
+La cobertura (con `coverage.py` y `pytest-cov`) sirve como indicador de **alcance**. 
+
+
+**Información adicional:**
+- **Recomendaciones adicionales:**
+  - **Integración con herramientas de análisis estático:** Combinar la cobertura con herramientas como `bandit` para detectar vulnerabilidades de seguridad en el código Python.
+  - **Pruebas de mutación:** Utilizar herramientas como `mutmut` o `cosmic-ray` para evaluar la efectividad de las pruebas, identificando si detectan cambios (mutaciones) en el código.
+  - **Automatización en CI/CD:** Configurar pipelines para que fallen automáticamente si la cobertura cae por debajo del umbral establecido o si los módulos sensibles no alcanzan una cobertura del 100%.
+  - **Monitoreo continuo:** Usar dashboards (por ejemplo, en SonarQube) para rastrear la evolución de la cobertura y correlacionarla con métricas de calidad como la densidad de defectos.
+
+Este enfoque integral no solo mejora la cobertura de código, sino que también fortalece la seguridad y la calidad del software en un contexto DevSecOps, alineándose con las mejores prácticas de desarrollo moderno.
 
 ###  Mocks vs Stubs
 
