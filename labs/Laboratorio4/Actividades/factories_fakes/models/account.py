@@ -16,7 +16,7 @@ class DataValidationError(Exception):
 
 
 class Account(db.Model):
-    """Clase que representa una Cuenta"""
+    """Clase que representa una cuenta"""
 
     __tablename__ = "accounts"  # Asegúrate de definir el nombre de la tabla
 
@@ -46,14 +46,14 @@ class Account(db.Model):
         db.session.commit()
 
     def update(self):
-        """Actualiza una Cuenta en la base de datos"""
+        """Actualiza una cuenta en la base de datos"""
         logger.info(f"Guardando {self.name}")
         if not self.id:
             raise DataValidationError("Actualización llamada con campo ID vacío")
         db.session.commit()
 
     def delete(self):
-        """Elimina una Cuenta del almacén de datos"""
+        """Elimina una cuenta del almacén de datos"""
         logger.info(f"Eliminando {self.name}")
         db.session.delete(self)
         db.session.commit()
@@ -69,7 +69,7 @@ class Account(db.Model):
 
     @classmethod
     def find(cls, account_id: int):
-        """Encuentra una Cuenta por su ID
+        """Encuentra una cuenta por su ID
 
         :param account_id: el id de la Cuenta a encontrar
         :type account_id: int
