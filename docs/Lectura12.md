@@ -382,7 +382,7 @@ Por ejemplo, en el test `test_obtener_invoca_repo`:
 El uso de `autospec=True` asegura que cualquier cambio en la interfaz de `RepositorioDB` (por ejemplo, renombrar `obtener` a `buscar` o cambiar el tipo de `id_` a `str`) romperá el test de inmediato, alertando al desarrollador sobre una violación potencial del LSP.
 
 
-**2. ¿Por qué es importante respetar el LSP en pruebas?**
+**¿Por qué es importante respetar el LSP en pruebas?**
 
 El LSP en pruebas garantiza que los *doubles* de prueba sean representaciones fieles de los objetos reales. Esto es crucial por las siguientes razones:
 
@@ -1408,7 +1408,7 @@ En este contexto, el fixture `db_tmp` (Constructor-like) detecta la variable `DB
 
 ####  Reutilización de código de test
 
-Gracias a la abstracción mediante fixtures, el **mismo conjunto de tests** —idénticas funciones y aserciones— puede correr tanto en la etapa rápida de unit tests como en la más completa de integration tests. Solo cambia la configuración de los fixtures:
+Gracias a la abstracción mediante fixtures, el **mismo conjunto de tests** , idénticas funciones y aserciones puede correr tanto en la etapa rápida de unit tests como en la más completa de integration tests. Solo cambia la configuración de los fixtures:
 
 * **Mode local (unit):** los fixtures de integración devuelven stubs e interfaces, reduciendo latencia.
 * **Mode CI (integration):** esos mismos fixtures detectan flags de entorno (`CI=true`) y devuelven instancias conectadas a contenedores Docker o servicios reales de staging.
