@@ -58,7 +58,7 @@ En este ejercicio, crearás una issue template en GitHub. Esto solo necesita hac
 
 6. Copia el siguiente markdown para el contenido de la plantilla de historia:
 
-[Ejemplo de plantilla de historia](https://github.com/users/kapumota/projects/5/views/1?pane=issue&itemId=96139438&issue=kapumota%7Cdevops-capstone-project%7C6)
+[Ejemplo de plantilla de historia]()
 
 7. Cambia el **Template name** a **User Story**, dale una descripción apropiada, y pega el contenido del markdown anterior en el **Template content**.
 
@@ -66,9 +66,9 @@ En este ejercicio, crearás una issue template en GitHub. Esto solo necesita hac
 
 9. Presiona el botón **Commit changes** para confirmar el cambio en tu repositorio.
 
-Ahora deberías tener una nueva carpeta en tu repositorio llamada `.github/ISSUE_TEMPLATES`, que contendrá tu nueva issue template de historia de usuario. [Revisa este ejemplo](https://github.com/kapumota/devops-capstone-project/tree/main/.github/ISSUE_TEMPLATE).
+Ahora deberías tener una nueva carpeta en tu repositorio llamada `.github/ISSUE_TEMPLATES`, que contendrá tu nueva issue template de historia de usuario. 
 
-Ahora tienes una issue template que puedes usar para todos tus repositorios de GitHub en los que necesites escribir historias para usar en el Kanban board. Cuando creemos issues en los laboratorios futuros, esta template te guiará sobre qué información es necesaria para crear tu historia de usuario.
+Ahora tienes una **issue template** que puedes usar para todos tus repositorios de GitHub en los que necesites escribir historias para usar en el Kanban board. Cuando creemos issues en los laboratorios futuros, esta template te guiará sobre qué información es necesaria para crear tu historia de usuario.
 
 
 ####  Parte 3
@@ -271,11 +271,10 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 3. Arrastra y suelta **Labels** de la lista de campos ocultos a la lista de campos visibles (resaltado como 3).
 4. Haz clic en el botón **Save** (resaltado como 4) para guardar los cambios.
 
-Al final de este ejercicio, tu Kanban board debería verse así: [Ejemplo de tablero de Kanban ](https://github.com/users/kapumota/projects/5/views/1)
 
 ### Ejercicios
 
-##### Ejercicio 1: Crear un Epic y vincular historias de usuario
+##### Ejercicio 1: Crear un epic y vincular historias de usuario
 
 **Objetivo:** Aprender a organizar historias de usuario más grandes en Epics y vincular múltiples historias de usuario a un Epic.
 
