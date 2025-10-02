@@ -60,7 +60,7 @@ En este ejercicio, crearás una issue template en GitHub. Esto solo necesita hac
 
 6. Copia el siguiente markdown para el contenido de la plantilla de historia:
 
-[Ejemplo de plantilla de historia]()
+[Ejemplo de plantilla de historia](https://github.com/kapumota/Curso-CC3S2/blob/main/ejemplos/ISSUE_TEMPLATE/user-story.md)
 
 7. Cambia el **Template name** a **User Story**, dale una descripción apropiada, y pega el contenido del markdown anterior en el **Template content**.
 
@@ -76,13 +76,6 @@ Ahora tienes una **issue template** que puedes usar para todos tus repositorios 
 ####  Parte 3
 
 En este ejercicio crearás siete historias de usuario basadas en los requisitos dados. Las primeras cuatro se te proporcionarán. Solo tendrás que copiarlas y pegarlas para familiarizarte con la creación de historias de usuario en GitHub. Deberás crear las últimas tres historias de usuario por ti mismo. Luego priorizarás estas historias y las moverás a las columnas apropiadas en tu Kanban board.
-
-#### Objetivos
-
-Después de completar esta actividad podrás:
-
-- Crear nuevas historias de usuario usando GitHub issues.
-- Priorizar el product backlog.
 
 ##### 1: Crear nuevas historias de usuario usando GitHub issues
 
@@ -157,19 +150,10 @@ En este ejercicio, moverás issues entre columnas para recrear el Kanban board d
 5. Deja las historias restantes en la columna **New Issues** por ahora. Las moveremos en un laboratorio posterior.
 
 
-
 #### Parte 4
 
 En este ejercicio, seguirás los pasos para llevar a cabo una reunión de refinamiento del backlog. Serás el product owner preparando el product backlog para tu próxima reunión de planificación del sprint. Esto implica preparar las historias que creamos en el último ejercicio para hacerlas listas para el sprint.
-
-##### Objetivos
-
-Después de completar este ejercicio, podrás:
-
-- Triage de nuevos issues  
-- Hacer que las historias estén listas para el sprint  
-- Crear nuevas labels  
-- Añadir labels a las historias  
+ 
 
 ##### Estado inicial
 
