@@ -35,6 +35,68 @@ La cobertura (coverage) corresponde a un indicador cuantitativo que refleja qué
 * **Diferencia clave**: una línea puede contener varias sentencias; la métrica de sentencia granulariza aún más el análisis.
 * **Uso**: herramientas como `coverage.py` en Python ofrecen tanto line as statement coverage; la cobertura de sentencia suele ser un poco más baja que la de línea, reflejando sentencias compuestas en la misma línea.
 
+**Ejemplo de configuración de cobertura con `pytest` y Codecov**
+
+Este ejemplo muestra un pipeline de GitHub Actions que ejecuta pruebas con cobertura, genera un informe XML y lo sube a Codecov, con un umbral mínimo del 80%.
+
+```yaml
+name: CI with Coverage
+on: [pull_request]
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov codecov
+      - name: Run tests with coverage
+        run: pytest --cov=./app --cov-report=xml --cov-report=html
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
+          threshold: 80
+```
+
+**Explicación**: 
+- Ejecuta `pytest` con el plugin `pytest-cov` para generar un informe de cobertura en XML y HTML.
+- Sube el informe a Codecov, bloqueando el pipeline si la cobertura cae por debajo del 80%.
+
+**Ejemplo de prueba para cobertura de rama**
+
+Este ejemplo prueba una función con una condición `if-else` para garantizar cobertura de ambas ramas.
+
+```python
+# app/calculator.py
+def categorize_number(x):
+    if x > 0:
+        return "positivo"
+    else:
+        return "no-positivo"
+
+# tests/test_calculator.py
+import pytest
+from app.calculator import categorize_number
+
+def test_categorize_number_positive():
+    assert categorize_number(5) == "positivo"
+
+def test_categorize_number_non_positive():
+    assert categorize_number(-3) == "no-positivo"
+    assert categorize_number(0) == "no-positivo"
+```
+
+**Explicación**:
+- Los tests cubren ambas ramas del condicional (`x > 0` y `else`), asegurando una cobertura de rama del 100%.
+
 ### 2. Implementación y uso en pipelines DevOps
 
 En entornos CI/CD, se suele integrar la generación de informes de cobertura en combinación con el gestor de pruebas (por ejemplo, pytest en Python, Jest en JavaScript, JUnit en Java). El flujo habitual es:
@@ -64,6 +126,91 @@ En entornos CI/CD, se suele integrar la generación de informes de cobertura en 
 * **SonarQube**: analiza cobertura junto con otros indicadores (complejidad ciclomática, duplicación de código).
 * **Codecov / Coveralls**: servicios en la nube que muestran diffs de cobertura línea a línea en pull requests.
 * **Integración con GitHub Actions**: pasos en YAML que corren tests y luego publican badge de coverage.
+
+**Ejemplo de microbenchmarking con `pytest-benchmark`**
+
+Este ejemplo mide el rendimiento de una función de ordenamiento.
+
+```python
+# app/sort.py
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+# tests/test_sort.py
+import pytest
+from app.sort import bubble_sort
+
+@pytest.mark.benchmark
+def test_bubble_sort_benchmark(benchmark):
+    data = [64, 34, 25, 12, 22, 11, 90]
+    result = benchmark(bubble_sort, data)
+    assert result == [11, 12, 22, 25, 34, 64, 90]
+```
+
+**Explicación**:
+- Usa `@pytest.mark.benchmark` para medir el tiempo de ejecución de `bubble_sort`.
+- La función `benchmark` ejecuta repetidamente la función para obtener estadísticas robustas.
+
+**Ejemplo de pruebas de estrés con parametrización**
+
+Este ejemplo mide la escalabilidad de una función con diferentes tamaños de entrada.
+
+```python
+import pytest
+import random
+from app.sort import bubble_sort
+
+def generate_data(n):
+    return [random.randint(1, 1000) for _ in range(n)]
+
+@pytest.mark.parametrize("size", [100, 1000, 10000])
+def test_bubble_sort_scalability(benchmark, size):
+    data = generate_data(size)
+    benchmark(bubble_sort, data)
+```
+
+**Explicación**:
+- Usa `@pytest.mark.parametrize` para probar `bubble_sort` con listas de 100, 1000 y 10000 elementos.
+- Genera datos aleatorios para simular cargas crecientes.
+
+**Ejemplo de exportación de benchmarks a Prometheus**
+
+Este script procesa el JSON generado por `pytest-benchmark` y lo exporta a un formato Prometheus.
+
+```python
+# scripts/export_benchmarks_to_prometheus.py
+import json
+import sys
+
+def export_to_prometheus(json_file):
+    with open(json_file) as f:
+        data = json.load(f)
+    for bench in data['benchmarks']:
+        name = bench['name'].replace('::', '_').replace('[', '_').replace(']', '')
+        mean_time = bench['stats']['mean'] * 1000  # Convertir a ms
+        print(f'pytest_benchmark_duration_ms{{test="{name}"}} {mean_time}')
+
+if __name__ == '__main__':
+    export_to_prometheus(sys.argv[1])
+```
+
+**Uso en CI**:
+
+```yaml
+- name: Run benchmarks and export to Prometheus
+  run: |
+    pytest --benchmark-json=benchmark_data.json
+    python scripts/export_benchmarks_to_prometheus.py benchmark_data.json > metrics.prom
+```
+
+**Explicación**:
+- Convierte los tiempos de ejecución (en segundos) a milisegundos para mayor claridad.
+- Genera métricas en formato Prometheus, listas para ser scrapeadas.
 
 
 ### 3. Métricas de rendimiento: benchmarking con pytest y métricas DORA
@@ -185,7 +332,7 @@ Para que las métricas de benchmarking sean accionables, deben almacenarse y vis
 
 #### 3.2 Métricas DORA: medir el ritmo y la estabilidad de entrega
 
-Las métricas DORA, popularizadas por los informes anuales de DevOps Research and Assessment (State of DevOps Report), ofrecen un marco estandarizado para evaluar el desempeño de un equipo de desarrollo en términos de velocidad de entrega y resiliencia frente a fallos. Cada métrica aporta una visión complementaria del proceso de software delivery, y juntas permiten identificar áreas de mejora que abarcan desde la eficiencia del pipeline hasta la calidad de las prácticas de operación.
+Las métricas DORA, popularizadas por los informes anuales de [DevOps Research and Assessment](https://dora.dev/) (State of DevOps Report), ofrecen un marco estandarizado para evaluar el desempeño de un equipo de desarrollo en términos de velocidad de entrega y resiliencia frente a fallos. Cada métrica aporta una visión complementaria del proceso de software delivery, y juntas permiten identificar áreas de mejora que abarcan desde la eficiencia del pipeline hasta la calidad de las prácticas de operación.
 
 **3.2.1 Lead Time for Changes (Tiempo de entrega de cambios)**
 
@@ -370,8 +517,108 @@ Entender cómo interactúan las métricas de benchmarking y DORA brinda un panor
 
 El análisis de estas correlaciones, apoyado en dashboards y revisiones periódicas, facilita la toma de decisiones basadas en datos, priorizando inversiones en optimización de pipelines o en fortalecimiento de pruebas según el impacto en las métricas clave.
 
-Pensado durante 5 segundos
+**Ejemplo de medición de Lead Time en GitHub Actions**
 
+Este ejemplo registra el tiempo desde el commit hasta el despliegue en producción.
+
+```yaml
+name: Measure Lead Time
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Record commit time
+        run: echo "COMMIT_TIME=$(date +%s)" >> $GITHUB_ENV
+      - name: Run tests
+        run: pytest tests/
+      - name: Deploy to production
+        run: ./deploy.sh
+      - name: Calculate lead time
+        run: |
+          DEPLOY_TIME=$(date +%s)
+          LEAD_TIME=$((DEPLOY_TIME - ${{ env.COMMIT_TIME }}))
+          echo "ci_lead_time_seconds{branch=\"${{ github.ref_name }}\"} $LEAD_TIME" >> metrics.prom
+      - name: Expose metrics
+        run: python -m http.server 8000 &
+```
+
+**Explicación**:
+- Registra el tiempo del commit y del despliegue, calcula la diferencia y emite una métrica Prometheus.
+
+**Ejemplo de conteo de Deployment Frequency**
+
+Este script registra cada despliegue exitoso en un contador Prometheus.
+
+```yaml
+name: Track Deployment Frequency
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy
+        run: ./deploy.sh
+      - name: Increment deployment counter
+        run: echo "ci_deployment_total{environment=\"production\"} 1" >> metrics.prom
+```
+
+**Explicación**:
+- Incrementa un contador cada vez que se ejecuta un despliegue exitoso, permitiendo rastrear la frecuencia.
+
+**Ejemplo de detección de Change Failure Rate**
+
+Este ejemplo detecta despliegues fallidos y calcula la tasa de fallo.
+
+```yaml
+name: Track Change Failure Rate
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy
+        id: deploy
+        run: ./deploy.sh || echo "DEPLOY_FAILED=true" >> $GITHUB_ENV
+      - name: Record deployment outcome
+        run: |
+          if [ "${{ env.DEPLOY_FAILED }}" == "true" ]; then
+            echo "ci_deployment_failures_total{environment=\"production\"} 1" >> metrics.prom
+          else
+            echo "ci_deployment_success_total{environment=\"production\"} 1" >> metrics.prom
+          fi
+```
+
+**Explicación**:
+- Registra despliegues fallidos o exitosos como contadores Prometheus, permitiendo calcular la tasa de fallo.
+
+**Ejemplo de medición de MTTR**
+
+Este ejemplo usa un script para registrar el tiempo de recuperación tras un fallo.
+
+```bash
+# scripts/monitor_recovery.sh
+#!/bin/bash
+START_TIME=$(date +%s)
+# Simular diagnóstico y corrección
+sleep 10  # Simulación de hotfix
+END_TIME=$(date +%s)
+MTTR=$((END_TIME - START_TIME))
+echo "ci_mttr_seconds{incident=\"service_down\"} $MTTR" >> metrics.prom
+```
+
+**Uso en CI**:
+
+```yaml
+- name: Monitor MTTR
+  run: ./scripts/monitor_recovery.sh
+```
+
+**Explicación**:
+- Calcula el tiempo entre la detección y la corrección de un fallo, emitiendo una métrica Prometheus.
 
 ### 4. Integración de métricas de rendimiento en CI/CD: instrumentación, almacenamiento, visualización y automatización
 
@@ -509,7 +756,6 @@ ci_pipeline_duration_seconds{branch="main",stage="deploy",runner="ubuntu"} 35.72
 ```
 
 Con esta taxonomía, es posible construir dashboards altamente filtrables y correlacionar métricas según el flujo de trabajo.
-
 
 #### 4.3 Visualización: dashboards y análisis interactivo
 
@@ -679,4 +925,82 @@ No debe pasarse por alto que métricas de pipelines a veces contienen informaci�
 
    * Establecer políticas de retención acorde a normas de seguridad y cumplimiento (p.ej. GDPR), eliminando datos de branches obsoletos tras el cierre de proyectos.
 
+**Ejemplo de configuración de alerta en Prometheus**
+
+Este ejemplo define una alerta para un Lead Time excesivo.
+
+```yaml
+# prometheus/alerts.yml
+groups:
+- name: pipeline_alerts
+  rules:
+  - alert: HighLeadTime
+    expr: avg_over_time(ci_lead_time_seconds{environment="production"}[6h]) > 3600
+    for: 30m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Lead Time alto en producción"
+      description: "El Lead Time medio en las últimas 6 horas supera 1 hora."
+```
+
+**Explicación**:
+- Dispara una alerta si el Lead Time promedio en 6 horas excede 1 hora, notificando vía Alertmanager.
+
+**Ejemplo de Dashboard en Grafana**
+Este JSON define un panel de Grafana para visualizar Lead Time.
+
+```json
+{
+  "title": "Lead Time for Changes",
+  "type": "timeseries",
+  "targets": [
+    {
+      "expr": "avg_over_time(ci_lead_time_seconds{environment=\"production\"}[1d])",
+      "legendFormat": "Lead Time ({{branch}})"
+    }
+  ],
+  "yaxes": [
+    {
+      "format": "seconds",
+      "label": "Lead Time (s)"
+    }
+  ]
+}
+```
+
+**Explicación**:
+- Muestra el Lead Time promedio diario, con un eje Y en segundos, filtrable por rama.
+
+**Ejemplo de automatización con Gatekeeping**
+
+Este ejemplo bloquea un PR si la cobertura cae por debajo del 80% o los benchmarks se degradan.
+
+```yaml
+name: PR Checks
+on: [pull_request]
+jobs:
+  gatekeeping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pytest-benchmark
+      - name: Run tests with coverage
+        run: pytest --cov=app --cov-report=xml --cov-fail-under=80
+      - name: Run benchmarks
+        run: pytest --benchmark-save=baseline
+      - name: Compare benchmarks
+        run: pytest --benchmark-compare --benchmark-fail-max-time-diff=0.05
+```
+
+**Explicación**:
+- Falla el pipeline si la cobertura es <80% o si algún test es >5% más lento que la línea base.
+
+
 La integración profunda de las métricas de rendimiento en el pipeline CI/CD, con captura precisa, almacenamiento escalable, visualización atractiva y automatización de respuestas, convierte el proceso de entrega en un sistema cognitivo: no solo revela el estado actual, sino que aprende de su comportamiento pasado y reacciona de forma autónoma para mantener la salud y la agilidad del desarrollo.
+
