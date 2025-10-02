@@ -6,8 +6,6 @@ En esta actividad, se configura sprints en GitHub, asigna **story points** a his
 
 En este ejercicio, crearás un plan de sprint a partir de tu product backlog. Esto normalmente se hace durante la reunión de planificación del sprint con todo el equipo, así que para este ejercicio, simularemos esa reunión.
 
-##### Objetivos
-
 Después de completar este ejercicio, podrás:
 
 - Configurar sprints  
@@ -69,7 +67,7 @@ En este ejercicio, crearás un sprint plan. Asignaremos puntos de historia estim
 
 7. La reunión de planificación del sprint ha avanzado bien. En las discusiones con el equipo de desarrollo, han estimado las siguientes dos historias en el Product Backlog y han determinado que ambas pueden caber en el sprint actual. Selecciona cada una de las siguientes historias en el Product Backlog, asígnales los puntos de historia correspondientes y el mismo Sprint, y arrástralas al Sprint Backlog en el mismo orden.
 
-   | Título de la Historia                      | Puntos de Historia |
+   | Título de la historia                      | Puntos de historia |
    | ------------------------------------------ | ------------------ |
    | Must persist counter across restarts       | 5                  |
    | Deploy service to the cloud               | 5                  |
@@ -158,8 +156,6 @@ En este ejercicio, simularás el flujo de trabajo diario de un desarrollador en 
 
 En este ejercicio, configurarás un burndown chart para tu sprint plan usando GitHub. Un burndown chart es una herramienta visual utilizada en la gestión ágil de proyectos para rastrear el progreso de un proyecto a lo largo del tiempo. Muestra la cantidad de trabajo restante frente al tiempo. El eje x en un burndown chart normalmente representa la línea de tiempo (días, sprints, etc.), mientras que el eje y muestra la cantidad de trabajo restante (a menudo medido en story points, tareas u horas). El gráfico ayuda a los equipos a monitorear su progreso y predecir si completarán su trabajo antes de la fecha límite del proyecto.
 
-##### Objetivos
-
 Después de completar esta actividad, podrás:
 
 - Entender cómo configurar tu burndown chart  
@@ -203,8 +199,6 @@ En este ejercicio, configurarás tu burndown chart para mostrar el estado de las
 #### Parte 3
 
 En este ejercicio práctico, aprenderás las actividades esenciales de cierre de sprint utilizando GitHub para gestionar historias no terminadas y preparar el backlog para el próximo sprint. Ajustarás los story points para las tareas incompletas, moverás las historias completadas a la columna **Done** y crearás nuevos issues para documentar el trabajo pendiente, asegurando una transición y continuidad fluidas entre sprints.
-
-##### Objetivos
 
 Después de completar este ejercicio, podrás:
 
