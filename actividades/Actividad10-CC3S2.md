@@ -1,6 +1,8 @@
 ### **Actividad: Gestión ágil de proyectos con GitHub Projects, configuración de Kanban Board y creación de historias de usuario**
 
-En esta actividad se configura un Kanban board en GitHub Projects para optimizar el flujo de trabajo. Se crean plantillas de **issues** para estandarizar historias de usuario para organizar y priorizar el product backlog, editando y reordenando historias. Refinar el backlog, preparando historias para el sprint con etiquetas y categorías adecuadas. Utilizar GitHub Projects para planificar, seguir y entregar proyectos ágiles de manera efectiva, asegurando una gestión clara y eficiente del proceso de desarrollo.
+En esta actividad se configura un Kanban board en GitHub Projects para optimizar el flujo de trabajo. Se crean plantillas de **issues** para estandarizar historias de usuario para organizar y priorizar el product backlog, editando y reordenando historias. Refinar el backlog, preparando historias para el sprint con etiquetas y categorías adecuadas. 
+
+Utilizar GitHub Projects para planificar, seguir y entregar proyectos ágiles de manera efectiva, asegurando una gestión clara y eficiente del proceso de desarrollo.
 
 #### Parte 1
 
@@ -185,7 +187,7 @@ Después de completar este ejercicio, podrás:
 - Counters can be reset
 
 
-##### 1: Triage de nuevos issues
+#### 1: Triage de nuevos issues
 
 En este ejercicio, tomarás todas las historias en la columna **New Issues** y las moverás a una columna apropiada o las rechazarás.
 
@@ -200,7 +202,7 @@ En este ejercicio, tomarás todas las historias en la columna **New Issues** y l
 Ahora has completado el triage de nuevos issues y puedes comenzar a hacer que las historias en la columna **Product Backlog** estén listas para el sprint.
 
 
-##### 2: Hacer que las historias estén listas para el sprint
+#### 2: Hacer que las historias estén listas para el sprint
 
 En esta parte, agregarás más detalles a las historias en el **Product Backlog** que creas que podrían entrar en el próximo sprint. Se te proporcionarán los detalles para dos de las historias. Debes proporcionar los detalles para las otras tres.
 
@@ -222,7 +224,7 @@ En esta parte, agregarás más detalles a las historias en el **Product Backlog*
 Al completar este ejercicio, tu Kanban board debería tener suficientes detalles en todas las historias del **Product Backlog** para hacerlas listas para el sprint.
 
 
-##### 3: Crear nuevas labels en GitHub
+#### 3: Crear nuevas labels en GitHub
 
 En este ejercicio, crearás una nueva label en GitHub llamada **technical debt** para marcar aquellas historias que no aportan valor visible al cliente pero deben completarse para continuar con el desarrollo.
 
@@ -240,7 +242,7 @@ En este ejercicio, crearás una nueva label en GitHub llamada **technical debt**
 
 Ahora deberías ver una label amarilla **technical debt** que podemos usar para anotar nuestras historias.
 
-##### 4: Añadir labels a las historias
+#### 4: Añadir labels a las historias
 
 En este ejercicio, añadirás labels a las historias en el **Product Backlog** para hacerlas aún más listas para el sprint. También usarás nuestra nueva label llamada **technical debt** para marcar aquellas historias que no aportan valor visible al cliente pero deben completarse para continuar con el desarrollo.
 
@@ -274,7 +276,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 
 ### Ejercicios
 
-##### Ejercicio 1: Crear un epic y vincular historias de usuario
+#### Ejercicio 1: Crear un epic y vincular historias de usuario
 
 **Objetivo:** Aprender a organizar historias de usuario más grandes en Epics y vincular múltiples historias de usuario a un Epic.
 
@@ -287,7 +289,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 **Resultado esperado:** El Epic "Gestión de Contadores" debe contener las historias de usuario relacionadas, proporcionando una visión global de esta funcionalidad.
 
 
-##### Ejercicio 2: Uso avanzado de etiquetas (labels) para priorización y estado
+#### Ejercicio 2: Uso avanzado de etiquetas (labels) para priorización y estado
 
 **Objetivo:** Aprender a usar etiquetas de manera más detallada para indicar la prioridad y el estado de las historias.
 
@@ -301,7 +303,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 **Resultado esperado:** Las historias de usuario tendrán etiquetas que indiquen tanto su prioridad como su estado actual, facilitando la gestión del flujo de trabajo.
 
 
-##### Ejercicio 3: Automatización de Kanban board con GitHub Actions
+#### Ejercicio 3: Automatización de Kanban board con GitHub Actions
 
 **Objetivo:** Aprender a automatizar tareas en el Kanban board usando GitHub Actions.
 
@@ -313,7 +315,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 **Resultado esperado:** Las historias de usuario se mueven automáticamente en el Kanban board según las reglas definidas, como cambiar de columna al asociar un pull request o al cerrar un issue.
 
 
-##### Ejercicio 4: Seguimiento de tiempo y esfuerzo usando GitHub Projects
+#### Ejercicio 4: Seguimiento de tiempo y esfuerzo usando GitHub Projects
 
 **Objetivo:** Aprender a usar el seguimiento de tiempo y esfuerzo para las historias de usuario en GitHub Projects.
 
@@ -326,7 +328,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 **Resultado esperado:** Cada historia de usuario tendrá una estimación de tiempo y un registro del tiempo real invertido, permitiendo un análisis del esfuerzo requerido.
 
 
-##### Ejercicio 5: Refinamiento de backlog basado en comentarios de los stakeholders
+#### Ejercicio 5: Refinamiento de backlog basado en comentarios de los stakeholders
 
 **Objetivo:** Aprender a refinar las historias de usuario del Product Backlog basado en comentarios de los stakeholders.
 
@@ -340,7 +342,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 **Resultado esperado:** La nueva historia de usuario basada en los comentarios de los stakeholders está correctamente integrada y priorizada en el Product Backlog.
 
 
-##### Ejercicio 6: Análisis del flujo de trabajo usando el Kanban board
+#### Ejercicio 6: Análisis del flujo de trabajo usando el Kanban board
 
 **Objetivo:** Analizar el flujo de trabajo usando las métricas proporcionadas por el Kanban board.
 
