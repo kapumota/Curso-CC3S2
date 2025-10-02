@@ -7,7 +7,7 @@ La cobertura (coverage) corresponde a un indicador cuantitativo que refleja qué
 * **Definición**: porcentaje de líneas de código que fueron ejecutadas al menos una vez por alguno de los tests.
 * **Cálculo**:
 
-  **Line coverage** = (Líneas ejecutadas / Líneas totales) × 100%
+  **Line coverage** = (Líneas ejecutadas/Líneas totales) × 100%
 
 * **Utilidad**: brinda una visión preliminar del alcance de la suite; si la cobertura de línea es baja, significa que hay muchas rutas de código completamente sin validar.
 
@@ -16,7 +16,7 @@ La cobertura (coverage) corresponde a un indicador cuantitativo que refleja qué
 * **Definición**: mide el porcentaje de bifurcaciones (condicionales, bucles, expresiones ternarias) cubiertas por los tests, considerando tanto el camino "verdadero" como el "falso" de cada punto de decisión.
 * **Cálculo**:
 
-  **Branch coverage** = (Ramas ejecutadas / Ramas totales) × 100%
+  **Branch coverage** = (Ramas ejecutadas/Ramas totales) × 100%
 
 * **Importancia**: con la cobertura de línea únicamente podríamos estar ejecutando siempre la rama "if true" y nunca validar la parte de "else". La cobertura de rama corrige esa limitación y exige tests más exhaustivos.
 
@@ -25,7 +25,7 @@ La cobertura (coverage) corresponde a un indicador cuantitativo que refleja qué
 * **Definición**: porcentaje de funciones o métodos que fueron invocados al menos una vez por la suite de tests.
 * **Cálculo**:
 
-  **Function coverage** = (Funciones ejecutadas / Funciones totales) × 100%
+  **Function coverage** = (Funciones ejecutadas/Funciones totales) × 100%
 
 * **Ventaja**: permite asegurar que cada unidad conceptual (función, método) ha sido efectivamente puesta a prueba, incluso aunque internamente no todas sus líneas estén cubiertas.
 
