@@ -1,13 +1,6 @@
 ### **Actividad: Gestión ágil de proyectos con GitHub Projects, configuración de Kanban Board y creación de historias de usuario**
 
-#### Objetivos:
-
-- Configurar y personalizar un Kanban board en GitHub Projects para gestionar el flujo de trabajo de manera eficiente.  
-- Crear y utilizar plantillas de issues en GitHub para estandarizar la escritura de historias de usuario.  
-- Organizar y priorizar el product backlog mediante la creación, edición y reordenación de historias de usuario en el Kanban board.  
-- Realizar el refinamiento del backlog, preparando las historias para el sprint y asegurando la correcta asignación de etiquetas y categorías.  
-- Utilizar GitHub Projects como una herramienta efectiva para la planificación, seguimiento y entrega de proyectos ágiles.  
-
+En esta actividad se configura un Kanban board en GitHub Projects para optimizar el flujo de trabajo. Se crean plantillas de **issues** para estandarizar historias de usuario para organizar y priorizar el product backlog, editando y reordenando historias. Refinar el backlog, preparando historias para el sprint con etiquetas y categorías adecuadas. Utilizar GitHub Projects para planificar, seguir y entregar proyectos ágiles de manera efectiva, asegurando una gestión clara y eficiente del proceso de desarrollo.
 
 #### Parte 1
 
