@@ -4,7 +4,7 @@
 ACTIVITY ?= aserciones_pruebas
 
 # Lista de actividades disponibles
-ACTIVITIES = aserciones_pruebas coverage_pruebas factories_fakes objects_mocking \
+ACTIVITIES = aserciones_pruebas coverage_pruebas factories_fakes mocking_objetos \
              practica_tdd pruebas_fixtures pruebas_pytest
 
 # Flags comunes para pytest (puedes ampliarlas)
@@ -15,7 +15,7 @@ PY_WARNINGS  ?= ignore::DeprecationWarning
 LINT_MAX_LINE ?= 88
 LINT_IGNORE   ?= E501,W391,W293
 # Ignora F401 en reexport del __init__ y E402 solo en archivos de tests
-LINT_PER_FILE ?= Actividades/objects_mocking/models/__init__.py:F401,Actividades/*/tests/*.py:E402
+LINT_PER_FILE ?= Actividades/mocking_objetos/models/__init__.py:F401,Actividades/*/tests/*.py:E402
 
 # Ayuda
 
