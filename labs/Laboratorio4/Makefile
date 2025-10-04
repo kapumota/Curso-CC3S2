@@ -4,7 +4,7 @@
 ACTIVITY ?= aserciones_pruebas
 
 # Lista de actividades disponibles
-ACTIVITIES = aserciones_pruebas coverage_pruebas factories_fakes objects_mocking \
+ACTIVITIES = aserciones_pruebas coverage_pruebas factories_fakes mocking_objetos\
              practica_tdd pruebas_fixtures pruebas_pytest
 
 # Flags comunes para pytest (puedes ampliarlas)
