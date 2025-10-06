@@ -1,5 +1,5 @@
 # Makefile (modo 'bdd'): asume que ya activaste el entorno virtual 'bdd'
-#   source bdd/bin/activate
+# source bdd/bin/activate
 # Las herramientas se resuelven desde el PATH del entorno activo.
 
 PY=python
