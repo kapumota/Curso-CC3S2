@@ -1,3 +1,4 @@
+#test_service_and_dip.py
 from app.adapters import FakeHttpClient, SecureRequestsClient
 from app.service import MovieService
 import pytest
