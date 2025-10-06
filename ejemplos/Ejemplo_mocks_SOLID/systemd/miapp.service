@@ -2,6 +2,7 @@
 Description=Mi App (DevSecOps/SOLID demo)
 After=network.target
 
+
 [Service]
 Type=simple
 User=www-data
