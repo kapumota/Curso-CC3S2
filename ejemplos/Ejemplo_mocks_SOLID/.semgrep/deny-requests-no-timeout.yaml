@@ -1,3 +1,4 @@
+#.sempgrep
 rules:
 - id: requests-no-timeout
   patterns:
