@@ -10,7 +10,7 @@ La actividad se divide en una parte teórica (reflexión conceptual) y una parte
 * Realiza la actividad en tu repositorio personal del curso.
 * Crea una carpeta llamada `Actividad3-CC3S2` y sube un archivo Markdown (`respuestas.md`) con tus respuestas teóricas, capturas de pantalla o salidas de comandos para la parte práctica, y cualquier archivo modificado o generado (sin incluir código fuente original).
 * Incluye un PDF breve (máx. 4 páginas) con informe resumido, cuadro de evidencias y checklist de trazabilidad.
-* Usa el laboratorio proporcionado (Makefile, app.py, configuraciones de Nginx, systemd, Netplan e Instrucciones.md).
+* Usa el [laboratorio 1](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio1) proporcionado (Makefile, app.py, configuraciones de Nginx, systemd, Netplan e Instrucciones.md).
 * Los ejercicios deben ser retadores: incluye razonamiento, modificaciones y depuración donde aplique.
 * Sube el repositorio actualizado antes de la fecha límite. En el README de la carpeta, agrega una tabla índice enlazando a evidencias.
 
