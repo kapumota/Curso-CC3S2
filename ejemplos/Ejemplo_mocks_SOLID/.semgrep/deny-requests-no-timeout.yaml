@@ -1,0 +1,8 @@
+rules:
+- id: requests-no-timeout
+  patterns:
+    - pattern: requests.$FUNC($URL)
+    - pattern-not: requests.$FUNC($URL, timeout=$TIMEOUT)
+  message: "Uso de requests sin timeout"
+  severity: ERROR
+  languages: [python]

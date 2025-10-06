@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    environment:
+      HTTP_TIMEOUT: "2.0"
+      ALLOWED_HOSTS: "api.ejemplo.com"
+    command: ["bash", "-lc", "make gates && python -m app.main"]
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,19 @@
+[Unit]
+Description=Mi App (DevSecOps/SOLID demo)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Environment=HTTP_TIMEOUT=2.0
+Environment=ALLOWED_HOSTS=api.ejemplo.com
+WorkingDirectory=/opt/miapp
+ExecStart=/usr/bin/python3 -m app.main
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
