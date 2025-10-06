@@ -1,3 +1,4 @@
+#adapter.py
 import os
 import urllib.parse
 import requests
