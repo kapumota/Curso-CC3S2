@@ -1,4 +1,4 @@
-# DevSecOps Mocks/Stubs + DI/DIP + SOLID (IaC local) — versión lint-clean (modo bdd)
+### DevSecOps Mocks/Stubs + DI/DIP + SOLID (IaC local) - versión lint-clean
 
 Este proyecto integra dobles de prueba, DI/DIP, SOLID y gates DevSecOps con política como código.
 Esta versión ya corrige los hallazgos de `ruff` reportados y usa un Makefile para un entorno **ya activado** (`bdd`).
