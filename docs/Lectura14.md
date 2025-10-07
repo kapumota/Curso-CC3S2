@@ -4,8 +4,7 @@
 
 ### Introducción y contexto operativo
 
-El proyecto que analizamos define un servicio de negocio minimalista que consulta un endpoint externo y lo hace cumpliendo políticas
-de DevSecOps como allowlist de hosts y timeouts configurables por variables de entorno.
+El proyecto que analizamos define un servicio de negocio minimalista que consulta un endpoint externo y lo hace cumpliendo políticas de DevSecOps como allowlist de hosts y timeouts configurables por variables de entorno.
 La estructura modular incluye un puerto de abstracción `HttpPort`, un servicio `MovieService` que depende de ese puerto, dos adaptadores HTTP que lo implementan y una ruta de entrada que levanta el servicio con un cliente falso para ejecución determinista. 
 
 El contrato del puerto queda establecido en `ports.py` con un protocolo typing que exige un método `get_json` que devuelve datos serializadosa partir de una URL, lo que elimina el acoplamiento directo del dominio con una librería de red particular .
@@ -58,8 +57,7 @@ Para pruebas que verdaderamente simulen recursos costosos o configuraciones comu
 
 ### Fixtures anidadas y reutilización
 
-La composición de fixtures hace evidente la separación de responsabilidades. Uno entrega datos de ejemplo, otro arma el cliente fake y 
-otro arma el servicio. 
+La composición de fixtures hace evidente la separación de responsabilidades. Uno entrega datos de ejemplo, otro arma el cliente fake y  otro arma el servicio. 
 
 Con esto, un test puede recibir el servicio ya listo, mientras otro se queda en el nivel del cliente si lo necesita.
 En el proyecto, la composición real se ve en `main.py`, donde se "anidan" responsabilidades en tres pasosequilibrados: construir fixtures, crear el `FakeHttpClient` y construir el `MovieService` para luego imprimir el resultado. 
@@ -113,7 +111,6 @@ En `SecureRequestsClient` el timeout se resuelve al módulo import time, lo que 
 
 A nivel de función `get_json`, el timeout se consulta del módulo y se pasa al cliente inyectado. Ambas rutas se benefician de las técnicas de parcheo según el punto donde se evalúa la variable  .
 
-
 ### 7. Autospec y `create_autospec`
 
 En `test_clients.py` se usa `Mock` genérico, pero en escenarios con APIs más ricas conviene restringir atributos para evitar falsos positivos. 
@@ -123,8 +120,7 @@ Esto endurece la prueba y previene errores sutiles. El patrón sería `http = cr
 ### 8. Inspección de llamadas con `call_args_list`
 
 Además de `assert_called_once_with`, a veces necesitamos ver *todas* las invocaciones, especialmente en flujos que reintentan con **backoff**. 
-La lista `call_args_list` del mock revela la secuencia de parámetros. Tras ejecutar una función que realiza varias llamadas, podríamos 
-inspeccionar cada tupla para asegurar que primero se llamó al endpoint de *status*, luego al de *ratings*, o que los tiempos entre reintentos crecieron según política. 
+La lista `call_args_list` del mock revela la secuencia de parámetros. Tras ejecutar una función que realiza varias llamadas, podríamos inspeccionar cada tupla para asegurar que primero se llamó al endpoint de *status*, luego al de *ratings*, o que los tiempos entre reintentos crecieron según política. 
 
 El diseño actual consulta un solo endpoint, pero si `MovieService` creciera para encadenar `status`, `movie_reviews` y `movie_ratings`, `call_args_list` sería clave para validar orden y parámetros sin tocar la red. 
 Hoy se valida una única llamada con los parámetros exactos, lo que ya establece la base de inspección de interacción .
@@ -146,7 +142,6 @@ Integrar estas marcas con el Makefile garantiza que los gates no fallen por caus
 El ciclo TDD Red Verde Refactor se ve en miniatura en la prueba `test_main_prints_status`. Primero escribimos un test que espera que `main` imprima claves y valores que señalan el servicio arriba. Luego implementamos el composition root para que pase usando el fake y fixtures. Finalmente refactorizamos hacia DI clara y política de seguridad en los adaptadores. El test asegura que la salida en stdout contiene indicadores `ok` y `service up`, lo que sirve como contrato observable del CLI de demostración  .
 
 El parcheo con `monkeypatch.setattr` en la capa de red apoya la etapa Roja al simular rápidamente respuestas y errores de `requests`, para después codificar el adapter seguro que además verifica allowlist y timeout. La prueba de allowlist que espera `ValueError` tanto en `clients.get_json` como en `SecureRequestsClient` fija una expectativa de política de seguridad que guía la implementación y evita regresiones futuras  .
-
 
 ### DevSecOps, SOLID, DI y el composition root
 
@@ -200,7 +195,6 @@ Con pytest, las variantes de DI se expresan en cómo preparamos y suministramos 
 
 * **Factory-like**. Aunque no existe una clase factory formal, el comentario sugiere introducir una `httpFactory` protocolar. En pytest la factory suele expresarse como un fixture que devuelve instancias listas para usar, quizás parametrizado por política de entorno. El patrón reduce duplicación y facilita componer estrategias de red o de fake a gusto .
 
-
 #### Pruebas de contrato y seguridad en la capa de red
 
 La prueba `test_secure_requests_client_happy_path` define un *fake_get* que asegura que la URL y el timeout son correctos y devuelve un `DummyResp` exitoso. 
@@ -215,7 +209,6 @@ Si más adelante el conjunto `ALLOWED_HOSTS` se configurara por entorno, bastar�
 En la ruta alternativa de cliente funcional `clients.get_json`, se impone la misma política a través de `_check_allowlist` que extrae `hostname` con `urllib.parse.urlparse` y compara contra el conjunto de permitidos. 
 La prueba `test_allowlist_bloquea_dominios_no_permitidos` lo verifica y evita llamadas a red para hosts maliciosos. 
 Este diseño ofrece dos lugares coherentes donde validar la política, uno orientado a clase **adapter** y otro a función **proxy**, ambos alineados con DevSecOps  .
-
 
 #### Contratos observables y pruebas de entrada por CLI
 
@@ -258,23 +251,18 @@ El siguiente paso natural sería mover la URL a configuración, mantener la allo
 
 Cada método del servicio seguiría dependiendo del puerto `HttpPort`, y los tests a nivel dominio usarían `FakeHttpClient` con fixtures por  URL, mientras que los tests del adapter seguirían en bajo nivel con `monkeypatch` a `requests.get` y verificaciones de interacción y política. 
 
-Esta metodología mantiene el dominio libre de detalles, sostiene la testabilidad extrema y permite que el composition root decida cómo 
-se conectan las dependencias según el entorno, que es el corazón del DIP y de una arquitectura limpia para DevSecOps.
+Esta metodología mantiene el dominio libre de detalles, sostiene la testabilidad extrema y permite que el composition root decida cómo se conectan las dependencias según el entorno, que es el corazón del DIP y de una arquitectura limpia para DevSecOps.
 
 #### Integración con el Makefile y pipeline
 
 El Makefile define un modo de trabajo donde las herramientas se resuelven desde el entorno virtual activo y ofrece tareas estándar que deberían ejecutarse en CI. 
 
-La combinación de `lint` más `coverage` en `gates` pone barreras de calidad que encajan con un enfoque DevSecOps, donde la seguridad y la 
-robustez se prueban temprano y a cada commit. `security` y `semgrep` aportan análisis estático de patrones peligrosos, por ejemplo invocaciones a red sin timeout o interpolación insegura de rutas, que es exactamente lo que el adapter seguro ya evita a nivel de código. 
+La combinación de `lint` más `coverage` en `gates` pone barreras de calidad que encajan con un enfoque DevSecOps, donde la seguridad y la robustez se prueban temprano y a cada commit. `security` y `semgrep` aportan análisis estático de patrones peligrosos, por ejemplo invocaciones a red sin timeout o interpolación insegura de rutas, que es exactamente lo que el adapter seguro ya evita a nivel de código. 
 El target `pack` crea artefactos deterministas con normalización de metadata y suma de verificación, lo que cierra el círculo de reproducibilidad y auditoría.
 
 Desde pytest, cada tema descrito arriba contribuye a que esos gates sean significativos. Los stubs evitan **flakiness**, los mocks verifican contratos de interacción, los fixtures reducen duplicación y preparan contextos 
-claros, `monkeypatch` facilita controlar entorno y dependencias, el parcheo dirigido en TDD acelera el Red-Verde-Refactor, **autospec** evita 
-falsos positivos y la inspección de llamadas documenta y asegura la orquestación correcta del comportamiento.  
-
+claros, `monkeypatch` facilita controlar entorno y dependencias, el parcheo dirigido en TDD acelera el Red-Verde-Refactor, **autospec** evita falsos positivos y la inspección de llamadas documenta y asegura la orquestación correcta del comportamiento.  
 Sumado al **composition root**, todos estos elementos forman una línea de montaje de calidad y seguridad que no depende de servicios externos y que produce evidencia confiable en cada ejecución.
-
 
 ### Implementación del composition root
 
@@ -384,12 +372,10 @@ def test_main_prints_status(capsys):
     assert "ok" in out and "service" in out and "up" in out
 ```
 
-
 #### Por qué esto es DIP y SOLID
 
 * **DIP**: `MovieService` depende de `HttpPort` y no de `requests` ni de ninguna clase concreta. Cambiar la implementación de `HttpPort` no requiere tocar el servicio.
 * **SRP**: `main.py` decide cableado y modo de ejecución. `MovieService` hace negocio. `adapters.py` hace IO y política de seguridad. Cada uno con su responsabilidad.
-
 
 #### Cómo cambiar la política sin tocar el dominio
 
