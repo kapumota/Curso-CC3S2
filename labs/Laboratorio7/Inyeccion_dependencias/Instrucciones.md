@@ -1,6 +1,8 @@
 ###  Inyección de dependencias en IaC usando Terraform y Python
 
-Este proyecto describe el patrón de **inyección de dependencias** aplicado a la provisión de infraestructura (IaC) de manera local, usando Terraform y  Python. Se analizan los componentes clave del código, su flujo de ejecución y los beneficios de este enfoque.
+Este proyecto describe el patrón de **inyección de dependencias** aplicado a la provisión de infraestructura (IaC) de manera local, usando Terraform y  Python. 
+
+Se analizan los componentes clave del código, su flujo de ejecución y los beneficios de este enfoque.
 
 #### Flujo de ejecución y comandos
 
