@@ -48,7 +48,6 @@ class ConfigSingleton(metaclass=SingletonMeta):
     def set(self, key: str, value: Any) -> None:
         """
         Establece un valor en la configuración global.
-
         Args:
             key: clave de configuración.
             value: valor asociado.
@@ -58,7 +57,6 @@ class ConfigSingleton(metaclass=SingletonMeta):
     def get(self, key: str, default: Any = None) -> Any:
         """
         Recupera un valor de la configuración global.
-
         Args:
             key: clave a consultar.
             default: valor por defecto si no existe la clave.
