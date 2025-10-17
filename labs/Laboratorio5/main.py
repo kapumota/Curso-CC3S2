@@ -1,5 +1,4 @@
 import json
-
 def hello_server_local(name, network):
     return {
         "resource": [
