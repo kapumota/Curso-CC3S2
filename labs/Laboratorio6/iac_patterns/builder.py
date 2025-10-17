@@ -1,6 +1,5 @@
 """Patrón Builder
-Construye de manera fluida configuraciones Terraform locales combinando los
-patrones Factory, Prototype y Composite.
+Construye de manera fluida configuraciones Terraform locales combinando los patrones Factory, Prototype y Composite.
 """
 
 from typing import Dict, Any
