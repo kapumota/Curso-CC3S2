@@ -1,5 +1,4 @@
 """Patrón Factory
-----------------
 Encapsula la lógica de creación de objetos para recursos Terraform del tipo null_resource.
 """
 
