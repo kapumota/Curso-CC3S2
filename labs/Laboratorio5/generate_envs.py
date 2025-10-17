@@ -19,7 +19,7 @@ def render_and_write(env):
         os.path.join(env_dir, "network.tf.json")
     )
 
-    # 2) Genera main.tf.json SÓLO con recursos
+    # 2) Genera main.tf.json solo con recursos
     config = {
         "resource": [
             {
