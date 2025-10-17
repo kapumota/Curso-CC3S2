@@ -10,7 +10,6 @@ cd Iac_orquestador_local
 pip install -r requirements.txt   # si usas Jinja2 o dependencias
 ```
 
-
 #### Uso
 
 1. Genera entornos:
