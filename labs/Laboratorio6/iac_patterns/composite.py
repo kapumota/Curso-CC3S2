@@ -28,7 +28,7 @@ class CompositeModule:
 
     def export(self) -> Dict[str, Any]:
         """
-        Exporta todos los recursos agregados en un único diccionario.
+        Exporta todos los recursos agregados a un único diccionario.
         Esta estructura se puede serializar directamente a un archivo Terraform JSON válido.
 
         Returns:
