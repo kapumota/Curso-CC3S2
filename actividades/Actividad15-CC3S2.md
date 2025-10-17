@@ -7,7 +7,7 @@ En esta actividad:
 
 
 #### Fase 0: Preparación
-Utiliza para esta actividad el siguiente [proyecto](https://github.com/kapumota/DS/tree/main/2025-1/local_iac_patterns) como referencia.
+Utiliza para esta actividad el siguiente [Laboratorio 6](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio6) como referencia.
 
 1. **Configura** el entorno virtual:
 
