@@ -5,6 +5,7 @@ El objetivo es ilustrar cómo abstraer y transformar metadatos genéricos (roles
 bloques `null_resource`.
 
 #### **Patrón Adapter en IaC**
+
 El patrón Adapter permite convertir la interfaz de un módulo de bajo nivel en otra que un módulo de alto nivel pueda consumir, manteniendo un contrato estable entre ambos. En el contexto de IaC:
 
 * **Contrato de salida común**: el adapter expone siempre un método `outputs()` que devuelve una lista de tuplas `(user, identity, role)`.
@@ -71,6 +72,7 @@ El patrón Adapter permite convertir la interfaz de un módulo de bajo nivel en 
    * Consulta `terraform.tfstate`.
 
 #### **Ejercicios teóricos y prácticos**
+
 1. Describe cómo garantizarías la validez del contrato `outputs()` en un proyecto con tres adaptadores distintos (por ejemplo, para GCP, AWS y fichero CSV). Indica qué pruebas unitarias escribirías para verificar que cada adaptador cumple su interfaz.
 
 2. Analiza la complejidad temporal y espacial de `LocalIdentityAdapter` y de `LocalProjectUsers` en función del número de roles $R$ y usuarios $U$. ¿Cómo escalaría el sistema si duplicas el módulo de metadatos original?
