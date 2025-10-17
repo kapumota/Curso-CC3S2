@@ -42,6 +42,7 @@ class ServerFactoryModule:
             }
         }
 
+
 if __name__ == "__main__":
     server = ServerFactoryModule(name="hello-world")
     with open('server.tf.json', 'w') as f:
