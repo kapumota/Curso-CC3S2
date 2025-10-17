@@ -1,6 +1,7 @@
 import json
 import access
 
+
 class LocalIdentityAdapter:
     """Adapter para transformar los roles genéricos a recursos locales null_resource."""
     def __init__(self, metadata):
