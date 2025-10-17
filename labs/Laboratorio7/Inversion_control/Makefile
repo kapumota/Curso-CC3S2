@@ -6,7 +6,7 @@ TF_ENV := \
 
 .PHONY: all prepare network server clean destroy
 
-all: prepare network server          ## Flujo completo
+all: prepare network server         
 
 prepare:
 	@mkdir -p .terraform/plugin-cache .terraform/tmp
