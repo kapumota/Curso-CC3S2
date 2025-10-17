@@ -1,4 +1,4 @@
-### Laboratorio: Patrones de Arquitectura en IaC local (Terraform + Python)
+### Laboratorio: Patrones de arquitectura en IaC local (Terraform + Python)
 
 Este laboratorio reúne **cinco módulos** que demuestran patrones de diseño aplicados a **Infraestructura como Código (IaC) local** usando**Terraform en formato JSON** y pequeños **programas en Python**:
 
