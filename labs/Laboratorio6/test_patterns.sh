@@ -56,7 +56,7 @@ comp.add(ResourcePrototype(NullResourceFactory.create('comp_proto')).data);\
 print(json.dumps(comp.export(), indent=2))"
 
 # 4. Builder
-echo "=== Probando patrón: Builder ==="
+echo "Probando el patrón: Builder"
 python generate_infra.py
 mv "$TF_DIR/main.tf.json" "$TF_DIR/builder.tf.json"
 mv "$TF_DIR/builder.tf.json" "$TF_DIR/main.tf.json"
@@ -69,7 +69,7 @@ rm "../builder.plan" main.tf.json
 cd "$ROOT_DIR"
 
 # 5. Singleton (solo Python)
-echo "=== Probando patrón: Singleton ==="
+echo "Probando el patrón: Singleton"
 python - <<'PYCODE'
 from iac_patterns.singleton import ConfigSingleton
 import json
