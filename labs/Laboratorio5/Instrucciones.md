@@ -1,4 +1,4 @@
-### Laboratorio 5:  Escribiendo infraestructura como código en un entorno local
+### Laboratorio:  Escribiendo infraestructura como código en un entorno local
 
 #### Requisitos
 - Terraform 1.x
