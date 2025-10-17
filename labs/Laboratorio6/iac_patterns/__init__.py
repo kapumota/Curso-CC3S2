@@ -1,10 +1,7 @@
 """Paquete iac_patterns
 
-Una colección de implementaciones de patrones de diseño (Singleton, Factory,
-Prototype, Builder, Composite) adaptadas para generar configuraciones JSON de Terraform
-que funcionan únicamente de forma local. Todos los recursos generados dependen
-únicamente de los proveedores `null_resource` y `local_file`, por lo tanto, **no**
-se requiere ningún proveedor en la nube, demonio de Docker o hipervisor externo.
+Una colección de implementaciones de patrones de diseño (Singleton, Factory, Prototype, Builder, Composite) adaptadas para generar 
+configuraciones JSON de Terraform que funcionan únicamente de forma local. 
 
 Ejemplo de uso
 --------------
