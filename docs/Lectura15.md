@@ -240,7 +240,7 @@ terraform apply -var-file=staging.tfvars
 
 Sin tocar código ni copiar y pegar.
 
-#### Versionado de cambios breaking
+#### Versionado de cambios
 
 Cuando cambies la sintaxis de un módulo (por ejemplo, cambies el nombre de una variable), crea un **CHANGELOG.md** o un documento de migración en tu repo, indicando paso a paso cómo actualizar de la versión anterior a la nueva.
 
@@ -292,7 +292,7 @@ Adoptar IaC no es solo una moda: aporta beneficios concretos en control, velocid
 * **Rollback instantáneo**
   Si un despliegue automático introduce un error, basta con revertir el commit en Git (`git revert <SHA>`) y volver a ejecutar la pipeline. Terraform detectará que el archivo ha vuelto a la versión anterior y deshará cualquier cambio no deseado. Este proceso toma minutos, en lugar de horas de reconstrucción manual.
 
-#### 2. Retorno de inversión (ROI) de tiempo
+#### 2. Retorno de Inversión (ROI) de tiempo
 
 * **Despliegues exprés**
   Un entorno completo, una red local simulada con `null_resource`, servidor de pruebas, balanceador se crea en segundos con:
@@ -351,7 +351,7 @@ Adoptar IaC no es solo una moda: aporta beneficios concretos en control, velocid
   Al versionar los `aws_iam_policy` o sus equivalentes locales, documentas qué permisos exactos necesita cada componente. Si mañana una función lambda reclama permisos excesivos, el diff del código muestra exactamente qué añadió y por qué, evitando que un servicio tenga más privilegios de los necesarios.
 
 
-En conjunto, estos beneficios transforman la forma de operar de los equipos DevOps, convirtiendo tareas manuales y propensas a errores en flujos reproducibles, veloces y auditables. Infrastructure as Code es, hoy en día, la base indiscutible de cualquier estrategia de despliegue automatizado y resiliente.
+En conjunto, estos beneficios transforman la forma de operar de los equipos DevOps, convirtiendo tareas manuales y propensas a errores en flujos reproducibles, veloces y auditables. IaCes, hoy en día, la base indiscutible de cualquier estrategia de despliegue automatizado y resiliente.
 
 ### Herramientas
 
@@ -606,7 +606,9 @@ En un entorno DevOps estas herramientas forman un **flujo continuo** que va desd
 
 ### Escribiendo IaC
 
-Al escribir Infrastructure as Code (IaC) buscamos capturar en texto plano todo el ciclo de vida de nuestros recursos, desde su creación hasta su actualización o destrucción, de modo que cualquier cambio sea visible, revisable y reproducible. A continuación profundizamos de manera fluida en cómo expresar cambios, trabajar con entornos inmutables y, finalmente, compartir pautas para mantener el código IaC limpio y sostenible.
+Al escribir Infrastructure as Code (IaC) buscamos capturar en texto plano todo el ciclo de vida de nuestros recursos, desde su creación hasta su actualización o destrucción, de modo que cualquier cambio sea visible, revisable y reproducible. 
+
+A continuación profundizamos de manera fluida en cómo expresar cambios, trabajar con entornos inmutables y, finalmente, compartir pautas para mantener el código IaC limpio y sostenible.
 
 #### Expresando cambios en infraestructura
 
