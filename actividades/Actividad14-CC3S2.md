@@ -12,7 +12,7 @@ Después verás cómo Terraform identifica cambios, remedia desvíos manuales y 
 
 #### Fase 0: Preparación 
 
-1. **Revisa** el [proyecto de la actividad](https://github.com/kapumota/DS/tree/main/2025-1/Iac_orquestador_local)  :
+1. **Revisa** el [laboratorio 5](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio5)  :
 
    ```
    modules/simulated_app/
