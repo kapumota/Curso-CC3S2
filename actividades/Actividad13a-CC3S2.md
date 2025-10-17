@@ -1,15 +1,10 @@
 ### Actividad: Patrones de dependencias y módulos en IaC con Terraform y Python
 
-#### Objetivos
-
-1. Comprender y aplicar patrones de dependencia (unidireccional, inyección de dependencias, facade, adaptador, mediador).
-2. Explorar distintos esquemas de organización de repositorios (mono-repositorio vs multi-repositorio).
-3. Implementar control de versiones, liberación y publicación de módulos Terraform.
-4. Ejecutar, probar y compartir módulos de manera local y remota.
+La actividad busca de forma integrada, el desarrollo de  los patrones de dependencia más usados en ingeniería de software e IaC, desde flujos unidireccionales hasta inyección de dependencias, así como los patrones facade, adapter y mediator y que sepas cuándo aplicar cada uno para desacoplar, orquestar y evolucionar sistemas.
 
 #### Pre-requisitos
 
-* Utiliza el siguiente [proyecto](https://github.com/kapumota/DS/tree/main/2025-1/Patrones_dependencias_infraestructura) dado y las lecturas 27->29 del curso.
+* Utiliza el siguiente [Laboratorio 7](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio7) dado y las lecturas 15->17 del curso.
 * Tener instalados:
 
   * Terraform (>= 1.0)
