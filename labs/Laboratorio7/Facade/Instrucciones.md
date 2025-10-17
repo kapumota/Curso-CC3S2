@@ -62,7 +62,6 @@ Con esta estructura, logramos un diseño modular y fácil de mantener, aplicando
    terraform destroy
    ```
 
-
 #### Ejercicios teóricos
 
 1. **Comparativa de patrones**
@@ -76,7 +75,7 @@ Con esta estructura, logramos un diseño modular y fácil de mantener, aplicando
 
    * **Tarea:**
 
-     1. Señala en el código dado cuáles son las "abstracciones" y cuáles las "concreciones".
+     1. Señala en el código dado cuáles son las "abstracciones".
      2. Propón una refactorización que invierta aún más las dependencias (por ejemplo, inyectando el intérprete "python" como parámetro).
      3. Justifica cómo tu cambio mejora (o no) la adherencia al DIP.
 
@@ -110,7 +109,7 @@ Con esta estructura, logramos un diseño modular y fácil de mantener, aplicando
 
      1. Escribe un pequeño script de Python (o pytest) que, tras generar los JSON, valide:
 
-        * Que `bucket.tf.json` tiene "resource.null\_resource.storage\_bucket".
+        * Que `bucket.tf.json` tiene "resource.null_resource.storage_bucket".
         * Que `bucket_access.tf.json` incluye `depends_on` apuntando a `"null_resource.storage_bucket"`.
      2. Añade un test que modifique el nombre base y compruebe que los triggers cambian correctamente.
      3. Documenta cómo integrar estas pruebas en un pipeline CI (por ejemplo, GitHub Actions).
