@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 class StorageBucketModule:
     def __init__(self, name_base, buckets_dir="./buckets"):
         self.name = f"{name_base}-storage-bucket"
