@@ -1,7 +1,5 @@
 """Patrón Prototype
-
-Permite clonar objetos Terraform y modificarlos de forma controlada,
-sin alterar el original.
+Permite clonar objetos Terraform y modificarlos de forma controlada, sin alterar el original.
 """
 
 import copy
