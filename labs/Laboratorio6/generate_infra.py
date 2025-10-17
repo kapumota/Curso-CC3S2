@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Punto de entrada que une todos los patrones para generar una configuración
-Terraform completamente local en formato JSON.
+Punto de entrada que une todos los patrones para generar una configuración Terraform completamente local en formato JSON.
 
 El archivo resultante puede aplicarse con:
 
