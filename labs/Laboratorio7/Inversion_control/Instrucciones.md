@@ -21,7 +21,7 @@ Inversion_control/
 * Permisos de escritura en el directorio del proyecto.
 
 
-#### Variables de entorno (TF\_ENV)
+#### Variables de entorno (TF_ENV)
 
 Para aislar la carpeta de datos y caché de Terraform dentro del proyecto, definimos en el Makefile:
 
@@ -100,8 +100,8 @@ Configuración Terraform generada para crear el recurso de servidor con sus trig
 
 Automatiza los pasos anteriores, encapsulando variables de entorno y comandos Terraform + Python.
 
-
 #### Ejercicios 
+
 #### Teóricos
 
 1. Relaciona la **Inversión de Control** con el principio de `D` (Dependecy Inversion) en SOLID. Describe un ejemplo en IaC.
