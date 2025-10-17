@@ -2,8 +2,8 @@
 
 #### 1. Instrucciones
 
-El patrón **mediador** organiza dependencias complejas entre recursos de infraestructura y controla el orden de creación/eliminación mediante un componente central. En un entorno **local** con Terraform, podemos simular la provisión de red, servidor y firewall usando únicamente recursos `null_resource` (con `triggers`) o `local_file`, manteniendo 
-idempotencia e inyección de dependencias.
+El patrón **mediador** organiza dependencias complejas entre recursos de infraestructura y controla el orden de creación/eliminación mediante un componente central. En un entorno **local** con Terraform, podemos simular la provisión de red, servidor y firewall usando únicamente recursos `null_resource` (con `triggers`) o `local_file`, manteniendo idempotencia e inyección de dependencias.
+
 
 #### Flujo de trabajo
 
