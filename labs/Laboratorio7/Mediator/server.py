@@ -1,5 +1,6 @@
 from dependency import DependsOn
 
+
 class ServerFactoryModule:
     def __init__(self, depends=None):
         self.depends = depends
