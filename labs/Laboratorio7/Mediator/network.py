@@ -1,5 +1,6 @@
 from dependency import DependsOn
 
+
 class NetworkFactoryModule:
     def build(self):
         return {
