@@ -337,3 +337,93 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 3. Identifica cuellos de botella en tu flujo de trabajo e identifica posibles mejoras.
 
 **Resultado esperado:** Obtención de un análisis detallado del flujo de trabajo y una lista de posibles acciones para mejorar la eficiencia del equipo, de acuerdo a lo que se presenta en github.
+
+### Entregable
+
+Entrega la Carpeta Actividad11-CC3S2 contiene este archivo y capturas.
+
+- Repositorio: Enlace (Reemplaza:https://github.com/tu-usuario/repo)Proyecto Kanban:
+- Enlace (Reemplaza:https://github.com/users/tu-usuario/projects/1)  
+
+
+#### Parte 1: Kanban Board
+
+- **Tablero inicial:** Captura de "Devops-agile" con columnas predeterminadas.
+  - **Archivo:** `capturas/tablero-inicial.png`
+
+- **Columnas renombradas:** Ready -> **Icebox**, In Review -> **Review/QA**.
+  - **Archivos:** `capturas/icebox.png`, `capturas/review-qa.png`
+
+- **Tablero final:** Columnas **Product Backlog** y **Sprint Backlogs**, orden correcto.
+  - **Archivo:** `capturas/tablero-final-parte1.png`
+
+#### Parte 2: Issue template
+
+- **Configuración:** *Settings > Features > Custom template*.
+  - **Archivo:** `capturas/template-config.png`
+
+- **Template User Story:** Markdown de ejemplo.
+  - **Enlace:** `.github/ISSUE_TEMPLATE/user-story.md`
+  - **Commit:** `capturas/commit-template.png`
+
+#### Parte 3: Historias de usuario
+
+- **7 Issues:**
+  - **Enlaces:** *Counter*, *Multiple Counters*, *Persist*, *Reset*, *Deploy*, *Remove*, *Update*
+  - **Creación:** `capturas/creacion-issue.png`
+
+- **Límite:** *New Issues* con límite **7**.
+  - **Archivo:** `capturas/limite-new-issues.png`
+
+- **Priorización:** *Counter* al inicio de **Product Backlog**, *Multiple Counters* en **Icebox**, resto en **New Issues**.
+  - **Archivo:** `capturas/tablero-parte3.png`
+
+#### Parte 4: Refinamiento y labels
+
+- **Triage:** *Deploy* bajo *Persist*, *Remove* a **Icebox**, *Update* tras *Reset*.
+  - **Archivos:** `capturas/triage-deploy.png`, `capturas/triage-remove.png`, `capturas/triage-update.png`
+
+- **Edición:** Detalles y criterios para todas las historias en **Product Backlog**.
+  - **Archivos:** `capturas/edit-counter.png`, etc.
+
+- **Label Technical Debt:** Amarillo `#FBCA04`.
+  - **Archivo:** `capturas/label-technical-debt.png`
+
+- **Labels Asignados:** **enhancement** para la mayoría, **technical debt** para *Deploy*.
+  - **Archivo:** `capturas/labels-visibles.png`
+
+#### Ejercicio 1: Epic
+
+- **Enlace:** *Gestión de Contadores*
+- **Captura:** Historias vinculadas + “Generar reportes de uso”.
+- **Archivo:** `capturas/epic.png`
+
+#### Ejercicio 2: Etiquetas
+
+- **Labels:** *High/Medium/Low Priority*, *In Review*, *Blocked*, *Ready for Testing*.
+- **Captura:** `capturas/nuevas-labels.png`
+- **Tablero:** `capturas/tablero-labels-ej2.png`
+
+#### Ejercicio 3: GitHub Actions
+
+- **Enlace:** `.github/workflows/kanban-automation.yml`
+-  **Captura:** YAML y prueba de automatización.
+- **Archivos:** `capturas/workflow.png`, `capturas/automation-proof.png`
+
+#### Ejercicio 4: Tiempo
+
+- **Campo:** Esfuerzo estimado (horas).
+- **Captura:** `capturas/campo-esfuerzo.png`
+-  **Resumen:** *Counter:* **4h** estimado, **5h** real.
+
+#### Ejercicio 5: Stakeholder Feedback
+
+- **Enlace:** *Exportar a CSV*
+- **Captura:** Historia priorizada.
+- **Archivo:** `capturas/export-csv.png`
+
+#### Ejercicio 6: Análisis
+
+- **Métricas:** *Cycle time*, cuellos de botella (**Review/QA: 3 días**).
+- **Archivos:** `capturas/metricas.png`, `capturas/reporte-metricas.txt`
+
