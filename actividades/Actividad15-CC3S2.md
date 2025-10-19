@@ -140,7 +140,7 @@ La actividad busca de forma integrada, el desarrollo de  los patrones de depende
 
 Para completar la actividad se debe crear una carpeta principal llamada `Actividad15-CC3S2`. Esta carpeta contendrá todos los entregables organizados de manera clara y estructurada, incluyendo código, documentación, diagramas, informes y evidencias de ejecución. 
 
-#### Estructura general de la carpeta
+#### Ejemplo de estructura general de la carpeta 
 
 ```
 Actividad15-CC3S2/
@@ -248,6 +248,4 @@ Actividad15-CC3S2/
 - **Longitud y Calidad**: Mantén las explicaciones concisas pero completas. Incluye referencias a lecturas 15-17 del curso.
 - **Originalidad**: Todo código debe estar comentado, y los informes deben reflejar comprensión propia (no copiar texto genérico).
 - **Si usas multi-repositorio**: Proporciona enlaces a GitHub en `repositorios/README_repos.md`. Si es monorepositorio, mantén todo en `codigo/`.
-
-  - Ejercicios resueltos
 
