@@ -116,7 +116,7 @@ La actividad busca de forma integrada, el desarrollo de  los patrones de depende
 
    * Publica uno de tus módulos en un registro local y úsalo desde otro proyecto clonándolo mediante `terraform init`.
 
-#### Ejercicios adicionales
+#### Ejercicios adicionales (opcional)
 
 1. Explica las diferencias clave entre los patrones Facade, Adapter y Mediator en términos de acoplamiento y reutilización.
 2. Describe un escenario real (por ejemplo, despliegue multi-cloud) y justifica qué patrón usarías para gestionar dependencias complejas, señalando ventajas e inconvenientes de cada opción.
