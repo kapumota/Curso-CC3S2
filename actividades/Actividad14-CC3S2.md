@@ -157,9 +157,6 @@ class InfrastructureBuilder:
 
 * **Tarea**: Explica cómo `InfrastructureBuilder` orquesta Factory -> Prototype -> Composite y genera el archivo JSON final.
 
-> **Entregable fase 1**: Documentocon fragmentos de código destacados, explicación de cada patrón y un diagrama UML simplificado.
-
-
 #### Fase 2: Ejercicios prácticos 
 
 Extiende el código base en una rama nueva por ejercicio:
@@ -251,9 +248,6 @@ Extiende el código base en una rama nueva por ejercicio:
   ```
 * **Validación**: Exportar a JSON y revisar anidamiento `module -> <name> -> resource`.
 
-> **Entregable Fase 2**: Ramas Git con cada ejercicio, código modificado y logs de `terraform plan`/`apply`.
-
-
 #### Fase 3: Desafíos teórico-prácticos
 
 #### 3.1 Comparativa Factory vs Prototype
@@ -294,9 +288,9 @@ Extiende el código base en una rama nueva por ejercicio:
 
   def test_prototype_clone_independent():
       proto = ResourcePrototype(NullResourceFactory.create("app"))
-      c1 = proto.clone(lambda b: b.__setitem__("foo", 1))
-      c2 = proto.clone(lambda b: b.__setitem__("bar", 2))
-      assert "foo" not in c2 and "bar" not in c1
+      c1 = proto.clone(lambda b: b.__setitem__("f1", 1))
+      c2 = proto.clone(lambda b: b.__setitem__("b1", 2))
+      assert "f1" not in c2 and "b1" not in c1
   ```
 
 #### 3.4 Escalabilidad de JSON
@@ -309,9 +303,75 @@ Extiende el código base en una rama nueva por ejercicio:
 * **Esquema**: `builder.export_to_cloud(workspace)` usando API HTTP.
 * **Diagrama**: Flujo desde `generate_infra.py` -> `terraform login` -> `apply`.
 
-> **Entrega final**:
->
-> * Informe comparativo y código de Adapter.
-> * Suite de tests.
-> * Análisis de escalabilidad.
-> * (Opcional) Documento con flujo de integración a Terraform Cloud.
+### Entregable
+
+Para completar la actividad se debe preparar y presentar una sección de entregables en una carpeta principal llamada **Actividad14-CC3S2**. Esta carpeta debe organizarse de manera clara y estructurada, preferiblemente con subcarpetas por fase o ejercicio para facilitar la revisión.
+
+#### Estructura recomendada de la carpeta
+- **Actividad14-CC3S2/**
+  - **Fase1/**
+    - Documento principal (por ejemplo: "Entregable_Fase1.md" o "Entregable_Fase1.pdf")
+    - Diagramas UML (por ejemplo: "Diagrama_UML_Patrones.png" o archivos .drawio/.uml)
+  - **Fase2/**
+    - Subcarpetas por ejercicio (por ejemplo: "Ejercicio2.1/", "Ejercicio2.2/", etc.)
+    - Cada subcarpeta debe incluir: código modificado, rama Git asociada (puedes incluir un archivo README con el enlace o commit hash), y logs de Terraform.
+  - **Fase3/**
+    - Documentos y códigos por subdesafío (por ejemplo: "Comparativa_Factory_vs_Prototype.md", "adapter.py", etc.)
+    - Diagramas y mediciones donde aplique.
+  - **README.md**: Un archivo general que resuma la estructura de la carpeta, instrucciones para reproducir (por ejemplo: cómo clonar el repositorio, ejecutar tests), y cualquier nota adicional.
+
+#### Entregables detallados por fase
+
+#### Fase 1: Exploración y análisis
+- **Documento principal**: Un archivo (Markdown, PDF o Word) que incluya:
+  - Fragmentos de código destacados (usando sintaxis de código, por ejemplo: bloques ```python:disable-run
+  - Explicación detallada de cada patrón:
+    - **Singleton**: Cómo `SingletonMeta` garantiza una sola instancia (usando el diccionario `_instances` y el método `__call__`) y el rol del `lock` (para sincronización en entornos multihilo, evitando carreras).
+    - **Factory**: Cómo `NullResourceFactory` encapsula la creación de `null_resource` (método estático `create` que genera un diccionario Terraform-compatible), y el propósito de `triggers` (para forzar re-ejecuciones en Terraform, usando UUID y timestamp para unicidad).
+    - **Prototype**: Explicación del proceso de clonación profunda (usando `deepcopy` para copiar el template independientemente), y cómo el `mutator` (una función callable) permite personalizar cada clon sin afectar el original.
+    - **Composite**: Cómo `CompositeModule` agrupa múltiples bloques (método `add` para agregar hijos, `export` para merging recursivo en un JSON válido para Terraform, uniendo recursos como `null_resource`).
+    - **Builder**: Cómo `InfrastructureBuilder` orquesta los patrones (usa Factory para base, Prototype para clones mutados, Composite para agrupar, y exporta a JSON via `export`).
+- **Diagrama UML simplificado**: Uno o más diagramas (puedes usar herramientas como PlantUML, Draw.io o Lucidchart) que muestren:
+  - Clases y relaciones para cada patrón (por ejemplo: herencia en SingletonMeta, composición en Composite).
+  - Un diagrama general del flujo: Factory -> Prototype -> Composite -> Builder.
+  - Específicamente para Prototype: Diagrama del proceso de clonación (template -> deepcopy -> mutator -> nuevo dict).
+
+#### Fase 2: Ejercicios prácticos
+- **Ramas Git**: Crea una rama nueva por ejercicio en tu repositorio Git (basado en el lab base). Incluye en la carpeta:
+  - Enlace al repositorio o exporta las ramas como archivos ZIP/tar si es necesario.
+  - Para cada ejercicio: Código modificado (archivos .py actualizados) y logs de validación (archivos .txt o .log con salida de comandos como `terraform plan` y `terraform apply`).
+- **Ejercicio 2.1 (Extensión del Singleton)**:
+  - Archivo modificado: `singleton.py` con el método `reset()` implementado (limpia `settings` pero mantiene `created_at`).
+  - Log de prueba: Archivo con la salida del assert proporcionado (por ejemplo: script de test ejecutado).
+- **Ejercicio 2.2 (Variación de la Factory)**:
+  - Archivo modificado: `factory.py` con la clase `TimestampedNullResourceFactory` (usa `strftime(fmt)` en triggers).
+  - Log: Salida de `terraform plan` mostrando el recurso con formato de timestamp (por ejemplo: '%Y%m%d').
+- **Ejercicio 2.3 (Mutaciones avanzadas con Prototype)**:
+  - Archivo modificado: `prototype.py` o integración en `builder.py` con mutator que añade `local_file`.
+  - Log: Salida de `terraform apply` confirmando la creación de `bienvenida.txt`.
+- **Ejercicio 2.4 (Submódulos con Composite)**:
+  - Archivo modificado: `composite.py` con soporte para "module" en `export()`.
+  - Log: JSON exportado con submódulos "network" y "app", y salida de `terraform validate`.
+- **Ejercicio 2.5 (Builder personalizado)**:
+  - Archivo modificado: `builder.py` con método `build_group(name, size)`.
+  - Log: JSON exportado mostrando anidamiento `module -> <name> -> resource`, y salida de Terraform.
+
+#### Fase 3: Desafíos teórico-prácticos
+- **3.1 Comparativa Factory vs Prototype**:
+  - Documento (~300 palabras): Archivo Markdown/PDF explicando cuándo elegir cada uno en IaC (Factory para creación simple/estandarizada, Prototype para variaciones eficientes via clones). Discute costes (serialización profunda en Prototype es más costosa en memoria para objetos grandes vs creación directa en Factory) y mantenimiento (Prototype reduce duplicación de código).
+- **3.2 Patrones avanzados: Adapter**:
+  - Archivo de código: `adapter.py` con la clase `MockBucketAdapter` implementada (mapea null_resource a mock_cloud_bucket).
+  - Integración: Modificación en `builder.py` para insertar el adapter.
+  - Log/Prueba: JSON exportado con `mock_cloud_bucket`, y salida de Terraform.
+- **3.3 Tests automatizados con pytest**:
+  - Archivo de tests: `test_patterns.py` con al menos los ejemplos proporcionados (test_singleton_meta, test_prototype_clone_independent), y posiblemente más para cubrir otros patrones.
+  - Log: Salida de `pytest` (por ejemplo: archivo .txt con resultados de tests passing).
+- **3.4 Escalabilidad de JSON**:
+  - Medición: Script o log mostrando tamaño de `main.tf.json` para `build_null_fleet(15)` y `(150)` (usa comandos como `ls -l` o Python para medir bytes).
+  - Documento: Discusión (~200 palabras) sobre impacto en CI/CD (tiempos de parseo, límites de Git/storage) y estrategias de fragmentación (por ejemplo: módulos Terraform separados, HCL en lugar de JSON, o tools como Terragrunt).
+
+### Notas generales para la entrega
+- **Formato y calidad**: Usa Markdown para documentos por simplicidad. Asegura que los códigos sean ejecutables y los diagramas legibles. Incluye referencias al lab base (GitHub link).
+- **Validación general**: Ejecuta la preparación (Fase 0) y verifica que todo funcione (por ejemplo: `terraform validate` sin errores).
+- **Repositorio Git**: Sube la carpeta completa a GitHub o similar, y incluye el enlace en el README. Cada fase/ejercicio debe tener commits descriptivos.
+- **Completitud**: La actividad está completa si todos los entregables de Fase 1 y 2 están presentes, y al menos 3/5 de Fase 3. Si hay omisiones, justifícalas en el README.
