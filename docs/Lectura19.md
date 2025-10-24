@@ -1,46 +1,45 @@
 ### Seguridad en Infrastructure as Code (IaC) para DevSecOps
 
-Este informe proporciona un marco completo para integrar seguridad en IaC, con explicaciones claras de conceptos como Cadena de Suministro, SBOM y Secretos, y controles prácticos para DevSecOps.
+Este informe proporciona un marco completo para integrar seguridad en IaC, con explicaciones claras de conceptos como **cadena de suministro**, **SBOM** y **secretos**, y con controles prácticos para DevSecOps.
 
-### Seguridad y cumplimiento (Shift-Left real)
+### Seguridad y cumplimiento (shift-left real)
 
-#### Cadena de suministro (Supply Chain)
+### Cadena de suministro (Supply Chain)
 
-**Definición**: La cadena de suministro en IaC se refiere al conjunto de procesos, herramientas y dependencias involucradas en la creación, distribución y consumo de código de infraestructura, por ejemplo módulos de Terraform, **proveedores**, scripts.
-Una **cadena de suministro** insegura puede introducir vulnerabilidades o código malicioso y comprometer entornos enteros.
+**Definición**: La cadena de suministro en IaC comprende los procesos, herramientas y dependencias involucradas en la creación, distribución y consumo de código de infraestructura (por ejemplo,, módulos de Terraform, **proveedores**, scripts). Una cadena de suministro insegura puede introducir vulnerabilidades o código malicioso y comprometer entornos completos.
 
 **Controles clave**:
 
-* **SBOM (Lista de materiales de Software)**:
+* **SBOM (Lista de materiales de software)**
 
-  * **¿Qué es?**: Un SBOM es un inventario estructurado que lista todos los componentes de software de un módulo o plantilla IaC, incluyendo dependencias como **proveedores**, versiones y orígenes. Es análogo a una lista de ingredientes para el software.
-  * **Implementación**: Generar SBOM con herramientas como **Syft** o **Grype** para módulos Terraform, incluyendo **proveedores** como `aws ~> 4.0` y sus orígenes, por ejemplo el registro de HashiCorp. El SBOM debe estar versionado y auditado en cada **release**.
+  * **¿Qué es?**: Un SBOM es un inventario estructurado que lista todos los componentes de software de un módulo o plantilla IaC, incluidas dependencias como **proveedores**, versiones y orígenes. Es análogo a una lista de ingredientes del software.
+  * **Implementación**: Generar el SBOM con **Syft**; escanear vulnerabilidades con **Grype** (puede consumir el SBOM). Para módulos Terraform, incluir **proveedores** como `aws ~> 4.0` y sus orígenes (por ejemplo,, el registro de HashiCorp). Versionar y auditar el SBOM en cada **release**.
   * **Ejemplo**: Un módulo Terraform para un bucket S3 incluiría en su SBOM el **proveedor** AWS, su versión, el hash del archivo y cualquier módulo anidado.
 
-* **Verificación de proveedores (checksums de proveedores)**:
+* **Verificación de proveedores (sumas de verificación)**
 
-  * **¿Qué es?**: Los **proveedores** como AWS y Azure son binarios descargados desde **registros**. Verificar sus checksums asegura que no han sido manipulados.
-  * **Implementación**: Usar `terraform providers lock` para generar un archivo de **bloqueo** con checksums verificados. En CI, validar que los **proveedores** descargados coincidan con estos checksums.
-  * **Ejemplo**: `terraform init` con `--lockfile=readonly` falla si el hash del **proveedor** no coincide.
+  * **¿Qué es?**: Los **proveedores** (AWS, Azure, etc.) son binarios descargados desde registros. Verificar sus sumas de verificación garantiza que no han sido manipulados.
+  * **Implementación**: Usar `terraform providers lock` para generar un archivo de **bloqueo** con sumas de verificación. En CI, validar que los **proveedores** descargados coincidan con ese archivo.
+  * **Ejemplo**: `terraform init --lockfile=readonly` falla si el hash del **proveedor** no coincide.
 
-* **SLSA y procedencia de artefactos**:
+* **SLSA y procedencia de artefactos**
 
-  * **¿Qué es?**: SLSA es un marco para asegurar la integridad de artefactos de software mediante metadatos de **procedencia** que documentan cómo y quién creó un artefacto.
-  * **Implementación**: Generar **procedencia** con herramientas como **Cosign** o **in-toto**, registrando el origen del módulo, por ejemplo el commit SHA y el repositorio Git. Almacenar en un registro seguro, por ejemplo un Terraform Registry privado.
-  * **Ejemplo**: Un módulo firmado incluye un archivo JSON con el commit SHA y el **pipeline** que lo generó.
+  * **¿Qué es?**: **SLSA** es un marco para asegurar la integridad de artefactos mediante metadatos de **procedencia** que documentan cómo y quién creó el artefacto.
+  * **Implementación**: Generar **procedencia** con **Cosign** o **in-toto**, registrando el commit SHA, el repositorio Git y el pipeline que produjo el módulo. Almacenar en un registro seguro (por ejemplo,, un Terraform Registry privado).
+  * **Ejemplo**: Un módulo firmado incluye un JSON de procedencia con el commit SHA y el **pipeline** que lo generó.
 
-* **Firma de releases y política de "solo etiquetas firmadas"**:
+* **Firma de releases y política de "solo etiquetas firmadas"**
 
-  * **¿Qué es?**: Firmar versiones asegura que los módulos consumidos son auténticos. La política de "solo etiquetas firmadas" prohíbe usar versiones no verificadas en producción.
-  * **Implementación**: Firmar releases con **GPG** o **Cosign**. **Forzar** en CI que solo se consuman etiquetas firmadas, por ejemplo GitHub Actions verifica la firma antes de `terraform apply`.
-  * **Ejemplo**: Un pipeline falla si la etiqueta `v1.0.0` no tiene una firma GPG válida.
+  * **¿Qué es?**: Firmar versiones asegura que los módulos consumidos son auténticos. La política de **solo etiquetas firmadas** prohíbe usar versiones no verificadas en producción.
+  * **Implementación**: Firmar releases con **GPG** o **Cosign**. **Forzar** en CI que solo se consuman etiquetas firmadas (por ejemplo,, GitHub Actions verifica la firma antes de `terraform apply`).
+  * **Ejemplo**: El pipeline falla si la etiqueta `v1.0.0` no tiene una firma GPG válida.
 
-* **Cadena de suministro "cerrada" de verdad**:
+* **Cadena de suministro cerrada**
 
-  * **Espejo interno de proveedores y módulos**: Mantener un **mirror** interno preparado para funcionar en modo aislado para **proveedores** y módulos, configurando `provider_installation` en Terraform para apuntar al espejo.
-  * **.terraform.lock.hcl de solo lectura en CI**: Forzar el archivo de bloqueo como de solo lectura para prevenir cambios no autorizados.
-  * **Objetivo SLSA**: Alcanzar SLSA nivel mayor o igual a 2 en la actualidad, con plan para nivel 3 en seis meses, con política de "solo consumir del registro interno" para aislar de fuentes externas.
-  * **Archivo de configuración de la CLI para mirrors**: Configurar espejos en el archivo de configuración de Terraform CLI, típicamente ubicado en `~/.terraformrc` o `~/.terraform.d/config.tfrc`.
+  * **Espejo interno de proveedores y módulos**: Mantener un **mirror** interno capaz de operar en modo aislado para **proveedores** y módulos; configurar `provider_installation` en Terraform para apuntar al espejo.
+  * **`.terraform.lock.hcl` de solo lectura en CI**: Forzar el archivo de bloqueo como solo lectura para evitar cambios no autorizados.
+  * **Objetivo SLSA**: Alcanzar **SLSA ≥ 2** en el presente y plan para **SLSA 3** en seis meses, con política de **"solo consumir del registro interno"** para aislarse de fuentes externas.
+  * **Archivo de configuración de la CLI para mirrors**: Configurar espejos en el archivo de configuración de Terraform CLI (`~/.terraformrc` o `~/.terraform.d/config.tfrc`).
   * **Ejemplo de configuración de Terraform CLI**:
 
     ```hcl
@@ -55,136 +54,147 @@ Una **cadena de suministro** insegura puede introducir vulnerabilidades o códig
     }
     ```
 
-    Este archivo asegura que Terraform solo consuma **proveedores** desde el **mirror** interno.
+    Esta configuración asegura que Terraform solo consuma **proveedores** desde el **mirror** interno.
 
 
-#### Secretos
+### Secretos
 
-**Definición**: Los secretos(secrets) son datos sensibles, por ejemplo, claves API, contraseñas, tokens, que, si se exponen, pueden comprometer la seguridad. En IaC, los secretos suelen aparecer en variables, archivos de configuración o scripts.
+**Definición**: Los **secretos** (*secrets*) son datos sensibles, por ejemplo, claves de API, contraseñas y *tokens* que, si se exponen, pueden comprometer la seguridad. En IaC, suelen aparecer en variables, archivos de configuración o scripts.
 
 **Controles clave**:
 
-* **Política de manejo centralizado, AWS Key Management Service, KMS, AWS Secrets Manager, ASM, GCP Secret Manager, SM, Azure Key Vault, AKV**:
+* **Gestión centralizada**
 
-  * **¿Qué es?**: Centralizar la gestión de secretos en servicios como AWS Key Management Service, KMS, AWS Secrets Manager, ASM, GCP Secret Manager, SM, o Azure Key Vault, AKV, evita hardcoding y facilita auditoría y rotación.
-  * **Implementación**: Almacenar secretos en AWS Secrets Manager, ASM, e inyectarlos en tiempo de ejecución mediante variables de entorno o integraciones, por ejemplo, Terraform `aws_secretsmanager_secret`. Usar roles IAM para limitar acceso.
-  * **Ejemplo**: Un secreto almacenado en AWS Secrets Manager, ASM, se inyecta como `data.aws_secretsmanager_secret_version.my_secret`.
-* **Rotación y detección de secretos en commits**:
+  * **Qué es**: Centralizar la gestión de secretos en servicios como **AWS KMS**, **AWS Secrets Manager**, **Google Secret Manager** y **Azure Key Vault** evita *hardcoding* y facilita auditoría y rotación.
+  * **Implementación**: Almacenar secretos en **AWS Secrets Manager** e inyectarlos en tiempo de ejecución mediante **variables de entorno** o integraciones (por ejemplo, el recurso de Terraform `aws_secretsmanager_secret`). Usar **roles IAM** para limitar el acceso.
+  * **Ejemplo**: Un secreto almacenado en AWS Secrets Manager se recupera como `data.aws_secretsmanager_secret_version.my_secret`.
 
-  * **¿Qué es?**: Rotar secretos regularmente, por ejemplo, cada 90 días, reduce el riesgo de exposición. Detectar secretos en commits evita filtraciones accidentales.
-  * **Implementación**: Usar hooks pre-commit con **GitGuardian** o **TruffleHog** para escanear código antes de subirlo. En CI, configurar verificaciones que fallen si se detectan secretos. Rotar automáticamente con scripts o AWS Secrets Manager, ASM.
-  * **Ejemplo**: Un hook pre-commit bloquea un commit con `AWS_ACCESS_KEY_ID` en un archivo `.tf`.
-* **Scope mínimo y rotación verificable**:
+* **Rotación y detección de secretos en commits**
 
-  * **Scope mínimo**: Secretos con alcance por entorno, env scoped, es decir, el secreto solo es válido y visible dentro de un entorno específico como `dev`, `staging` o `prod`. Esto evita que un pipeline o servicio de desarrollo acceda por error a credenciales de producción y refuerza el principio de menor privilegio. Para aplicarlo, se recomienda namespacing por entorno en el gestor de secretos, por ejemplo, `prod/db/password`, políticas IAM separadas con condiciones por entorno, separación de claves KMS por entorno para cifrado y descifrado, y reglas de protección por entorno en CI o GitHub Environments.
-  * **TTL, Time To Live**: Secretos y tokens con expiración automática en un periodo corto, por ejemplo, entre 5 y 60 minutos, reducen la ventana de ataque y limitan el impacto de filtraciones. Se sugiere usar tokens de sesión de corta duración, por ejemplo, AWS STS, GCP Service Account impersonation o credenciales federadas de Azure, habilitar rotación automática en el gestor de secretos y agregar verificaciones en CI que fallen si se detectan secretos con edad mayor a un umbral, por ejemplo, 90 días.
-  * **Preferencia por token exchange sobre llaves estáticas**: En lugar de almacenar y reutilizar llaves estáticas de larga duración, se debe intercambiar identidad por tokens temporales bajo demanda. Ejemplos incluyen GitHub Actions OIDC hacia AWS STS AssumeRole, Kubernetes ServiceAccount hacia GCP Workload Identity u OAuth 2.0 client credentials. Las ventajas son revocación simple al deshabilitar la emisión, menor superficie de exposición al no persistir secretos de larga vida y auditoría granular, ya que cada token emitido queda con huella temporal, origen y alcance. Por ejemplo, un job de GitHub presenta un token OIDC y AWS emite credenciales temporales con rol y TTL estricto para aplicar Terraform. En Kubernetes, la Workload Identity intercambia el JWT del ServiceAccount por un token de acceso con permisos limitados y caducidad corta.
-  * **Rotación comprobable**: Métrica de porcentaje de secretos rotados en menos de 90 días monitoreada en tableros. Incluir pruebas de revocación posteriores a la rotación para verificar que llaves antiguas fallen.
-  * **No secretos en Outputs o plan**: Validación OPA que falle si un output puede contener secreto, por ejemplo, regex para detectar patrones sensibles.
-  * **Ejemplo de política OPA para bloquear Outputs con posibles secretos**:
+  * **Qué es**: Rotar secretos con regularidad (por ejemplo, cada 90 días) reduce el riesgo de exposición. Detectar secretos en commits evita filtraciones accidentales.
+  * **Implementación**: Usar *hooks* **pre-commit** con **GitGuardian** o **TruffleHog** para escanear antes de *push*. En CI, configurar verificaciones que **fallen** si se detectan secretos. Automatizar la rotación con scripts o con el *scheduler* del gestor de secretos.
+  * **Ejemplo**: Un *hook* pre-commit bloquea un commit que contiene `AWS_ACCESS_KEY_ID` en un archivo `.tf`.
+
+* **Ámbito mínimo y rotación verificable**
+
+  * **Ámbito mínimo (por entorno)**: Los secretos deben tener alcance por entorno (*env-scoped*). El secreto solo es válido/visible en `dev`, `staging` o `prod`. Recomendado: *namespacing* por entorno en el gestor (por ejemplo, `prod/db/password`), **políticas IAM** separadas con condiciones por entorno, **claves KMS** distintas por entorno y **protecciones** por entorno en CI/GitHub Environments.
+
+  * **TTL (Time To Live)**: Usar secretos y *tokens* de **corta duración** (por ejemplo, 5-60 min) para reducir la ventana de ataque. Preferir **AWS STS**, **GCP Workload Identity / SA impersonation** o **credenciales federadas de Azure**. Habilitar rotación automática y agregar verificaciones en CI que fallen si se detectan secretos con **edad > 90 días**.
+
+  * **Preferir *token exchange* sobre llaves estáticas**: En vez de llaves de larga vida, intercambiar identidad por *tokens* temporales bajo demanda. Ejemplos: **GitHub Actions OIDC -> AWS STS AssumeRole**, **Kubernetes ServiceAccount -> GCP Workload Identity**, **OAuth 2.0 client credentials**. Ventajas: revocación simple, menor superficie (no persistir secretos) y auditoría granular (cada emisión queda trazada).
+
+  * **Rotación comprobable**: Medir **% de secretos rotados en < 90 días** en tableros. Incluir **pruebas de revocación** posteriores a la rotación (las llaves antiguas deben fallar).
+
+  * **No exponer secretos en *outputs* ni en el plan**: Validación con **OPA/Conftest** que falle si un *output* puede contener un secreto (por ejemplo, patrones sensibles).
+
+  * **Ejemplo de política OPA para bloquear *outputs* con posibles secretos**:
 
     ```rego
     package terraform
 
-    import rego.v1
-
-    deny contains msg if {
-      output := input.planned_values.outputs[_]
-      contains_sensitive(output.value)  # Función personalizada para detectar secretos, por ejemplo, regex para API keys
-      msg := sprintf("Output '%s' puede contener un secreto sensible", [output.name])
-    }
-
-    contains_sensitive(value) if {
-      regex.match("(?i)(key|secret|password|token|api_key)", value)
+    # Requiere entrada tipo tfplan para Conftest/OPA
+    deny[msg] {
+      some k
+      output := input.planned_values.outputs[k]
+      val := output.value
+      is_string(val)
+      re_match("(?i)(key|secret|password|token|api[_-]?key)", val)
+      msg := sprintf("El output '%s' puede contener un secreto sensible", [k])
     }
     ```
 
-    Esta política se integra en Conftest para fallar planes con outputs riesgosos.
+    Integra en **Conftest** para fallar *plans* con *outputs* riesgosos.
 
-#### IAM mínimamente privilegiado
+### IAM con privilegio mínimo
 
-**Definición**: El principio de privilegio mínimo (least privilege) asegura que las identidades (humanas o máquinas) solo tengan los permisos necesarios para su función.
+**Definición**: El principio de **privilegio mínimo** (*least privilege*) garantiza que las identidades, humanas o de máquina solo cuenten con los permisos estrictamente necesarios para su función.
 
-**Controles clave**:
+**Controles clave**
 
-* **Módulos con perfiles de permisos predeterminados**:
+* **Módulos con perfiles de permisos predeterminados**
 
-  * **¿Qué es?**: Los módulos IaC deben incluir políticas IAM con permisos mínimos, configurables mediante variables.
+  * **Qué es**: Los módulos IaC deben incluir **políticas IAM mínimas por defecto**, configurables mediante variables.
 
-    * **Explicación de "perfiles de permisos predeterminados"**: Conjunto base de permisos estrictos entregados por defecto por un módulo, que se pueden ampliar de forma controlada por variables. Ayuda a estandarizar el principio de privilegio mínimo.
-  * **Implementación**: Diseñar módulos con roles IAM predefinidos, por ejemplo, solo `s3:PutObject` para un bucket. Usar variables para overrides controlados.
+    * **"Perfiles de permisos predeterminados"**: Conjunto base y **estricto** de permisos que entrega el módulo por defecto; se puede **ampliar de forma controlada** mediante variables, estandarizando el principio de privilegio mínimo.
+  * **Implementación**: Diseñar módulos con **roles/políticas predefinidos** (por ejemplo, solo `s3:PutObject`/`s3:GetObject` sobre un bucket específico). Permitir **ajustes controlados** (antes "overrides") vía variables con límites y revisión.
 
-    * **Explicación de "overrides controlados"**: Mecanismo para ajustar parámetros por defecto de un módulo de forma delimitada y auditada. Previene que un cambio de variables abra permisos excesivos sin revisión.
-  * **Ejemplo**: Un módulo S3 define un rol con `s3:GetObject` pero no `s3:DeleteBucket`.
-* **Linters de políticas y pruebas de acceso negativas**:
+    * **"Ajustes controlados"**: Mecanismo para modificar valores por defecto **de forma delimitada y auditable**, evitando que un cambio de variables abra permisos excesivos sin revisión.
+  * **Ejemplo**: Un módulo de S3 define una política que permite `s3:GetObject` en un prefijo concreto y **no** permite `s3:DeleteBucket`.
+* **Analizadores de políticas y pruebas de acceso negativas**
 
-  * **¿Qué es?**: Linters analizan políticas para detectar permisos excesivos. Pruebas negativas verifican que accesos no autorizados fallen.
+  * **Qué es**: Los **analizadores estáticos** (linters) detectan permisos excesivos; las **pruebas negativas** verifican que accesos no autorizados **fallen** como se espera.
+  * **Implementación**: Ejecutar **tfsec** o **Checkov** en CI para analizar políticas y configuraciones; complementar con **Conftest/OPA** o **AWS IAM Access Analyzer/Policy Sentry** para validar condiciones de acceso. Incluir pruebas (por ejemplo, en `terraform test` + evaluaciones de políticas) que confirmen que operaciones no permitidas como `s3:DeleteBucket` resulten denegadas.
 
-  * **Implementación**: Usar **tfsec** o **Checkov** en CI para lintear políticas. Incluir tests en `terraform test` que validen accesos denegados, por ejemplo, intentar `s3:DeleteBucket` y esperar error.
 
-#### Cifrado y PKI
+### Cifrado y PKI
 
-**Definición**: El cifrado protege datos en reposo, por ejemplo, discos, y en tránsito, por ejemplo, red. PKI, Public Key Infrastructure, gestiona claves y certificados para autenticación y encriptado.
-- **Explicación de "en reposo" at rest**: Son datos almacenados en discos, bases o snapshots protegidos mediante cifrado en el almacenamiento.
-- **Explicación de "en tránsito" in transit**: Son datos que viajan por redes entre clientes y servicios protegidos por protocolos como TLS.
-- **Explicación de "PKI"**: Conjunto de procesos y componentes que emiten, validan y revocan certificados digitales, gestionan autoridades certificadoras y pares de claves públicas y privadas.
+**Definición**: El **cifrado** protege datos **en reposo** (por ejemplo, discos) y **en tránsito** (por ejemplo, redes). La **PKI (Infraestructura de Clave Pública)** gestiona claves y certificados para **autenticación** y **cifrado**.
 
-**Controles clave**:
+* **"En reposo" (at rest)**: Datos almacenados (discos, bases de datos, snapshots) protegidos mediante cifrado en el medio de almacenamiento.
+* **"En tránsito" (in transit)**: Datos que viajan por redes entre clientes y servicios, protegidos por protocolos como **TLS**.
+* **"PKI"**: Conjunto de procesos y componentes que **emiten**, **validan** y **revocan** certificados digitales; administran **autoridades certificadoras** y **pares de claves** pública/privada.
 
-* **Defaults de encriptado en reposo y tránsito**:
+**Controles clave**
 
-  * **¿Qué es?**: Encriptado en reposo protege datos almacenados y en tránsito protege datos en movimiento.
-  * **Implementación**: Configurar recursos como S3 o RDS con encriptado por defecto, AES 256. Forzar el cumplimiento mediante políticas o configuración que impida degradar la seguridad, por ejemplo rechazar conexiones sin TLS moderno (TLS 1.3 plus para APIs y endpoints).
-    * **Explicación de "TLS 1.3 plus"**: Protocolo de cifrado de transporte en su versión 1.3 o superior que mejora privacidad y rendimiento frente a versiones anteriores.
-    * **Explicación de "APIs" y "endpoints"**: Interfaces de programación y puntos de acceso de red donde clientes consumen servicios. Deben exigir TLS para proteger credenciales y datos.
-  * **Ejemplo**: `aws_s3_bucket` con `server_side_encryption_configuration` habilitado.
-* **Claves administradas, AWS Key Management Service KMS, con rotación y políticas de clave opinadas**:
+* **Cifrado por defecto en reposo y en tránsito**
 
-  * **¿Qué es?**: AWS Key Management Service KMS gestiona claves criptográficas con políticas estrictas y rotación programada. Las políticas de claves con una postura explícita y restrictiva, definen quién puede usar, administrar y rotar la clave. Evitan configuraciones laxas por defecto.
-  * **Implementación**: Usar KMS para claves con políticas que denieguen acceso no autorizado. Rotar claves anualmente o tras incidentes, con auditoría vía CloudTrail.
+  * **¿Qué es?**: Cifrar datos almacenados y datos en movimiento de forma predeterminada.
+  * **Implementación**: Configurar recursos (por ejemplo, **S3** o **RDS**) con cifrado por defecto (**AES-256**). Forzar el cumplimiento mediante políticas que impidan degradar la seguridad; por ejemplo, **rechazar** conexiones sin **TLS** moderno (**TLS 1.3+**) en **APIs** y **endpoints**.
 
-    * **Explicación de "rotación"**: Proceso de reemplazar claves de cifrado por nuevas en periodos definidos o después de incidentes para reducir el riesgo por exposición o desgaste criptográfico.
-    * **Explicación de "CloudTrail"**: Servicio de registro de auditoría de AWS que captura eventos de uso de API y cambios de configuración, útil para trazabilidad y cumplimiento.
-  * **Ejemplo**: Una política KMS permite solo `kms:Decrypt` a un rol específico.
+    * **"TLS 1.3+"**: Versión 1.3 o superior del protocolo TLS, que mejora privacidad y rendimiento respecto de versiones anteriores.
+    * **"APIs" y "endpoints"**: Interfaces y puntos de acceso de red por donde los clientes consumen servicios; deben exigir TLS para proteger credenciales y datos.
+  * **Ejemplo**: Recurso `aws_s3_bucket` con `server_side_encryption_configuration` habilitado.
+
+* **Claves administradas con AWS Key Management Service (KMS), rotación y políticas de clave opinadas**
+
+  * **¿Qué es?**: **AWS KMS** gestiona claves criptográficas con políticas estrictas y **rotación** programada. Las políticas de clave con postura explícita y restrictiva definen quién puede **usar**, **administrar** y **rotar** la clave, evitando configuraciones laxas.
+  * **Implementación**: Usar **KMS** para claves con políticas que **denieguen** acceso no autorizado. **Rotar** claves **anualmente** o tras incidentes, con auditoría vía **AWS CloudTrail**.
+
+    * **"Rotación"**: Reemplazar claves de cifrado por otras nuevas de forma periódica o tras incidentes para reducir riesgo por exposición.
+    * **"CloudTrail"**: Servicio de auditoría de AWS que registra uso de APIs y cambios de configuración, útil para trazabilidad y cumplimiento.
+  * **Ejemplo**: Política KMS que permite `kms:Decrypt` únicamente a un rol específico.
+
 
 #### Regulación
 
-**Definición**: Cumplir con regulaciones ISO 27001, NIST, PCI DSS implica alinear controles de seguridad con estándares específicos y gestionar excepciones.
-**Explicación de "ISO 27001"**: Norma internacional para sistemas de gestión de seguridad de la información que define controles y procesos para proteger activos.
-**Explicación de "PCI DSS"**: Estándar de seguridad para la industria de tarjetas de pago que regula la protección de datos de titulares y la operación de sistemas que los procesan.
+**Definición**: Cumplir con **ISO/IEC 27001**, **NIST** y **PCI DSS** implica alinear controles de seguridad con estándares específicos y gestionar **excepciones** formalmente.
 
-**Controles clave**:
+* **"ISO/IEC 27001"**: Norma para sistemas de gestión de seguridad de la información, con controles y procesos para proteger activos.
+* **"PCI DSS"**: Estándar de seguridad para la industria de tarjetas de pago que regula la protección de datos de titulares y la operación de los sistemas que los procesan.
 
-* **Mapear gates a controles**:
+**Controles clave**
 
-  * **¿Qué es?**: Cada gate en el pipeline debe corresponder a un control regulatorio.
+* **Mapear "gates" de pipeline a controles**
 
-    * **Explicación de "gates"**: Puntos de verificación que se deben aprobar para avanzar en el pipeline, por ejemplo escaneo de secretos o verificación de cifrado.
-    * **Explicación de "pipeline"**: Flujo automatizado de construcción, validación y despliegue de cambios que integra pruebas, análisis y controles de seguridad.
-  * **Implementación**: Crear una matriz que asocie gates, por ejemplo secrets scan, con controles como ISO A 10.1 protección criptográfica.
+  * **¿Qué es?**: Cada **gate** del pipeline debe corresponder a un control regulatorio.
 
-    * **Explicación de "secrets scan"**: Escaneo automatizado del repositorio y artefactos para detectar credenciales, claves o tokens expuestos y fallar si se encuentran.
-    * **Explicación de "ISO A 10.1" y "NIST SC 28"**: Referencias a controles específicos dentro de los marcos ISO y NIST. NIST SC 28 protege la confidencialidad de la información en reposo mediante mecanismos de cifrado y gestión de claves.
-  * **Ejemplo**: Gate de encriptado mapea a NIST SC 28.
-* **Proceso de excepciones con vencimiento, aceptación de riesgos con límite de tiempo (time boxed risk acceptance)**:
+    * **"Gates"**: Puntos de verificación que deben aprobarse para avanzar (por ejemplo, **escaneo de secretos** o verificación de **cifrado**).
+    * **"Pipeline"**: Flujo automatizado de construcción, validación y despliegue que integra pruebas, análisis y controles de seguridad.
+  * **Implementación**: Crear una **matriz** que asocie gates (por ejemplo, *secrets scan*) con controles (por ejemplo, **ISO Anexo A** control de criptografía, o **NIST SP 800-53 SC-28** para protección de información en reposo mediante cifrado y gestión de claves).
 
-  * **¿Qué es?**: Excepciones permiten desviaciones temporales de políticas con vencimiento definido.
+    * **"Secrets scan"**: Escaneo automatizado de repositorios y artefactos para detectar credenciales, claves o tokens expuestos y **fallar** si se encuentran.
+  * **Ejemplo**: El gate de **cifrado en reposo** se mapea a **NIST SC-28**.
 
-    * **Explicación de "time boxed risk acceptance"**: Aceptación consciente de un riesgo por un periodo limitado y documentado con condiciones de expiración y revisión.
-  * **Implementación**: Usar un sistema de tickets, por ejemplo Jira, para aprobar excepciones con vencimiento de 30 a 90 días y auditoría trimestral.
+* **Proceso de excepciones con vencimiento (time-boxed risk acceptance)**
+
+  * **¿Qué es?**: Excepciones que permiten **desviaciones temporales** de políticas con un vencimiento definido y condiciones claras.
+
+    * **"Time-boxed risk acceptance"**: Aceptación consciente de un riesgo por un **periodo limitado** y documentado, con fecha de expiración y revisión.
+  * **Implementación**: Gestionar excepciones en un sistema de tickets (por ejemplo, **Jira**), con vencimiento de **30-90 días** y **auditoría trimestral**.
+
 
 #### Estado y backend de Terraform
 
-**Definición**: El estado de Terraform almacena la configuración de la infraestructura, un backend seguro es crítico para prevenir corrupción, leaks o accesos no autorizados.
+**Definición**: El **estado de Terraform** representa el mapa fuente->recurso de la infraestructura. **Un backend seguro** es crítico para evitar **corrupción**, **filtraciones** o **accesos no autorizados**.
 
 **Controles clave**:
 
-* Usar backends cifrados como S3 con AWS Key Management Service (KMS), Azure Storage o GCS, habilitar versioning y Object Lock (WORM) para inmutabilidad.
-* Implementar locking con DynamoDB (para AWS) o tablas de locks equivalentes para prevenir applies concurrentes.
-* Usar workspaces para segregar estados, aplicar principio de menor privilegio (por ejemplo, roles para plan vs. apply).
-* Solo los roles de CI pueden ejecutar cambios en la infraestructura, las personas solo pueden generar planes mediante cuentas break-glass con MFA y expiración, y los outputs sensibles deben enmascararse en los planes.
-* **Evidencia**: Hash del state (SHA256), logs de lock/unlock, trail de plan/apply (por ejemplo, via CloudTrail).
-* **Ejemplo**: Backend en `main.tf`:
+* Usar **backends cifrados** (S3 con **AWS KMS** y **Object Lock (WORM)**, Azure Storage, o GCS), habilitando **versionado** del bucket/contenedor.
+* Implementar **locking** (por ejemplo, **DynamoDB** en AWS) o mecanismos equivalentes para **prevenir aplicaciones simultáneas de `terraform apply`**.
+* Usar **workspaces** para segregar estados y aplicar **principio de privilegio mínimo** (roles diferenciados para **plan** vs **apply**).
+* **Solo** los **roles de CI** pueden ejecutar cambios en infraestructura; las personas **solo** generan **planes** mediante **cuentas de emergencia (*break-glass*) con MFA y expiración**. **Oculta** salidas sensibles en **planes y logs**.
+* **Evidencia**: **hash** del archivo de estado (SHA-256), **trazas de lock/unlock**, y **traza de plan/apply** (por ejemplo, con **AWS CloudTrail**).
+* **Ejemplo** (backend en `main.tf`):
 
   ```hcl
   terraform {
@@ -199,198 +209,348 @@ Una **cadena de suministro** insegura puede introducir vulnerabilidades o códig
 
 #### Brechas y cómo cerrarlas
 
-**Definición**: Las brechas (gaps) en IaC son vulnerabilidades o debilidades comunes que pueden exponer la infraestructura a riesgos. Identificarlas y cerrarlas es esencial para una postura de seguridad robusta.
+**Definición**: Las **brechas** en IaC son debilidades que exponen la infraestructura a riesgos. **Detectarlas y cerrarlas** mantiene una postura de seguridad robusta.
 
-**Brechas comunes y estrategias de cierre**:
+**Brechas comunes y cierres**:
 
-* **Brecha: Falta de validación en en la cadena de suministros**: Dependencias no verificadas pueden introducir malware.
+* **Brecha: Falta de validación en la cadena de suministro** (dependencias no verificadas).
 
- * **Cierre**: Implementar SBOM, checksums y SLSA en todos los módulos. Usar gates CI que bloqueen deploys sin verificación.
-* **Brecha: Exposición de secretos en repositorios**: Secretos hardcoded en commits históricos.
-  * **Cierre**: Escanear repositorios existentes con TruffleHog y rotar todos los secretos detectados. Enforce pre-commit hooks y CI gates obligatorios.
-* **Brecha: IAM sobredimensionado**: Permisos excesivos permiten escalación de privilegios.
+  * **Cierre**: Implementar **SBOM**, **checksums** y **SLSA** en todos los módulos. Añadir **gates de CI** que bloqueen despliegues sin verificación.
+* **Brecha: Exposición de secretos en repositorios** (historial con *hardcode*).
 
-  * **Cierre**: Aplicar linters automáticos (tfsec) y pruebas negativas en cada PR. Revisar periódicamente con herramientas como AWS IAM Access Analyzer.
-* **Brecha: encriptado inconsistente**: Datos no encriptados en reposo/tránsito.
+  * **Cierre**: Escanear con **TruffleHog**; **rotar** secretos detectados. Forzar **pre-commit hooks** y **gates** en CI.
+* **Brecha: IAM sobredimensionado** (permisos excesivos).
 
-  * **Cierre**: Definir defaults en módulos y validar con OPA/Conftest. Monitorear post-deploy con CSPM para drifts.
-* **Brecha: Cumplimiento no documentado**: Falta de mapeo a regulaciones lleva a auditorías fallidas.
+  * **Cierre**: **Linters** automáticos (por ejemplo, `tfsec`) y **pruebas negativas** en cada PR; revisión periódica con **IAM Access Analyzer**.
+* **Brecha: Cifrado inconsistente** (en reposo/tránsito).
 
-  * **Cierre**: Mantener una matriz viva de gates vs. controles, con revisiones trimestrales y evidencia automatizada.
-* **Brecha: Drift no gestionado**: Cambios manuales en la nube ignoran IaC.
+  * **Cierre**: Definir **defaults seguros** en módulos y validar con **OPA/Conftest**; monitorear **post-deploy** con **CSPM** para *drift*.
+* **Brecha: Cumplimiento no documentado**.
 
-  * **Cierre**: Jobs diarios de detección con remediación automática para drifts menores, escalación para críticos.
-* **Brecha: Pruebas insuficientes**: Módulos no probados fallan en producción.
+  * **Cierre**: Mantener una **matriz viva** de **gates ↔ controles** con revisiones trimestrales y **evidencia automatizada**.
+* **Brecha: *Drift* no gestionado** (cambios manuales fuera de IaC).
 
-  * **Cierre**: Requerir cobertura >80% en unit/integration tests, con datos sintéticos para simular escenarios reales.
+  * **Cierre**: **Jobs diarios** de detección con remediación automática en casos menores y **escalación** en críticos.
+* **Brecha: Pruebas insuficientes** (fallos en producción).
+
+  * **Cierre**: Exigir **cobertura ≥ 80 %** en **unit/integration tests** con **datos sintéticos** representativos.
 
 #### Evidencia & Auditoría
 
-**Definición**: La evidencia y auditoría aseguran trazabilidad y cumplimiento, permitiendo verificar que los controles se aplicaron correctamente.
+**Definición**: La **evidencia** y **auditoría** garantizan **trazabilidad** y **cumplimiento**, verificando que los controles se aplicaron correctamente.
 
 **Controles clave**:
 
-* **Evidencia conservada por gate**: Cada gate en el pipeline genera artefactos para auditoría.
+* **Evidencia por gate** (artefactos y retención):
 
-  * **Gate de cadena de suministro (SBOM/Checksums)**: Artefacto (SBOM JSON), hash (SHA256 del módulo), log (CI output), adjunto (provenance file). Retención: 12 meses en almacenamiento immutable (por ejemplo, S3 con Object Lock).
-  * **Gate de secretos**: Artefacto (scan report), hash (N/A), log (pre-commit/CI logs), adjunto (lista de secretos detectados, anonimizada). Retención: 6 meses.
-  * **Gate de IAM**: Artefacto (lint report), hash (política IAM), log (test results), adjunto (negative test outputs). Retención: 12 meses.
-  * **Gate de encriptado**: Artefacto (OPA output), hash (key policy), log (plan diff), adjunto (certificados PKI). Retención: 24 meses para regulaciones financieras.
-  * **Gate de drift**: Artefacto (drift report), hash (state file), log (job execution), adjunto (remediation playbook). Retención: 12 meses.
+  * **Cadena de suministro (SBOM/Checksums)**: **SBOM (JSON)**, **SHA-256** del módulo, **logs de CI**, **archivo de procedencia** (*provenance*). **Retención**: 12 meses en almacenamiento **inmutable** (por ejemplo, S3 con **Object Lock**).
+  * **Secretos**: **Reporte de escaneo**, **logs** (pre-commit/CI), **lista anonimizada** de hallazgos. **Retención**: 6 meses.
+  * **IAM**: **Reporte de lint**, **hash** de la **política IAM**, **resultados de pruebas negativas**. **Retención**: 12 meses.
+  * **Cifrado**: **Salida de OPA**, **hash** de la **política de claves**, **diff del plan**, **certificados PKI**. **Retención**: 24 meses (sectores financieros).
+  * **Drift**: **Reporte de drift**, **hash** del **state file**, **logs del job**, **playbook de remediación**. **Retención**: 12 meses.
 * **Nombres de artefactos reproducibles**:
 
-  * SBOM: `sbom-<modulo_nombre>-<tag_version>-sha256.json` (por ejemplo, `sbom-s3-bucket-v1.2.0-sha256.json`).
-  * Atestación (Provenance): `attestation-<modulo_nombre>-<tag_version>.intoto` (por ejemplo, `attestation-iam-role-v2.0.0.intoto`).
-  * **Implementación**: Generar automáticamente en CI con herramientas como in-toto, almacenados en un artifact repository (por ejemplo, Artifactory) con firma digital.
+  * **SBOM**: `sbom-<modulo>-<tag>-sha256.json` (por ejemplo: `sbom-s3-bucket-v1.2.0-sha256.json`).
+  * **Atestación (provenance)**: `attestation-<modulo>-<tag>.intoto` (por ejemplo: `attestation-iam-role-v2.0.0.intoto`).
+  * **Implementación**: Generación **automática en CI** (por ejemplo, **in-toto**) y almacenamiento en un **repositorio de artefactos** (por ejemplo, Artifactory) con **firma digital**.
+
 
 #### RACI y excepciones
 
-**Definición**: RACI (Responsible, Accountable, Consulted, Informed) define roles claros para cada control. Las excepciones formalizadas gestionan riesgos temporales.
+**Definición.** RACI (Responsible, Accountable, Consulted, Informed) define roles claros por control. Las **excepciones formalizadas** documentan y aceptan riesgos **temporales**, con fecha de expiración, mitigaciones y responsables.
 
-**Tabla RACI por control**:
+**Tabla RACI por control**
 
-| Control                  | Responsible (Ejecuta) | Accountable (Responde) | Consulted (Opina) | Informed (Se Notifica) |
-| ------------------------ | --------------------- | ---------------------- | ----------------- | ---------------------- |
-| Supply Chain (SBOM/SLSA) | Platform Team         | SecOps                 | Owners            | Todos                  |
-| Manejo de Secrets        | Owners                | Platform Team          | SecOps            | Todos                  |
-| IAM Least-Privilege      | Owners                | SecOps                 | Platform Team     | Todos                  |
-| Encriptado/PKI           | Platform Team         | SecOps                 | Owners            | Todos                  |
-| Drift Detection          | Platform Team         | Owners                 | SecOps            | Todos                  |
-| Pruebas IaC              | Owners                | Platform Team          | SecOps            | Todos                  |
+| Control                          | Responsible (ejecuta) | Accountable (responde) | Consulted (opina)    | Informed (notificado) |
+| -------------------------------- | --------------------- | ---------------------- | -------------------- | --------------------- |
+| Cadena de suministro (SBOM/SLSA) | Equipo de Plataforma  | SecOps                 | Equipos dueños       | Todos                 |
+| Manejo de secretos               | Equipos dueños        | Equipo de Plataforma   | SecOps               | Todos                 |
+| IAM (menor privilegio)           | Equipos dueños        | SecOps                 | Equipo de Plataforma | Todos                 |
+| Cifrado/PKI                      | Equipo de Plataforma  | SecOps                 | Equipos dueños       | Todos                 |
+| Detección de deriva (drift)      | Equipo de Plataforma  | Equipos dueños         | SecOps               | Todos                 |
+| Pruebas de IaC                   | Equipos dueños        | Equipo de Plataforma   | SecOps               | Todos                 |
 
-* **Responsible**: Ejecuta la tarea, por ejemplo, Platform Team genera SBOM.
-* **Accountable**: Aprueba y responde por el resultado, por ejemplo, SecOps valida seguridad.
-* **Consulted**: Proporciona input, por ejemplo, Owners en IAM para necesidades de negocio.
-* **Informed**: Recibe updates, por ejemplo, notificaciones Slack.
+* **Responsible (R):** ejecuta la tarea (por ejemplo, el Equipo de Plataforma genera el SBOM).
+* **Accountable (A):** aprueba y responde por el resultado (por ejemplo, SecOps valida seguridad). *A debe ser único por control.*
+* **Consulted (C):** aporta criterios (por ejemplo, equipos dueños para requisitos de IAM).
+* **Informed (I):** recibe notificaciones (por ejemplo, avisos en Slack).
 
-#### Operabilidad y confiabilidad (Run It)
+
+### Operabilidad y confiabilidad (Run It)
 
 #### Observabilidad de IaC
 
-**Definición**: La observabilidad permite monitorear y auditar cambios en IaC para garantizar trazabilidad y rendimiento.
+**Definición.** La observabilidad permite **monitorizar y auditar** cambios de IaC para garantizar **trazabilidad, desempeño y cumplimiento**.
 
-**Controles clave**:
+**Controles clave**
 
-* **Tracing de Plan/Apply por módulo/sprint**:
+* **Trazabilidad de `plan/apply` por módulo/sprint**
+  **¿Qué es?** Registro de cada `terraform plan/apply` por módulo y por sprint.
+  **Implementación.** Terraform Cloud/Enterprise o logs centralizados (ELK) con trazas (por ejemplo, Jaeger).
+  **Ejemplo.** El 23/10/2025 se aplicó el módulo `s3` con cambios en `versioning`.
 
-  * **¿Qué es?**: Registrar cada `terraform plan/apply` para rastrear cambios por módulo o sprint.
-  * **Implementación**: Usar Terraform Cloud o logs centralizados (por ejemplo, ELK) con tracing via Jaeger.
-  * **Ejemplo**: Un log muestra que el módulo `s3` fue aplicado el 23/10/2025 con cambios en `versioning`.
-* **Audit logging de cambios**:
+* **Audit logging de cambios**
+  **¿Qué es?** Registro **inmutable** de acciones de IaC.
+  **Implementación.** AWS CloudTrail (o equivalente) con retención ≥ 1 año.
+  **Ejemplo.** CloudTrail registra un `Apply` con usuario, timestamp y recursos afectados.
 
-  * **¿Qué es?**: Registro immutable de todas las acciones IaC.
-  * **Implementación**: Usar AWS CloudTrail o equivalente con retención de 1 año.
-  * **Ejemplo**: CloudTrail registra un `Apply` con el usuario y timestamp.
-* **Tableros DORA**:
+* **Tableros DORA**
+  **¿Qué es?** Métricas DORA: **Lead Time**, **Change Failure Rate**, **MTTR**, **Deployment Frequency**.
+  **Implementación.** Dashboards en Grafana con **tiempo desde commit hasta apply** y alertas.
+  **Ejemplo.** En el último sprint, **Change Failure Rate = 5 %** y **MTTR = 45 min**.
 
-  * **¿Qué es?**: Métricas DORA (DevOps Research and Assessment) miden eficiencia: Lead Time, Change Failure Rate, MTTR, Deployment Frequency.
-  * **Implementación**: Configurar dashboards en Grafana con métricas como tiempo desde commit hasta apply.
-  * **Ejemplo**: Un dashboard muestra un Change Failure Rate de 5% en el último sprint.
 
-#### Gestión de Drift
+#### Gestión de *Drift*
 
-**Definición**: El drift ocurre cuando el estado real de los recursos (en la nube) difiere del estado definido en IaC.
+**Definición:** El *drift* ocurre cuando el estado real de los recursos en la nube difiere del estado definido en IaC.
 
-**Controles clave**:
+**Controles clave:**
 
-* **Job Recurrente de detección de drift**:
+* **Tarea recurrente de detección de *drift***
 
-  * **¿Qué es?**: Detectar diferencias entre el código IaC y el estado real.
-  * **Implementación**: Programar `terraform plan -detailed-exitcode` en CI diariamente.
-  * **Ejemplo**: Un job detecta que un bucket S3 cambió su `acl` manualmente.
-* **Severidad por tipo de recurso y playbook de remediación**:
+  * **¿Qué es?** Detectar diferencias entre el código IaC y el estado real.
+  * **Implementación:** Programar `terraform plan -detailed-exitcode` en CI (diario o por cambio en main). Opcional: `-out=plan.tfplan` para auditoría (0 = sin cambios, 2 = *drift*/cambios).
+  * **Ejemplo:** Un *job* detecta que un bucket S3 cambió su `acl` manualmente.
 
-  * **¿Qué es?**: Clasificar drifts por impacto y definir remediaciones automáticas o manuales.
-  * **Implementación**: Alta severidad para IAM drifts, baja para tags. Playbooks incluyen `terraform apply` para auto-remediación o notificación Slack para manual.
-  * **Ejemplo**: Un drift en IAM dispara una alerta crítica, un tag faltante se corrige automáticamente.
+* **Severidad por tipo de recurso y *playbook* de remediación**
+
+  * **¿Qué es?** Clasificar *drifts* por impacto y definir remediaciones automáticas o manuales.
+  * **Implementación:** Alta severidad para *drifts* en IAM; baja para *tags*. Los *playbooks* incluyen `terraform apply` para autorremediación o notificación a Slack para remediación manual.
+  * **Ejemplo:** Un *drift* en IAM dispara una alerta crítica; un *tag* faltante se corrige automáticamente.
 
 #### Resiliencia
 
-**Definición**: La resiliencia asegura que los recursos IaC puedan recuperarse de fallos con mínimas interrupciones.
+**Definición:** La resiliencia asegura que la infraestructura definida como código pueda recuperarse de fallos con mínima interrupción.
 
-**Controles clave**:
+**Controles clave:**
 
-* **Patrones de DR/Backup (RPO/RTO por módulo)**:
+* **Patrones de DR/Backup (RPO/RTO por módulo)**
 
-  * **¿Qué es?**: RPO (Recovery Point Objective) mide datos perdidos, RTO (Recovery Time Objective), tiempo de recuperación.
-  * **Implementación**: Definir RPO/RTO por módulo (por ejemplo, RTO <4h para RDS). Usar multi-AZ o cross-region replication.
-  * **Ejemplo**: Un módulo RDS con backup diario (RPO=24h).
-* **Pruebas de restauración en pipeline**:
+  * **¿Qué es?** RPO (*Recovery Point Objective*): ventana máxima de pérdida de datos. RTO (*Recovery Time Objective*): tiempo máximo de recuperación.
+  * **Implementación:** Definir RPO/RTO por módulo (por ejemplo, RTO < 4 h para RDS). Usar Multi-AZ o replicación entre regiones.
+  * **Ejemplo:** Módulo RDS con backup diario (RPO = 24 h).
 
-  * **¿Qué es?**: Verificar que los backups sean restaurables.
-  * **Implementación**: Incluir steps en CI para `terraform import` y pruebas funcionales (por ejemplo, conectar a DB restaurada).
-  * **Ejemplo**: Un pipeline restaura un snapshot RDS y valida conectividad.
+* **Pruebas de restauración en el *pipeline***
 
-#### Runtime Posture
+  * **¿Qué es?** Verificar que los respaldos sean restaurables.
+  * **Implementación:** Incluir *steps* en CI para restaurar (por ejemplo, `terraform import`/restauración de snapshot) y pruebas funcionales (conexión a la DB restaurada).
+  * **Ejemplo:** El *pipeline* restaura un snapshot de RDS y valida la conectividad.
 
-**Definición**: La postura en runtime monitorea la infraestructura post-deploy para detectar y remediar amenazas en tiempo real.
+#### Postura en *runtime*
 
-**Controles clave**:
+**Definición:** La postura en *runtime* monitorea la infraestructura tras el *deploy* para detectar y remediar amenazas en tiempo real.
 
-* **Integración de CSPM/CNAPP**: Usar Cloud Security Posture Management (CSPM) o Cloud Native Application Protection Platform (CNAPP) como gates post-apply (por ejemplo, AWS CloudTrail para logs, Config para conformidad, GuardDuty para detección de amenazas). No limitarse a OPA pre-apply, ejecutar scans post-deploy.
+**Controles clave:**
 
-  * **Implementación**: Configurar jobs post-apply que integren con CSPM tools, fallando si se detectan violaciones (por ejemplo, recurso no encriptado).
-  * **Ejemplo**: GuardDuty alerta sobre accesos sospechosos, Config verifica conformidad con NIST.
-* **KPI: % de Findings Críticos Auto-Remediados en <24h**: Medir la tasa de remediación automática (por ejemplo, via AWS Lambda triggers). Objetivo: >90% en <24h.
+* **Integración de CSPM/CNAPP**
+  Usar *Cloud Security Posture Management* (CSPM) o *Cloud Native Application Protection Platform* (CNAPP) como *gates* post-apply (por ejemplo, CloudTrail para logs, Config para conformidad, GuardDuty para detección). No limitarse a OPA pre-apply; ejecutar *scans* post-deploy.
 
-  * **Implementación**: Usar métricas en Datadog, alertar si KPI cae por debajo del umbral.
-* **Observabilidad y Cumplimiento "Runtime"**:
+  * **Implementación:** Jobs post-apply que integren con la herramienta de CSPM; fallar si hay violaciones (por ejemplo, recurso sin cifrado).
+  * **Ejemplo:** GuardDuty alerta sobre accesos sospechosos; Config verifica conformidad con NIST.
 
-  * **SLO de Remediación**: Crítico <24h, Alto <72h, definido por severidad.
-  * **Métricas**: MTTD/MTTR (Mean Time to Detect/Remediate) por dominio (IAM, red, datos) + % auto-remediado.
-  * **Control**: Si un finding crítico persiste >24h, bloquear apply del módulo afectado via CI gates.
-  * **Ejemplo**: Dashboard muestra MTTR de 12h para IAM findings, con 80% auto-remediados.
+* **KPI: % de hallazgos críticos autorremediados en < 24 h**
+  Medir la tasa de autorremediación (por ejemplo, con *triggers* de AWS Lambda). **Objetivo:** > 90 % en < 24 h.
+
+  * **Implementación:** Exponer métricas (Datadog/CloudWatch) y alertar si el KPI cae bajo el umbral.
+
+* **Observabilidad y cumplimiento en *runtime***
+
+  * **SLO de remediación:** Crítico < 24 h; Alto < 72 h (según severidad).
+  * **Métricas:** MTTD/MTTR (*Mean Time to Detect/Remediate*) por dominio (IAM, red, datos) y % autorremediado.
+  * **Control:** Si un hallazgo crítico persiste > 24 h, bloquear el *apply* del módulo afectado mediante *gates* en CI.
+  * **Ejemplo:** El *dashboard* muestra MTTR de 12 h en hallazgos de IAM, con 80 % autorremediados.
+
 
 #### Gestión de cambios y "break-glass"
 
-**Definición**: Gestionar cambios de forma controlada, break-glass para emergencias.
+**Definición**: Gestionar cambios de forma controlada; "break-glass" para emergencias.
 
 **Controles clave**:
 
-* **Flujo de Cambio**: PR con plan firmado -> aprobación -> apply por bot/role técnico (no humanos).
-* **Break-Glass**: Rol de emergencia con MFA, expiración (por ejemplo, 1h) y post-mortem obligatorio (incluye diff exacto aplicado).
-* **Evidencia**: Ticket de cambio, firmas/verificación de tag, registro de quién aplicó y por qué.
-* **Ejemplo**: En emergencia, activar rol con MFA, registrar diff en Jira y realizar post-mortem en 24.
+* **Flujo de cambio**: PR con plan firmado -> aprobación -> aplicación por bot o *role* técnico (no humanos).
+* **Break-glass**: Rol de emergencia con MFA, expiración (por ejemplo, 1 h) y **post-mortem** obligatorio (incluye el **diff** exacto aplicado).
+* **Evidencia**: Ticket de cambio, firmas/verificación del **tag**, registro de quién aplicó y por qué.
+* **Ejemplo**: En emergencia, activar el rol con MFA, registrar el **diff** en Jira y realizar el post-mortem dentro de 24 horas.
 
-#### Glosario rápido solo en español
 
-* Backend: repositorio o servicio de almacenamiento del estado remoto.
-* State: archivo de estado de la infraestructura.
-* Remote state: estado remoto colaborativo.
-* Versioning: control de versiones de objetos.
-* Object Lock, WORM: bloqueo inmutable de objetos, escribir una vez leer muchas veces.
-* State locking: bloqueo del estado para evitar concurrencia.
-* Workspace: espacio lógico de estado por entorno o proyecto.
-* Plan y Apply: planificar cambios y aplicarlos.
-* Least privilege: privilegio mínimo.
-* CI: integración continua.
-* Break glass: acceso de emergencia temporal.
-* MFA: autenticación multifactor.
-* Outputs sensibles: salidas con datos confidenciales enmascaradas.
-* Hash SHA256: huella criptográfica de integridad.
-* CloudTrail: auditoría de eventos en la nube de AWS.
-* Supply chain: cadena de suministro de software.
-* SBOM: lista de materiales de software.
-* SLSA: niveles de seguridad de la cadena de suministro.
-* Gate: punto de control obligatorio del pipeline.
-* Enforce: forzar el cumplimiento.
-* Pre-commit hook: validación previa al commit.
-* PR, pull request: solicitud de integración para revisión.
-* OPA y Conftest: motor y herramienta para validar políticas.
-* CSPM: gestión de postura de seguridad en la nube.
-* Drift: deriva entre IaC y la realidad.
-* RACI: matriz de responsabilidades.
-* ELK: stack de logs y visualización.
-* Jaeger: sistema de trazas distribuidas.
-* DORA: métricas de desempeño DevOps.
-* Lead time, change failure rate, MTTR, deployment frequency: tiempo a producción, tasa de fallos por cambio, tiempo medio de recuperación, frecuencia de despliegue.
-* Detailed exit code: código de salida detallado del plan.
-* Multi AZ: múltiples zonas de disponibilidad.
-* Snapshot: copia de seguridad puntual.
-* CNAPP: plataforma de protección de aplicaciones nativas en la nube.
-* GuardDuty: detección de amenazas en AWS.
-* KPI: indicador clave de desempeño.
-* SLO: objetivo de nivel de servicio.
-* MTTD y MTTR: tiempo medio de detección y de remediación.
-* Diff: diferencia exacta entre estados.
-* Tag: etiqueta de versión.
+### Diseño seguro de módulos
+
+#### Interfaces mínimas
+
+**Definición**: Los módulos deben exponer solo lo necesario para reducir la superficie de ataque.
+
+**Controles clave**:
+
+* Limitar variables de entrada y usar valores predeterminados seguros.
+* Banderas booleanas de funcionalidad (**feature flags**/**toggles**) para activar o desactivar características sin romper compatibilidad.
+* **Ejemplos probados + `terraform validate` + tests**: Incluir ejemplos en `/examples` con pruebas que también funcionen como documentación.
+* **Ejemplo**: Un módulo EC2 solo expone `instance_type` y usa `enable_encryption = true` por defecto.
+
+#### Políticas declarativas por dominio
+
+**Definición**: Políticas en **OPA** (**Open Policy Agent**) y **Conftest** que definen reglas por dominio (red, identidad, datos).
+
+**Controles clave**:
+
+* **Implementación**: Incluir archivos **Rego** en el repositorio, por ejemplo, denegar `public_ip` en EC2.
+* **Ejemplo**: Una política OPA falla si un módulo crea un bucket S3 público.
+
+#### Compatibilidad y ruptura
+
+**Controles clave**:
+
+* **Matriz Terraform y proveedor + política SemVer**: Mantener por módulo una matriz de compatibilidad (por ejemplo, Terraform 1.0–1.5 y proveedor AWS 4.0–5.0). Política **SemVer** (**versionado semántico**): **Major** = cambios rompientes (**breaking changes**, por ejemplo, remover una variable), **Minor** = nuevas funciones compatibles, **Patch** = correcciones.
+
+  * **Implementación**: Documentar en el **README** y validar en **CI** (**integración continua**).
+* **"BREAKING CHANGE" requerido**: Usar **conventional commits** (por ejemplo, `BREAKING CHANGE: remove var.old_param`) y sección fija en las **release notes** (**notas de versión**) con impactos y **migration guide** (**guía de migración**).
+
+  * **Ejemplo**: Notas de versión con "Breaking Changes: Variable `legacy_encryption` removida; migrar a `encryption_enabled`".
+* **Compatibilidad y ruptura operativa**:
+
+  * **Cumplimiento de SemVer**: Forzar SemVer en CI; sección fija "BREAKING CHANGES" con **playbook** de migración y **smoke test** posterior a la actualización.
+  * **Matriz de compatibilidad verificada en CI**: Probar combinaciones (por ejemplo, Terraform 1.5 y 1.9 con proveedores 4.x y 5.x) de forma automática.
+  * **Ejemplo**: El pipeline de CI falla si un cambio introduce incompatibilidad con Terraform 1.5.
+
+#### *Cloud-agnostic* vs. específico
+
+**Definición**: Diseñar módulos portables (**cloud-agnostic**) cuando sea posible, con secciones específicas claramente marcadas.
+
+**Controles clave**:
+
+* **Secciones agnósticas**: Lógica general (variables, *outputs*) sin referencias a proveedores específicos.
+* **Secciones específicas (por ejemplo, AWS-only)**: Marcar con comentarios (por ejemplo, "# Específico de AWS: usar KMS"). Sugerir equivalentes una sola vez por línea: Azure Key Vault (**AKV**), GCP Secret Manager (**SM**), Cloud KMS (GCP), o en AWS: Secrets Manager (**ASM**) y KMS.
+* **Implementación**: Usar proveedores variables y condicionales multinube; documentar portabilidad en el **README**.
+
+
+#### Threat modeling y clasificación de datos
+
+**Definición**: El **threat modeling (modelado de amenazas)** identifica riesgos; la **clasificación de datos** alinea controles con la sensibilidad.
+
+**Controles clave**:
+
+* **STRIDE o LINDDUN por dominio**: Aplicar **STRIDE** (**suplantación, manipulación, repudio, divulgación, denegación, elevación de privilegios**) o **LINDDUN** (**vinculabilidad, identificabilidad, no repudio, detectabilidad, divulgación de información, desconocimiento del usuario, incumplimiento**) para dominios de red, identidad y datos, con controles compensatorios.
+* **Clasificación**: **Public**, **Internal**, **Confidential**, **Restricted**, con **etiquetas obligatorias** y **requisitos mínimos**. Ejemplo: **Restricted** implica **KMS dedicado**, **rotación ≤ 180 días**, **TLS 1.3** y **logging** reforzado.
+* **Evidencia**: Matriz que mapea **recurso -> clasificación -> controles**; por ejemplo, bucket **S3** clasificado **Restricted** con **cifrado KMS dedicado** y **logs** enviados al **SIEM** (**gestión de información y eventos de seguridad**).
+* **Ejemplo**: Modelo de amenazas de identidad: mitigar **elevación de privilegios** con **principio de mínimo privilegio** y **MFA** (**autenticación multifactor**).
+
+
+### Flujo de trabajo y calidad
+
+#### Convenciones de PR
+
+**Definición**: Estandarizar **pull requests (PR)** para consistencia y seguridad.
+
+**Controles clave**:
+
+* **Conventional Commits**: Usar formato como `feat: add encryption` para **changelogs** automáticos (**historial de cambios**).
+* **Checklist de seguridad y CODEOWNERS**: Requerir revisiones en rutas sensibles (por ejemplo, `/modules/iam`) mediante el archivo **CODEOWNERS** (**propietarios de código**).
+* **Ejemplo**: Un PR que toca `/modules/iam` sin revisión de SecOps **no** puede integrarse.
+
+#### Pre-commit homogéneo
+
+**Definición**: Los **hooks de pre-commit** aseguran calidad local y se replican en CI.
+
+**Controles clave**:
+
+* **Implementación**: Usar **pre-commit** con `terraform fmt`, **tfsec**, **TruffleHog** y **Conftest**.
+* **Ejemplo**: Un hook **bloquea** un commit con formato incorrecto o un secreto detectado.
+
+### Catálogo interno de módulos y adopción
+
+**Definición**: Registro centralizado de módulos con metadatos para promover adopción.
+
+**Controles clave**:
+
+* **Estados**: **Experimental** (beta, sin SLO), **Stable** (listo para producción), **Deprecated** (fin de soporte en **6 meses**).
+* **SLO de soporte** (**objetivo de nivel de servicio**): **Stable** con **99 %** de disponibilidad y **respuesta a issues < 24 h**; **Deprecated** solo recibe **correcciones críticas**.
+* **Telemetría de uso**: Monitorear consumidores (por ejemplo, **Terraform Cloud workspaces**) y versión en uso (métricas **Prometheus**). **KPI** (**indicador clave de rendimiento**): porcentaje de adopción por equipo.
+* **Implementación**: **Terraform Registry** privado integrado con **Grafana** para tableros de uso.
+* **Catálogo y adopción:**:
+
+  * **Estados con SLO y fecha de EoL** (**End of Life, fin de vida**): Incluir fecha de retiro para **Deprecated**.
+  * **Telemetría**: Alertas de desuso si hay **> 2 versiones** de diferencia con la última.
+  * **Ejemplo**: Módulo **v1.0** marcado **Deprecated** con **EoL 2026-04-01** y alerta a consumidores en **v0.9**.
+
+
+### Pruebas IaC más nítidas
+
+**Definición:** Distinguir los tipos de pruebas para lograr **cobertura completa**.
+
+**Controles clave:**
+
+* **Unit, Contract:** Verificar interfaces de entrada y salida con **datos sintéticos** (por ejemplo, variables simuladas). **Criterio:** validar variables y salidas **sin desplegar** recursos.
+* **Plan Policy:** Ejecutar `terraform plan` y evaluar con **OPA** (políticas **Rego**). **Criterio:** **sin deriva** en el plan y reglas Rego **aprobadas**.
+* **Integration, post-deploy:** Desplegar en entorno **sandbox** y verificar funcionalidad (por ejemplo, acceso a base de datos). **Criterio:** pruebas **end-to-end** con **limpieza automática (cleanup)**.
+* **Medir cobertura de políticas:** Usar **Rego coverage** para el **porcentaje de reglas ejercitadas por módulo** con **objetivo ≥ 90 %**.
+* **Implementación:** Integrar en el **pipeline** con **tftest** y **datos sintéticos** generados con **Faker**.
+
+**Pruebas IaC, cobertura de políticas y datos sintéticos**
+
+* **Policy coverage:** **Cobertura Rego ≥ 90 %** por módulo.
+* **Fixtures sintéticos obligatorios:** Nombres descriptivos (por ejemplo, `public_s3_bucket_fixture`).
+* **Gate de regresión de plan:** No permitir **deriva** introducida por cambios; **plan diff** estable para **entradas iguales**.
+* **Ejemplo:** La prueba **falla** si un cambio **altera el plan** sin modificar las entradas.
+
+### Costos y gobierno financiero
+
+#### Etiquetado consistente
+
+**Definición:** Las **etiquetas (tags)** permiten rastrear **costos** y cumplir **políticas**.
+
+**Controles clave:**
+
+* **Implementación:** **Forzar etiquetas** como `owner`, `cost-center`, `env` con **OPA/Conftest**. Configurar **alertas de presupuesto** (por ejemplo, **AWS Budgets**).
+* **Ejemplo:** Un **gate** **falla** si un recurso no tiene la etiqueta `confidentiality`.
+
+
+### Controles obligatorios de seguridad en IaC
+
+* **Modelado de amenazas por dominio:** Analizar riesgos de **red** (por ejemplo, *DDoS*), **identidad** (por ejemplo, **escalación**), y **datos** (por ejemplo, **filtraciones**).
+* **Mínimos criptográficos:** **AES-256** y **TLS 1.3 o superior**.
+* **IAM de privilegio mínimo:** Políticas con **denegación por defecto (deny by default)**.
+* **Etiquetas obligatorias:** En **todos** los recursos.
+* **SBOM y procedencia (*provenance*):** Por cada **versión (release)**.
+* **Firma de artefactos:** **Obligatoria**.
+* **OPA y Conftest:** **Validación en CI**.
+* **Excepciones con vencimiento:** Máximo **90 días**.
+
+
+### Plantilla de módulo opinada
+
+**Estructura de módulo Terraform (opinada)**
+
+```
+/main.tf           # Lógica principal
+/variables.tf      # Variables mínimas
+/outputs.tf        # Salidas sensibles enmascaradas
+/examples/         # Ejemplos probados
+/tests/            # Pruebas con tftest
+/policies/         # Reglas Rego para OPA
+```
+
+* **Valores predeterminados seguros:** Cifrado habilitado e **IAM** con privilegio mínimo.
+* **Pruebas:** `terraform validate` y **pruebas unitarias**.
+* **OPA:** Política para **denegar exposición pública**.
+
+#### Matriz de gates
+
+```
+| Recurso | Gate                         | Severidad | Mapeo normativo | Descripción                          |
+|---------|------------------------------|-----------|------------------|--------------------------------------|
+| IAM     | Linter de privilegio mínimo  | Alta      | ISO A.9.2.3      | Verificar permisos mínimos.          |
+| Storage | Verificación de cifrado      | Alta      | NIST SC-28       | Forzar cifrado en reposo.            |
+| Redes   | OPA: sin exposición pública  | Media     | PCI 1.3          | Denegar acceso público.              |
+| Todos   | Etiquetas y presupuesto      | Baja      | ISO A.8.2        | Etiquetas obligatorias y alertas.    |
+```
+
+
+#### Dashboard mínimo
+
+```
+- DORA: Lead Time, Change Failure Rate, MTTR, Deployment Frequency.
+- KPIs de IaC: Adopción de módulos y derivas detectadas.
+- Rechazos por política: % de compilaciones fallidas por OPA o secretos expuestos.
+```
+
+
+
