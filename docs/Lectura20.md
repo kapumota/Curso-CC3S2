@@ -9,7 +9,7 @@ Puedes resolver este problema implementando pruebas para IaC. Las pruebas son un
 
 > Probar IaC es un proceso que verifica si la infraestructura funciona correctamente.
 
-Imagina que cons un switch de red con un nuevo segmento. Para comprobar manualmente las redes existentes, haces ping a cada servidor de cada segmento y verificas su conectividad. Para asegurarte de que la nueva red está bien conda, creas un servidor en ella y compruebas que responde al conectarte. Esta prueba manual puede llevar horas cuando hay dos o tres redes.
+Imagina que configuras un switch de red con un nuevo segmento. Para comprobar manualmente las redes existentes, haces ping a cada servidor de cada segmento y verificas su conectividad. Para asegurarte de que la nueva red está bien configurada, creas un servidor en ella y compruebas que responde al conectarte. Esta prueba manual puede llevar horas cuando hay dos o tres redes.
 
 A medida que creas más redes, puedes tardar días en verificar toda la conectividad. Con cada actualización de segmento, debes comprobar manualmente la conectividad de la red y de los recursos asociados (servidores, colas, bases de datos, etc.). Como no es viable probarlo todo, sueles elegir solo algunos recursos, lo que deja espacio para errores ocultos que podrían manifestarse semanas o meses después.
 
@@ -21,49 +21,50 @@ Obviamente, las pruebas no detectan todos los problemas ni eliminan por completo
 
 Puedes utilizar frameworks de pruebas específicos de tu proveedor o herramienta de infraestructura, así como bibliotecas nativas de testing en distintos lenguajes de programación. En los ejemplos de código se emplea pytest (un framework de Python) y Apache Libcloud (una biblioteca de Python para conectar con GCP), pero el enfoque es aplicable a cualquier herramienta o framework.
 
-No conviene escribir tests para cada pequeño fragmento de IaC, ya que podrían volverse difíciles de mantener y generar redundancias. En su lugar, es fundamental evaluar cuándo merece la pena crear una prueba y qué tipo aplica a cada recurso modificado. Las **pruebas de infraestructura son una heurística**: nunca podrás predecir ni simular completamente un cambio en producción. Una buena prueba aporta claridad sobre cómo conr la infraestructura y cómo un cambio impactará el sistema. Por último, distinguiremos qué tests resultan adecuados para módulos (fábricas, prototipos o constructores) frente a la conción general de patrones composite o singleton en un entorno de producción.
+No conviene escribir tests para cada pequeño fragmento de IaC, ya que podrían volverse difíciles de mantener y generar redundancias. En su lugar, es fundamental evaluar cuándo merece la pena crear una prueba y qué tipo aplica a cada recurso modificado. Las **pruebas de infraestructura son una heurística**: nunca podrás predecir ni simular completamente un cambio en producción. Una buena prueba aporta claridad sobre cómo está definida la infraestructura y cómo un cambio impactará el sistema. Por último, distinguiremos qué tests resultan adecuados para módulos (fábricas, prototipos o constructores) frente a la configuración general de patrones composite o singleton en un entorno de producción.
 
 #### El ciclo de pruebas de infraestructura
 
 Las pruebas te ayudan a ganar confianza y evaluar el impacto de los cambios en los sistemas de infraestructura. Sin embargo, ¿cómo puedes probar un sistema sin crearlo primero? Además, ¿cómo sabes que tu sistema funciona después de aplicar los cambios?
 
-Después de definir una conción de infraestructura, ejecutas pruebas iniciales para comprobarla. Si pasan, puedes aplicar los cambios a la infraestructura activa y probar el sistema.
+Después de definir una configuración de infraestructura, ejecutas pruebas iniciales para comprobarla. Si pasan, puedes aplicar los cambios a la infraestructura activa y probar el sistema.
 
-En este flujo de trabajo, ejecutas dos tipos de pruebas. Unas analizan estáticamente la conción **antes** de desplegar los cambios en la infraestructura, y otras analizan dinámicamente los recursos de infraestructura **después** de aplicarlos, para asegurarse de que todo sigue funcionando. La mayoría de tus pruebas sigue este patrón: pruebas antes y después del despliegue de cambios.
+En este flujo de trabajo, ejecutas dos tipos de pruebas. Unas analizan estáticamente la configuración **antes** de desplegar los cambios en la infraestructura, y otras analizan dinámicamente los recursos de infraestructura **después** de aplicarlos, para asegurarse de que todo sigue funcionando. La mayoría de tus pruebas sigue este patrón: pruebas antes y después del despliegue de cambios.
 
 #### Análisis estático
 
 ¿Cómo aplicarías el ciclo de pruebas de infraestructura a nuestro ejemplo de red? Imagina que analizas tu script de red para verificar que el nuevo segmento tiene el rango de direcciones IP correcto. No necesitas desplegar los cambios en la red; en su lugar, examinas el script, un archivo estático.
 
-Las pruebas que evalúan la conción de infraestructura antes de desplegar cambios en los recursos realizan **análisis estático**.
+Las pruebas que evalúan la configuración de infraestructura antes de desplegar cambios en los recursos realizan **análisis estático**.
 
-> El análisis estático para IaC verifica la conción de infraestructura en texto plano antes de desplegar cambios en los recursos en vivo.
+> El análisis estático para IaC verifica la configuración de infraestructura en texto plano antes de desplegar cambios en los recursos en vivo.
 
-Las pruebas de análisis estático no requieren recursos de infraestructura, ya que normalmente parséan la conción. No corren el riesgo de afectar sistemas activos. Si las pruebas de análisis estático pasan, tenemos más confianza de poder aplicar el cambio.
+Las pruebas de análisis estático no requieren recursos de infraestructura, ya que normalmente parsean la configuración. No corren el riesgo de afectar sistemas activos. Si las pruebas de análisis estático pasan, tenemos más confianza de poder aplicar el cambio.
 
-A menudo uso pruebas de análisis estático para comprobar normas de nombrado y dependencias en la infraestructura. Se ejecutan antes de aplicar los cambios y, en cuestión de segundos, señalan cualquier inconsistencia en nombres o conciones. Puedo corregir, volver a ejecutar las pruebas hasta que pasen y luego aplicar los cambios a los recursos. Como las pruebas de análisis estático no modifican infraestructura activa, la reversión es más sencilla. Si fallan, regresas a la conción, corriges los problemas y vuelves a hacer commit. Si no consigues que pase el análisis estático, puedes revertir el commit a una versión anterior que sí lo haga.
+A menudo uso pruebas de análisis estático para comprobar normas de nombrado y dependencias en la infraestructura. Se ejecutan antes de aplicar los cambios y, en cuestión de segundos, señalan cualquier inconsistencia en nombres o configuraciones. Puedo corregir, volver a ejecutar las pruebas hasta que pasen y luego aplicar los cambios a los recursos. Como las pruebas de análisis estático no modifican infraestructura activa, la reversión es más sencilla. Si fallan, regresas a la configuración, corriges los problemas y vuelves a hacer commit. Si no consigues que pase el análisis estático, puedes revertir el commit a una versión anterior que sí lo haga.
 
 #### Análisis dinámico
 
-Si el análisis estático pasa, puedes desplegar los cambios en la red. Sin embargo, no sabes si el segmento funciona realmente: un servidor necesita conectarse. Para probar la conectividad, creas un servidor en la red y ejecutas un script de prueba que comprueba la conectividad entrante y saliente. Una vez aplicados los cambios al entorno de infraestructura en vivo, ejecutas pruebas para verificar la funcionalidad del sistema. Si el script falla y muestra que el servidor no se conecta, vuelves a la conción para corregirla.
+Si el análisis estático pasa, puedes desplegar los cambios en la red. Sin embargo, no sabes si el segmento funciona realmente: un servidor necesita conectarse. Para probar la conectividad, creas un servidor en la red y ejecutas un script de prueba que comprueba la conectividad entrante y saliente. Una vez aplicados los cambios al entorno de infraestructura en vivo, ejecutas pruebas para verificar la funcionalidad del sistema. Si el script falla y muestra que el servidor no se conecta, vuelves a la configuración para corregirla.
 
 Ten en cuenta que tu script de pruebas necesita una red en vivo para crear el servidor y testear su conectividad. Las pruebas que verifican la funcionalidad tras aplicar cambios a recursos en vivo realizan **análisis dinámico**.
 
 > El análisis dinámico para IaC verifica la funcionalidad del sistema después de aplicar cambios a recursos de infraestructura en vivo.
 
-Cuando estas pruebas pasan, tenemos más confianza en que la actualización tuvo éxito. Si fallan, identifican un problema en el sistema; sabes que debes depurar, corregir la conción o los scripts y volver a ejecutar las pruebas. Funcionan como un sistema de alerta temprana para cambios que podrían romper recursos o funcionalidades.
+Cuando estas pruebas pasan, tenemos más confianza en que la actualización tuvo éxito. Si fallan, identifican un problema en el sistema; sabes que debes depurar, corregir la configuración o los scripts y volver a ejecutar las pruebas. Funcionan como un sistema de alerta temprana para cambios que podrían romper recursos o funcionalidades.
 
 Solo puedes analizar dinámicamente un entorno en vivo. Pero, ¿y si no sabes si la actualización funcionará? ¿Puedes aislar estas pruebas del entorno de producción? En lugar de aplicar todos los cambios directamente a producción, puedes usar un entorno de pruebas intermedio para separarlos y testearlos.
 
 #### Entornos de prueba de infraestructura
 
-Algunas organizaciones duplican redes completas en un entorno separado para probar cambios de gran envergadura. Aplicar cambios en un entorno de pruebas facilita detectar y corregir errores, actualizar la conción y confirmar los cambios sin afectar sistemas críticos.
+Algunas organizaciones duplican redes completas en un entorno separado para probar cambios de gran envergadura. Aplicar cambios en un entorno de pruebas facilita detectar y corregir errores, actualizar la configuración y confirmar los cambios sin afectar sistemas críticos.
 
 Cuando ejecutas tus pruebas en un entorno separado antes de promoverlas al activo, añades una capa al ciclo de pruebas de infraestructura. Primero aplicas el cambio en pruebas y ejecutas el análisis dinámico. Si pasa, lo aplicas a producción y vuelves a ejecutar el análisis dinámico allí.
 
 Un entorno de pruebas aisla cambios y pruebas del entorno de producción.
 
 > Un entorno de pruebas es distinto de producción y se usa para testear cambios de infraestructura.
+> Nota: distinguimos entre (1) entornos de prueba de módulos, que son cuentas/proyectos baratos y aislados donde creo y destruyo recursos individuales para validar un módulo, y (2) entornos de prueba persistentes (a veces llamados "staging"), que replican casi toda la topología de producción y donde validamos cambios complejos sin tumbar nada en vivo.
 
 Un entorno de pruebas antes de producción te ayuda a practicar y verificar cambios antes de desplegarlos en producción. Te permite entender mejor su efecto sobre sistemas existentes. Si no puedes corregir una actualización, puedes restaurar el entorno de pruebas a una versión previa que funcione. Puedes usar entornos de pruebas para:
 
@@ -72,7 +73,7 @@ Un entorno de pruebas antes de producción te ayuda a practicar y verificar camb
 
 No obstante, ten en cuenta que debes mantener los entornos de prueba como los de producción. Cuando sea posible, un entorno de pruebas debe:
 
-* Tener una conción lo más similar posible a la de producción.
+* Tener una configuración lo más similar posible a la de producción.
 * Ser distinto del entorno de desarrollo de la aplicación.
 * Ser persistente (no crearse y destruirse en cada prueba).
 
@@ -82,57 +83,59 @@ Mantener un entorno de pruebas persistente te permite comprobar si las actualiza
 
 ### Pruebas unitarias
 
-Como se ha mencionado el análisis estático evalúa los archivos en busca de conciones específicas. ¿Qué tipos de pruebas puedes escribir para el análisis estático?
+Como se ha mencionado, el análisis estático evalúa los archivos en busca de configuraciones específicas. ¿Qué tipos de pruebas puedes escribir para el análisis estático?
 
 Imagina que tienes un módulo factory para crear una red llamada **hello-world-network** y tres subredes con rangos de direcciones IP en **10.0.0.0/16**. Quieres verificar sus nombres de red y rangos de IP. Esperas que las subredes dividan el rango **10.0.0.0/16** entre ellas.
-Como solución, puedes escribir pruebas para comprobar el nombre de la red y los rangos de direcciones IP de las subredes en tu IaC sin crear la red ni las subredes. Este análisis estático verifica los parámetros de conción para valores esperados (nombre de red, de subnets, rango de IP para subnets) en cuestión de segundos.
+Como solución, puedes escribir pruebas para comprobar el nombre de la red y los rangos de direcciones IP de las subredes en tu IaC sin crear la red ni las subredes. Este análisis estático verifica los parámetros de configuración para valores esperados (nombre de red, de subnets, rango de IP para subnets) en cuestión de segundos.
 
-Acabamos de ejecutar pruebas unitarias sobre la IaC de la red. Una prueba unitaria se ejecuta en aislamiento y analiza estáticamente la conción o el estado de la infraestructura. Estas pruebas no dependen de recursos activos de infraestructura ni de dependencias y comprueban el subconjunto más pequeño de conción.
+Acabamos de ejecutar pruebas unitarias sobre la IaC de la red. Una prueba unitaria se ejecuta en aislamiento y analiza estáticamente la configuración o el estado de la infraestructura. Estas pruebas no dependen de recursos activos de infraestructura ni de dependencias y comprueban el subconjunto más pequeño de configuración.
 
-> Las pruebas unitarias analizan estáticamente la conción o el estado de infraestructura en texto plano. No dependen de recursos de infraestructura en vivo ni de dependencias.
+> Las pruebas unitarias analizan estáticamente la configuración o el estado de infraestructura en texto plano. No dependen de recursos de infraestructura en vivo ni de dependencias.
 
-Ten en cuenta que las pruebas unitarias pueden analizar metadatos en archivos de conción o estado de infraestructura. Algunas herramientas proporcionan información directamente en la conción, mientras que otras exponen valores a través del estado. 
+Ten en cuenta que las pruebas unitarias pueden analizar metadatos en archivos de configuración o estado de infraestructura. Algunas herramientas proporcionan información directamente en la configuración, mientras que otras exponen valores a través del estado. 
 
-#### Probando la conción de infraestructura
+#### Probando la configuración de infraestructura
 
-Comenzaremos escribiendo pruebas unitarias para módulos que usan plantillas para generar la conción de infraestructura. El módulo factory de red utiliza una función para crear un objeto con la conción de red. Necesitas saber si la función `_network_contion` genera la conción correcta.
+Comenzaremos escribiendo pruebas unitarias para módulos que usan plantillas para generar la configuración de infraestructura. El módulo factory de red utiliza una función para crear un objeto con la configuración de red. Necesitas saber si la función `_network_contion` genera la configuración correcta.
 
-Para el módulo factory de red, puedes escribir pruebas unitarias en pytest para comprobar las funciones que generan la conción JSON de las redes y subredes. El archivo de pruebas incluye tres tests: uno para el nombre de la red, otro para el número de subredes y otro para los rangos de IP.
+Para el módulo factory de red, puedes escribir pruebas unitarias en pytest para comprobar las funciones que generan la configuración JSON de las redes y subredes. El archivo de pruebas incluye tres tests: uno para el nombre de la red, otro para el número de subredes y otro para los rangos de IP.
 
 Pytest identificará las pruebas buscando archivos y tests con prefijo `test_`. En el listado siguiente, llamamos al archivo de pruebas `test_network.py` para que pytest lo encuentre. Las pruebas en el archivo tienen el prefijo `test_` y una descripción de lo que comprueban.
 
  ```python
- import pytest
- from main import NetworkFactoryModule
+import pytest
+from main import NetworkFactoryModule
 
- NETWORK_PREFIX = 'hello-world'
- NETWORK_IP_RANGE = '10.0.0.0/16'
+NETWORK_PREFIX = 'hello-world'
+NETWORK_IP_RANGE = '10.0.0.0/16'
 
- @pytest.fixture(scope="module")
- def network():
-     return NetworkFactoryModule(
-         name=NETWORK_PREFIX,
-         ip_range=NETWORK_IP_RANGE,
-         number_of_subnets=3
-     )
+@pytest.fixture(scope="module")
+def network():
+    return NetworkFactoryModule(
+        name=NETWORK_PREFIX,
+        ip_range=NETWORK_IP_RANGE,
+        number_of_subnets=3
+    )
 
- @pytest.fixture
- def network_contion(network):
-     return network._network_contion()['google_compute_network'][0]
+@pytest.fixture
+def network_configuration(network):
+    # Suponemos que el módulo expone esta función interna
+    return network._network_configuration()['google_compute_network'][0]
 
- @pytest.fixture
- def subnet_contion(network):
-     return network._subnet_contion()['google_compute_subnetwork']
+@pytest.fixture
+def subnet_configuration(network):
+    return network._subnet_configuration()['google_compute_subnetwork']
 
- def test_configuration_for_network_name(network, network_configuration):
-     assert network_configuration[network._network_name][0]['name'] == f"{NETWORK_PREFIX}-network"
+def test_configuration_for_network_name(network_configuration, network):
+    assert network_configuration[network._network_name][0]['name'] == f"{NETWORK_PREFIX}-network"
 
- def test_configuration_for_three_subnets(subnet_configuration):
-     assert len(subnet_configuration) == 3
+def test_configuration_for_three_subnets(subnet_configuration):
+    assert len(subnet_configuration) == 3
 
- def test_configuration_for_subnet_ip_ranges(subnet_configuration):
-     for i, subnet in enumerate(subnet_configuration):
-         assert subnet[next(iter(subnet))][0]['ip_cidr_range'] == f"10.0.{i}.0/24"
+def test_configuration_for_subnet_ip_ranges(subnet_configuration):
+    for i, subnet in enumerate(subnet_configuration):
+        assert subnet[next(iter(subnet))][0]['ip_cidr_range'] == f"10.0.{i}.0/24"
+
  ```
 
 El archivo de pruebas incluye un objeto `network` estático que se pasa entre tests. Esta fixture crea un objeto de red consistente al que cada prueba puede referirse. Reduce el código repetitivo utilizado para construir un recurso de prueba.
@@ -284,13 +287,13 @@ def test_network_output_has_network_name(network_outputs):
 
 def test_network_output_has_ip_cidr_range(network_outputs):
     assert network_outputs._ip_cidr_range == network_cidr_range
-````
+```
 
 Imagina que actualizas el módulo de red para emitir el ID de red en lugar del nombre. Eso rompe la funcionalidad del módulo de servidor ascendente porque ¡el servidor espera el nombre de la red! Las pruebas de contrato aseguran que no rompas el contrato (o la interfaz) entre dos módulos cuando actualizas cualquiera de ellos. Usa una prueba de contrato para verificar tus fachadas y adaptadores al expresar dependencias entre recursos.
 
 ¿Por qué deberías añadir la prueba de contrato de ejemplo al servidor, un recurso de nivel superior? Tu servidor espera salidas específicas de la red. Si el módulo de red cambia, quieres detectarlo primero desde el módulo de alto nivel.
 
-En general, un módulo de alto nivel debe diferir ante cambios en el módulo de bajo nivel para preservar la composabilidad y la evolutividad. Quieres evitar hacer cambios significativos en la interfaz de un módulo de bajo nivel porque pueden afectar a otros módulos que dependen de él.
+Idealmente, los módulos de alto nivel deberían seguir funcionando aunque los módulos de bajo nivel cambien internamente, para conservar la composabilidad y la capacidad de evolución del sistema. Por este motivo conviene mantener estable la interfaz pública de los módulos de bajo nivel: modificarla de forma significativa introduce riesgo de ruptura en todos los módulos que dependen de ella.
 
 #### Lenguajes específicos de dominio
 
@@ -309,11 +312,11 @@ En este escenario, un **"contract between dependencies"** (contrato entre depend
    El módulo "B" (por ejemplo, el servidor) recibe esas mismas propiedades como entrada para funcionar correctamente.
 
 3. **El contrato**
-   Es la garantía de que
+   Es la garantía de que: 
 
-   * **los nombres de los atributos** (p. ej. `_network`, `_ip_cidr_range`)
-   * **el formato y tipo de datos** (p. ej. cadena, lista, objeto)
-   * **los valores esperados** (p. ej. `"hello-world-subnet"`, `"10.0.0.0/16"`)
+   * **los nombres de los atributos** (por ejemplo, `_network`, `_ip_cidr_range`)
+   * **el formato y tipo de datos** (por ejemplo, cadena, lista, objeto)
+   * **los valores esperados** (por ejemplo, `"hello-world-subnet"`, `"10.0.0.0/16"`)
 
    permanecerán consistentes entre ambos módulos. Si el módulo proveedor cambiara, por ejemplo, de devolver el nombre de red a un identificador numérico, estaría rompiendo el contrato y el módulo consumidor fallaría.
 
@@ -324,7 +327,7 @@ En este escenario, un **"contract between dependencies"** (contrato entre depend
 
 ¿Cómo sabes que puedes aplicar los cambios de tu configuración o módulo a un sistema de infraestructura? Necesitas aplicar los cambios en un entorno de pruebas y analizar dinámicamente la infraestructura en ejecución. Una prueba de integración se ejecuta contra entornos de prueba para verificar cambios exitosos en un módulo o configuración.
 
-Las pruebas de integración se ejecutan contra entornos de prueba y analizan dinámicamente los recursos de infraestructura para verificar que sean afectados por cambios en módulos o configuraciones.
+Las pruebas de integración se ejecutan contra entornos de prueba y analizan dinámicamente los recursos de infraestructura para verificar que los cambios en módulos o configuraciones se apliquen correctamente y el sistema siga funcionando.
 
 > Las pruebas de integración requieren un entorno de prueba aislado para verificar la integración de módulos y recursos. 
 
