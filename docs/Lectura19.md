@@ -6,14 +6,14 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 
 ### Cadena de suministro (Supply Chain)
 
-**Definición**: La cadena de suministro en IaC comprende los procesos, herramientas y dependencias involucradas en la creación, distribución y consumo de código de infraestructura (por ejemplo,, módulos de Terraform, **proveedores**, scripts). Una cadena de suministro insegura puede introducir vulnerabilidades o código malicioso y comprometer entornos completos.
+**Definición**: La cadena de suministro en IaC comprende los procesos, herramientas y dependencias involucradas en la creación, distribución y consumo de código de infraestructura (por ejemplo, módulos de Terraform, **proveedores**, scripts). Una cadena de suministro insegura puede introducir vulnerabilidades o código malicioso y comprometer entornos completos.
 
 **Controles clave**:
 
 * **SBOM (Lista de materiales de software)**
 
   * **¿Qué es?**: Un SBOM es un inventario estructurado que lista todos los componentes de software de un módulo o plantilla IaC, incluidas dependencias como **proveedores**, versiones y orígenes. Es análogo a una lista de ingredientes del software.
-  * **Implementación**: Generar el SBOM con **Syft**; escanear vulnerabilidades con **Grype** (puede consumir el SBOM). Para módulos Terraform, incluir **proveedores** como `aws ~> 4.0` y sus orígenes (por ejemplo,, el registro de HashiCorp). Versionar y auditar el SBOM en cada **release**.
+  * **Implementación**: Generar el SBOM con **Syft**; escanear vulnerabilidades con **Grype** (puede consumir el SBOM). Para módulos Terraform, incluir **proveedores** como `aws ~> 4.0` y sus orígenes (por ejemplo, el registro de HashiCorp). Versionar y auditar el SBOM en cada **lanzamiento**.
   * **Ejemplo**: Un módulo Terraform para un bucket S3 incluiría en su SBOM el **proveedor** AWS, su versión, el hash del archivo y cualquier módulo anidado.
 
 * **Verificación de proveedores (sumas de verificación)**
@@ -25,20 +25,20 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 * **SLSA y procedencia de artefactos**
 
   * **¿Qué es?**: **SLSA** es un marco para asegurar la integridad de artefactos mediante metadatos de **procedencia** que documentan cómo y quién creó el artefacto.
-  * **Implementación**: Generar **procedencia** con **Cosign** o **in-toto**, registrando el commit SHA, el repositorio Git y el pipeline que produjo el módulo. Almacenar en un registro seguro (por ejemplo,, un Terraform Registry privado).
+  * **Implementación**: Generar **procedencia** con **Cosign** o **in-toto**, registrando el commit SHA, el repositorio Git y el pipeline que produjo el módulo. Almacenar en un registro seguro (por ejemplo, un Terraform Registry privado).
   * **Ejemplo**: Un módulo firmado incluye un JSON de procedencia con el commit SHA y el **pipeline** que lo generó.
 
-* **Firma de releases y política de "solo etiquetas firmadas"**
+* **Firma de versiones y política de "solo etiquetas firmadas"**
 
   * **¿Qué es?**: Firmar versiones asegura que los módulos consumidos son auténticos. La política de **solo etiquetas firmadas** prohíbe usar versiones no verificadas en producción.
-  * **Implementación**: Firmar releases con **GPG** o **Cosign**. **Forzar** en CI que solo se consuman etiquetas firmadas (por ejemplo,, GitHub Actions verifica la firma antes de `terraform apply`).
+  * **Implementación**: Firmar versiones con **GPG** o **Cosign**. **Forzar** en CI que solo se consuman etiquetas firmadas (por ejemplo, GitHub Actions verifica la firma antes de `terraform apply`).
   * **Ejemplo**: El pipeline falla si la etiqueta `v1.0.0` no tiene una firma GPG válida.
 
 * **Cadena de suministro cerrada**
 
   * **Espejo interno de proveedores y módulos**: Mantener un **mirror** interno capaz de operar en modo aislado para **proveedores** y módulos; configurar `provider_installation` en Terraform para apuntar al espejo.
   * **`.terraform.lock.hcl` de solo lectura en CI**: Forzar el archivo de bloqueo como solo lectura para evitar cambios no autorizados.
-  * **Objetivo SLSA**: Alcanzar **SLSA ≥ 2** en el presente y plan para **SLSA 3** en seis meses, con política de **"solo consumir del registro interno"** para aislarse de fuentes externas.
+  * **Objetivo SLSA**: Alcanzar **SLSA ≥ 2** de inmediato y **SLSA ≥ 3** **antes del 30/04/2026**, con política de **"solo consumir del registro interno"** para aislarse de fuentes externas.
   * **Archivo de configuración de la CLI para mirrors**: Configurar espejos en el archivo de configuración de Terraform CLI (`~/.terraformrc` o `~/.terraform.d/config.tfrc`).
   * **Ejemplo de configuración de Terraform CLI**:
 
@@ -267,7 +267,7 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 | Manejo de secretos               | Equipos dueños        | Equipo de Plataforma   | SecOps               | Todos                 |
 | IAM (menor privilegio)           | Equipos dueños        | SecOps                 | Equipo de Plataforma | Todos                 |
 | Cifrado/PKI                      | Equipo de Plataforma  | SecOps                 | Equipos dueños       | Todos                 |
-| Detección de deriva (drift)      | Equipo de Plataforma  | Equipos dueños         | SecOps               | Todos                 |
+| Detección de drift      | Equipo de Plataforma  | Equipos dueños         | SecOps               | Todos                 |
 | Pruebas de IaC                   | Equipos dueños        | Equipo de Plataforma   | SecOps               | Todos                 |
 
 * **Responsible (R):** ejecuta la tarea (por ejemplo, el Equipo de Plataforma genera el SBOM).
@@ -479,7 +479,7 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 **Controles clave:**
 
 * **Unit, Contract:** Verificar interfaces de entrada y salida con **datos sintéticos** (por ejemplo, variables simuladas). **Criterio:** validar variables y salidas **sin desplegar** recursos.
-* **Plan Policy:** Ejecutar `terraform plan` y evaluar con **OPA** (políticas **Rego**). **Criterio:** **sin deriva** en el plan y reglas Rego **aprobadas**.
+* **Plan Policy:** Ejecutar `terraform plan` y evaluar con **OPA** (políticas **Rego**). **Criterio:** **sin drift** en el plan y reglas Rego **aprobadas**.
 * **Integration, post-deploy:** Desplegar en entorno **sandbox** y verificar funcionalidad (por ejemplo, acceso a base de datos). **Criterio:** pruebas **end-to-end** con **limpieza automática (cleanup)**.
 * **Medir cobertura de políticas:** Usar **Rego coverage** para el **porcentaje de reglas ejercitadas por módulo** con **objetivo ≥ 90 %**.
 * **Implementación:** Integrar en el **pipeline** con **tftest** y **datos sintéticos** generados con **Faker**.
@@ -488,7 +488,7 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 
 * **Policy coverage:** **Cobertura Rego ≥ 90 %** por módulo.
 * **Fixtures sintéticos obligatorios:** Nombres descriptivos (por ejemplo, `public_s3_bucket_fixture`).
-* **Gate de regresión de plan:** No permitir **deriva** introducida por cambios; **plan diff** estable para **entradas iguales**.
+* **Gate de regresión de plan:** No permitir **drift** introducido por cambios, **plan diff** estable para **entradas iguales**.
 * **Ejemplo:** La prueba **falla** si un cambio **altera el plan** sin modificar las entradas.
 
 ### Costos y gobierno financiero
@@ -548,9 +548,15 @@ Este informe proporciona un marco completo para integrar seguridad en IaC, con e
 
 ```
 - DORA: Lead Time, Change Failure Rate, MTTR, Deployment Frequency.
-- KPIs de IaC: Adopción de módulos y derivas detectadas.
+- KPIs de IaC: Adopción de módulos y drifts detectados.
 - Rechazos por política: % de compilaciones fallidas por OPA o secretos expuestos.
 ```
 
+#### Glosario breve
 
-
+* **SBOM (Software Bill of Materials):** Inventario estructurado de todos los componentes, versiones y orígenes de un artefacto/software para transparencia y gestión de vulnerabilidades en la cadena de suministro.
+* **SLSA (Supply-chain Levels for Software Artifacts):** Marco de niveles que exige procedencia verificable y controles anti-manipulación sobre artefactos (builds reproducibles, firmas, trazabilidad de pipeline).
+* **OPA (Open Policy Agent):** Motor de *policy-as-code* que usa **Rego** para evaluar y hacer cumplir políticas en planes IaC, Kubernetes, APIs y más.
+* **PKI (Public Key Infrastructure):** Conjunto de CAs, certificados y claves que habilitan autenticación, cifrado y firmas digitales, con emisión y revocación gestionadas (CRL/OCSP).
+* **CNAPP (Cloud-Native Application Protection Platform):** Plataforma integrada que combina CSPM/CIEM/KSPM/CWPP para seguridad de configuración y *runtime* en entornos *cloud-native*.
+* **CSPM (Cloud Security Posture Management):** Monitoreo continuo de configuraciones en la nube contra *benchmarks* y políticas para detectar desviaciones y misconfiguraciones (incluido *drift*).
