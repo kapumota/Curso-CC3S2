@@ -1,4 +1,3 @@
-
 package local.plan
 
 deny[msg] {
