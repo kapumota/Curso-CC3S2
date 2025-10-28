@@ -87,7 +87,7 @@ Actividad7-CC3S2/
 └─ README.md  (respuestas a TODAS las preguntas)
 ```
 
-> Guarda salidas con redirección, p. ej.:
+> Guarda salidas con redirección, por ejemplo:
 > `git log --graph --oneline --decorate --all > evidencias/01-ff.log`
 
 #### Contexto y estrategias base
@@ -154,7 +154,7 @@ Las fusiones integran trabajo de múltiples ramas. Elegir bien impacta **trazabi
    ```
 
 **Qué observar:** **no** hay merge commit; un único commit nuevo en `main`.
-**Nota:** incluye referencia manual al PR o rama (p. ej., "(#123)").
+**Nota:** incluye referencia manual al PR o rama (por ejemplo, "(#123)").
 
 ### Ejercicios guiados (responde en `README.md`)
 
