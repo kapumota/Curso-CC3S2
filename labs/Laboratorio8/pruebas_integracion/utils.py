@@ -1,3 +1,5 @@
+#utils.py
+
 """
 Funciones de utilidad para simular terraform init/apply/destroy localmente.
 """
