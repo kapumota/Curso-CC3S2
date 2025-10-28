@@ -144,7 +144,7 @@ class InfrastructureBuilder:
         proto = ResourcePrototype(base)
         for i in range(count):
             def mutator(block):
-                # Renombrar recurso "app" a "app_<i>"
+                # Renombra recurso "app" a "app_<i>"
                 res = block["resource"]["null_resource"].pop("app")
                 block["resource"]["null_resource"][f"app_{i}"] = res
             self.module.add(proto.clone(mutator))
@@ -193,7 +193,7 @@ Extiende el código base en una rama nueva por ejercicio:
       @staticmethod
       def create(name: str, fmt: str) -> dict:
           ts = datetime.utcnow().strftime(fmt)
-          # TODO: usar ts en triggers
+          # TODO: usa ts en triggers
   ```
 * **Prueba**: Genera recurso con formato `'%Y%m%d'` y aplica `terraform plan`.
 
@@ -265,7 +265,7 @@ Extiende el código base en una rama nueva por ejercicio:
           self.null = null_block
 
       def to_bucket(self) -> dict:
-          # Mapear triggers a parámetros de bucket simulado
+          # Mapea triggers a parámetros de bucket simulado
           name = list(self.null["resource"]["null_resource"].keys())[0]
           return {
               "resource": {
@@ -324,7 +324,7 @@ Para completar la actividad se debe preparar y presentar una sección de entrega
 
 #### Fase 1: Exploración y análisis
 - **Documento principal**: Un archivo (Markdown, PDF o Word) que incluya:
-  - Fragmentos de código destacados (usando sintaxis de código, por ejemplo: bloques ```python:disable-run
+  - Fragmentos de código destacados (usando sintaxis de código, por ejemplo: bloques `python:disable-run`
   - Explicación detallada de cada patrón:
     - **Singleton**: Cómo `SingletonMeta` garantiza una sola instancia (usando el diccionario `_instances` y el método `__call__`) y el rol del `lock` (para sincronización en entornos multihilo, evitando carreras).
     - **Factory**: Cómo `NullResourceFactory` encapsula la creación de `null_resource` (método estático `create` que genera un diccionario Terraform-compatible), y el propósito de `triggers` (para forzar re-ejecuciones en Terraform, usando UUID y timestamp para unicidad).
