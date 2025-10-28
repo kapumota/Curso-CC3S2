@@ -1,5 +1,6 @@
 PY=python
 
+
 tools:
 	@echo "[tools] Escaneo de secretos y formato (simple)"
 	@$(PY) tools/secrets_scan.py . || (echo "Posibles secretos detectados. Revisa." && exit 2)
