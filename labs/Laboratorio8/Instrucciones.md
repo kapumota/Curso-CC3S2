@@ -1,4 +1,4 @@
-### Pruebas_iac
+### Laboratorio: Pruebas en Infraestructura como código (IaC)
 
 Este proyecto contiene cuatro tipos de pruebas automáticas totalmente locales:
 
