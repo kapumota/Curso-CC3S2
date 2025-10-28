@@ -1,4 +1,4 @@
-
+#sbom.py
 import os, json, hashlib, sys
 def sha256_of_file(path):
     h = hashlib.sha256()
