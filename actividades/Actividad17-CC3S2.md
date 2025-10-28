@@ -1,6 +1,6 @@
 ### Actividad: Pruebas en IaC
 
-El objetivo de esta actividad es profundizar, de manera local y exclusivamente con Terraform, en todos los tipos de pruebas vistos (unitarias, de contrato, integración, somoke, regresión y extremo a extremo). 
+El objetivo de esta actividad es profundizar, de manera local y exclusivamente con Terraform, en todos los tipos de pruebas vistos (unitarias, de contrato, integración, smoke, regresión y extremo a extremo). 
 
 > Revisa la estructura del repositorio de referencia: [Pruebas en IaC](https://github.com/kapumota/DS/tree/main/2025-1/Pruebas_iac).
 
