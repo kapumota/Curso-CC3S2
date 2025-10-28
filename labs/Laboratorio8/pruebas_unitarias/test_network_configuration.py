@@ -1,3 +1,4 @@
+#test_network_configuration.py
 import json
 import pytest
 CONFIG_FILE = 'network_config.json'
