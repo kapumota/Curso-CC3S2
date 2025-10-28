@@ -7,7 +7,7 @@ Este proyecto contiene cuatro tipos de pruebas automáticas totalmente locales:
 3. **Pruebas de integración** (`pruebas_integracion/`)
 4. **Pruebas de extremo a extremo (E2E)** (`pruebas_e2e/`)
 
-Cada suite está desacoplada de proveedores de nube y simula los flujos completos usando Python.
+Cada conjunto de pruebas está desacoplada de proveedores de nube y simula los flujos completos usando Python.
 
 #### Requisitos previos
 
