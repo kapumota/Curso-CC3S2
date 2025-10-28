@@ -100,7 +100,7 @@ Cuando cambian variables de configuración, Terraform los mapea a **triggers** q
 #### B. Migrando a IaC
 
 * **Mini-reto**
- 1. Crea en un nuevo directorio `legacy/` un simple `run.sh` + `config.cfg` con parámetros (por ejemplo, puerto, ruta).
+ 1. Crea en un nuevo directorio `legacy/` un simple `run.sh` + `config.cfg` con parámetros (por ejemplo, puertos, rutas).
 
     ```
      echo 'PORT=8080' > legacy/config.cfg
