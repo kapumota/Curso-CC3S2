@@ -1,3 +1,5 @@
+#test_integration.py
+
 import os
 import pytest
 from pruebas_integracion.main import LocalServerFactory, SERVER_CFG_FILE
