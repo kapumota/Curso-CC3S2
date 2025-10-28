@@ -44,7 +44,7 @@ En este ejercicio, aprenderás cómo configurar un Kanban board usando GitHub Pr
 
 En este ejercicio, crearás una issue template en GitHub que te ayudará a escribir historias de usuario bien formateadas en el Kanban board.
 
-##### Crear una issue template en GitHub
+#### Crear una issue template en GitHub
 
 En este ejercicio, crearás una issue template en GitHub. Esto solo necesita hacerse una vez para cada nuevo repositorio que crees.
 
@@ -77,7 +77,7 @@ Ahora tienes una **issue template** que puedes usar para todos tus repositorios 
 
 En este ejercicio crearás siete historias de usuario basadas en los requisitos dados. Las primeras cuatro se te proporcionarán. Solo tendrás que copiarlas y pegarlas para familiarizarte con la creación de historias de usuario en GitHub. Deberás crear las últimas tres historias de usuario por ti mismo. Luego priorizarás estas historias y las moverás a las columnas apropiadas en tu Kanban board.
 
-##### 1: Crear nuevas historias de usuario usando GitHub issues
+#### 1: Crear nuevas historias de usuario usando GitHub issues
 
 En este ejercicio, crearás las siguientes historias de usuario usando GitHub issues:
 
@@ -135,7 +135,7 @@ Tu primera historia de usuario ahora está creada
 12. Continúa agregando historias hasta que las siete estén creadas y completa tu Kanban. Las primeras cuatro historias se proporcionan en la lección Deberás crear tu propio rol, función y beneficio para las últimas tres historias.
 
 
-##### Ejercicio: Priorizar el product backlog
+#### Ejercicio: Priorizar el product backlog
 
 En este ejercicio, moverás issues entre columnas para recrear el Kanban board del video de la lección **Building the Product Backlog**. Esto simulará un punto de partida inicial para nuestro próximo laboratorio sobre la refinación del backlog. Ten en cuenta que puedes mover los issues entre columnas simplemente arrastrándolos y soltándolos de una columna a otra.
 
@@ -258,7 +258,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 4. Haz clic en el botón **Save** (resaltado como 4) para guardar los cambios.
 
 
-### Ejercicios
+#### Ejercicios
 
 #### Ejercicio 1: Crear un epic y vincular historias de usuario
 
@@ -338,7 +338,7 @@ En este ejercicio, añadirás labels a las historias en el **Product Backlog** p
 
 **Resultado esperado:** Obtención de un análisis detallado del flujo de trabajo y una lista de posibles acciones para mejorar la eficiencia del equipo, de acuerdo a lo que se presenta en github.
 
-### Entregable
+#### Entregables
 
 Entrega la Carpeta Actividad11-CC3S2 contiene este archivo y capturas.
 
