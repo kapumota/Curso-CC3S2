@@ -242,7 +242,7 @@ Dentro de tu carpeta de entrega llamada **Actividad12-CC3S2**, crea subcarpetas 
    - **Parte3-BurndownChart**
    - **Parte4-CierreSprint**
 
-### **Incluir los entregables en cada subcarpeta**:
+#### **Incluir los entregables en cada subcarpeta**:
 - Guarda las capturas de pantalla y cualquier archivo adicional en las subcarpetas correspondientes. A continuación, detallo los archivos que deberías incluir según los entregables mencionados:
 
    #### **Parte1-Planificacion**
