@@ -186,3 +186,62 @@ El objetivo de esta actividad es profundizar, de manera local y exclusivamente c
 
 > **Gran desafío:** Incluye un test E2E que introduzca de forma manual un fallo en un contenedor (detención forzada) y verifique que, al volver a aplicar Terraform, el contenedor se recrea automáticamente, sin tocar la red ni el DNS simulados.
 
+### Entregable
+En tu repositorio personal debes incluir una carpeta llamada **`Actividad17-CC3S2/`** con TODO lo siguiente:
+
+1. **`README.md`**
+
+   * Breve descripción de cada módulo (`network`, `compute`, `storage`, `firewall`, `dns`).
+
+2. **`Ejercicios_obligatorios.md`**
+   Respuestas escritas en texto a:
+
+   * Ejercicio 1
+   * Ejercicio 2.4
+   * Ejercicio 2.6
+   * Ejercicio 3.7
+   * Ejercicio 3.8
+   * Ejercicio 4.10
+   * Ejercicio 5.13
+   * Ejercicio 6.18
+   * Ejercicio 7
+   * Ejercicio 10
+     (Estos son los ejercicios obligatorios de la actividad.)
+
+4. **`modules/`**
+   Carpeta con al menos estos módulos Terraform, cada uno con `main.tf`, `variables.tf`, `outputs.tf`:
+
+   * `network/`
+   * `compute/`
+   * `storage/`
+   * `firewall/`
+   * `dns/`
+
+   Los módulos `firewall` y `dns` deben reflejar lo descrito en el Ejercicio 7 (reglas de acceso y mapeo hostname->IP con validación).
+
+5. **`scripts/`**
+   Debe contener:
+
+   * `run_smoke.sh`
+
+     * Corre `terraform fmt -check`, `terraform validate`, y `terraform plan -refresh=false` para cada módulo, y extrae al menos un valor contractual. Debe estar pensado para durar <30s total.
+   * `run_all.sh`
+
+     * Limpia estado, corre en orden la pirámide de pruebas (unit -> smoke/contract -> integration -> E2E) y al final imprime un resumen de pases/fallos por categoría.
+
+6. **`plans/`**
+
+   * Al menos un plan de regresión (también llamado **plan dorado**): un archivo JSON como `plan_base_network.json` o `plan_base_firewall.json` que guarda el comportamiento esperado de tu módulo Terraform. Ese archivo sirve como referencia estable: en el futuro generas un `terraform plan` nuevo, lo normalizas (quitando timestamps/UUID, ruido, etc.) y lo comparas contra el plan dorado. Si hay diferencias reales en recursos o atributos, las detectas como una posible rotura. Este archivo debe usarse y explicarse en tu respuesta del Ejercicio 3.8.
+
+7. **`evidencia/`**
+   Debe contener 3 archivos de salida real (copiar/pegar consola):
+
+   * `smoke_run.txt` -> salida de `run_smoke.sh`.
+   * `all_run.txt` -> salida de `run_all.sh` mostrando el orden completo y el resumen final.
+   * `e2e_http_check.txt` -> evidencia del escenario E2E (Ejercicio 4.10):
+
+     * petición HTTP al frontend con 200,
+     * bloqueo/timeout al backend directo,
+     * respuesta JSON válida vía el frontend.
+
+
