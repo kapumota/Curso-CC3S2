@@ -50,7 +50,7 @@ La actividad busca de forma integrada, el desarrollo de  los patrones de depende
    * ¿Cómo agruparías varios módulos (red + servidor + firewall) tras un únic "facade"?
 2. **Ejercicio práctico**
 
-   * Crea en `facade/` un `facade.tf.json` que exponga outputs simplificados (p.por ejemplo, `endpoint`, `network_id`).
+   * Crea en `facade/` un `facade.tf.json` que exponga outputs simplificados (por ejemplo, `endpoint`, `network_id`).
    * Refactoriza `main.py` para usar este módulo de facade en lugar de llamadas directas.
 
 
@@ -77,7 +77,7 @@ La actividad busca de forma integrada, el desarrollo de  los patrones de depende
 
 * **Actividad de discusión** (en pares o tríos):
 
-  * Para un escenario complejo (p.por ejemplo, multi-cloud), justifica qué patrón(s) usarías y por qué.
+  * Para un escenario complejo (por ejemplo, multi-cloud), justifica qué patrón(s) usarías y por qué.
   * Prepara una presentación de 5 min con ejemplos de código.
 
 
@@ -111,7 +111,7 @@ La actividad busca de forma integrada, el desarrollo de  los patrones de depende
 
 1. **Registro local vs Terraform registry**
 
-   * Configura `providers.tf` para usar un `registry.local` (p.por ejemplo, con `terraform local publish` o repositorio Artifactory).
+   * Configura `providers.tf` para usar un `registry.local` (por ejemplo, con `terraform local publish` o repositorio Artifactory).
 2. **Ejercicio práctico**
 
    * Publica uno de tus módulos en un registro local y úsalo desde otro proyecto clonándolo mediante `terraform init`.
