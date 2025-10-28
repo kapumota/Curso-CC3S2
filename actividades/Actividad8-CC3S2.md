@@ -4,7 +4,7 @@ El proyecto se desarrollará de forma incremental utilizando el proceso RGR (Red
 
 #### El patrón Arrange-Act-Assert
 
-El patrón **Arrange-Act-Assert (AAA)** organiza las pruebas unitarias en tres pasos claros: preparar el escenario (**Arrange**), ejecutar el comportamiento (**Act**) y verificar el resultado (**Assert**). Las pruebas son el primer uso real del código: lo invocan como en la aplicación, capturan resultados y validan expectativas, dando retroalimentación inmediata sobre diseño y usabilidad del API. Los nombres descriptivos de clases y métodos de prueba cuentan la "historia" del comportamiento esperado (p. ej., `TestUsername` y `test_converts_to_lowercase`).
+El patrón **Arrange-Act-Assert (AAA)** organiza las pruebas unitarias en tres pasos claros: preparar el escenario (**Arrange**), ejecutar el comportamiento (**Act**) y verificar el resultado (**Assert**). Las pruebas son el primer uso real del código: lo invocan como en la aplicación, capturan resultados y validan expectativas, dando retroalimentación inmediata sobre diseño y usabilidad del API. Los nombres descriptivos de clases y métodos de prueba cuentan la "historia" del comportamiento esperado (por ejemplo, `TestUsername` y `test_converts_to_lowercase`).
 
 Para que las pruebas sean realmente útiles, se aplican los principios **FIRST**:
 
@@ -211,8 +211,6 @@ Cada iteración del proceso RGR se basa en la anterior, permitiendo construir un
   
 - **Cobertura de casos de uso**: Además de probar los escenarios exitosos (`test_process_payment`), también cubrimos casos de fallo (`test_process_payment_failure`) para asegurar que el sistema maneje adecuadamente los errores.
 
-
-
 ### Ejercicios
 
 #### Reglas generales
@@ -262,7 +260,6 @@ def test_descuento_total(precio, cantidad, descuento, esperado):
     # Assert
     assert round(total, 2) == pytest.approx(esperado, abs=0.01)
 ```
-
 
 #### A2. Idempotencia de actualización de cantidades
 
@@ -414,7 +411,6 @@ class TestPasarelaPagoContratos:
         pg.charge.assert_called_once()
 
 ```
-
 #### TDD + DevOps
 
 #### C1. Contratos de pasarela de pago con `mock`
@@ -566,7 +562,6 @@ def test_estabilidad_semillas(capsys):
     assert out1 == out2
 ```
 
-
 #### D2. Invariantes de inventario
 
 Valida el invariante: "agregar N, remover N -> total=0 e items=0; agregar N, actualizar a 0 -> estado equivalente". Resume en `evidencias/analisis.md` por qué previene regresiones.
@@ -623,7 +618,7 @@ def test_mensaje_error_contiene_contexto():
 * **`evidencias/decisiones.md`**:
 
   * Contratos verificados por cada prueba (qué garantiza del carrito/pagos),
-  * Variables y **efecto observable** (p. ej., `DISCOUNT_RATE`, `TAX_RATE`),
+  * Variables y **efecto observable** (por ejemplo, `DISCOUNT_RATE`, `TAX_RATE`),
   * Casos borde considerados y dónde se prueban.
 
 * Nuevos archivos de prueba dentro de `tests/` (no borres los existentes).
