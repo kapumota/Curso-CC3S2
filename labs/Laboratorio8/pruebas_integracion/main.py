@@ -1,3 +1,5 @@
+#main.py
+
 #!/usr/bin/env python3
 """
 Genera configuración JSON de servidor local sin proveedor de la nube.
