@@ -100,7 +100,7 @@ Cuando cambian variables de configuración, Terraform los mapea a **triggers** q
 #### B. Migrando a IaC
 
 * **Mini-reto**
- 1. Crea en un nuevo directorio `legacy/` un simple `run.sh` + `config.cfg` con parámetros (p.ej. puerto, ruta).
+ 1. Crea en un nuevo directorio `legacy/` un simple `run.sh` + `config.cfg` con parámetros (por ejemplo, puerto, ruta).
 
     ```
      echo 'PORT=8080' > legacy/config.cfg
@@ -122,7 +122,7 @@ Cuando cambian variables de configuración, Terraform los mapea a **triggers** q
 | **Linting y formateo**                     | - Instala `jq`. Ejecutar `jq . network.tf.json > tmp && mv tmp network.tf.json`. ¿Qué cambió?                 |
 | **Nomenclatura de recursos**               | - Renombra en `main.tf.json` el recurso `null_resource` a `local_server`. Ajustar generador Python.           |
 | **Variables y constantes**                 | - Añade variable `port` en `network.tf.json` y usarla en el `command`. Regenerar entorno.                     |
-| **Parametrizar dependencias**              | - Genera `env3` de modo que su `network` dependa de `env2` (p.ej. `net2-peered`). Implementarlo en Python.    |
+| **Parametrizar dependencias**              | - Genera `env3` de modo que su `network` dependa de `env2` (por ejemplo, `net2-peered`). Implementarlo en Python.    |
 | **Mantener en secreto**                    | - Marca `api_key` como **sensitive** en el JSON y leerla desde `os.environ`, sin volcarla en disco.           |
 
 #### Fase 4: Integración final y discusión
@@ -144,7 +144,7 @@ Cuando cambian variables de configuración, Terraform los mapea a **triggers** q
 
 1. **Drift avanzado**
 
-   * Crea un recurso "load\_balancer" que dependa de dos `local_server`. Simula drift en uno de ellos y observa el plan.
+   * Crea un recurso "load_balancer" que dependa de dos `local_server`. Simula drift en uno de ellos y observa el plan.
 
 2. **CLI Interactiva**
 
