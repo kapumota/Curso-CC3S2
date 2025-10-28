@@ -239,7 +239,6 @@ Genera datos mínimos (stubs) y fixtures reutilizables, con validación de entra
 2. **Archivo**: `Actividades/pruebas_fixtures/conftest.py`
 
 ```python
-# English comments per course preference
 import json
 import os
 import re
@@ -247,7 +246,7 @@ import logging
 import pytest
 
 class SecretRedactor(logging.Filter):
-    """Redact tokens, apikeys, and Authorization headers in logs."""
+    """Redacta tokens, claves de API y encabezados de autorización en los registros."""
     SECRET_PAT = re.compile(r"(Authorization:\s*Bearer\s+)[A-Za-z0-9\-\._~\+\/]+=*", re.I)
     KEY_PAT = re.compile(r"(api[_-]?key|token|secret)\s*=\s*[^&\s]+", re.I)
 
@@ -268,17 +267,17 @@ def _redacted_logging(caplog):
 
 @pytest.fixture
 def stub_valid_account():
-    # minimal happy-path stub
+    # Stub mínimo de camino feliz
     return {"id": "u_001", "email": "user@example.com", "role": "reader", "active": True}
 
 @pytest.fixture
 def stub_corrupt_account():
-    # negative: wrong types / missing fields
+    # negativo: tipos incorrectos/campos faltantes
     return {"id": None, "email": "bad@@", "role": 123, "active": "yes"}
 
 @pytest.fixture
 def imdb_fixtures():
-    # loads plausible IMDb responses from fixtures file
+    # Carga respuestas plausibles de IMDb desde el archivo de partidos.
     base = os.path.dirname(__file__)
     with open(os.path.join(base, "fixtures", "imdb_responses.json"), "r", encoding="utf-8") as f:
         return json.load(f)
@@ -302,7 +301,7 @@ def imdb_fixtures():
     "theMovieDb": "8.7"
   },
   "malformed_payload": {
-    "oops": "not the expected schema"
+    "oops": "no es el esquema esperado"
   }
 }
 ```
@@ -312,19 +311,20 @@ def imdb_fixtures():
 
 ```python
 def validate_account(d):
-    # strict minimal checks
-    if not isinstance(d, dict): raise TypeError("account must be dict")
+    # controles mínimos estrictos
+    if not isinstance(d, dict): raise TypeError("la cuenta debe ser un dict")
     for k in ("id", "email", "role", "active"):
-        if k not in d: raise ValueError(f"missing {k}")
+        if k not in d: raise ValueError(f"falta {k}")
     if not isinstance(d["id"], str) or not d["id"]:
-        raise ValueError("id must be non-empty str")
+        raise ValueError("id debe ser una cadena no vacía")
     if "@" not in d["email"]:
-        raise ValueError("invalid email")
+        raise ValueError("correo inválido")
     if not isinstance(d["role"], str):
-        raise ValueError("role must be str")
+        raise ValueError("role debe ser una cadena")
     if not isinstance(d["active"], bool):
-        raise ValueError("active must be bool")
+        raise ValueError("active debe ser booleano")
     return True
+
 ```
 
 5. **Test rápido**
@@ -362,7 +362,7 @@ import time
 from typing import Dict, Any
 
 class FakeHttpClient:
-    """No network. Serves preloaded fixtures; can simulate errors/timeouts."""
+    """Sin red. Sirve datos pre-cargados, puede simular errores/tiempos de espera."""
     def __init__(self, fixtures: Dict[str, Any], delay_ms: int = 0, fail_mode: str | None = None):
         self._fx = fixtures
         self._delay = delay_ms / 1000.0
@@ -372,16 +372,17 @@ class FakeHttpClient:
         if self._delay:
             time.sleep(min(self._delay, timeout + 0.05))
         if self._fail_mode == "timeout":
-            # Simulate exceeding timeout
+            # Simula tiempo de espera excedido
             time.sleep(timeout + 0.1)
-            raise TimeoutError("request timed out")
+            raise TimeoutError("la solicitud excedió el tiempo de espera")
         if self._fail_mode == "500":
-            raise RuntimeError("HTTP 500 simulated")
+            raise RuntimeError("HTTP 500 simulado")
         if "malformed" in url:
             return self._fx["malformed_payload"]
         if "Ratings" in url:
             return self._fx["ratings_ok"]
         return self._fx["search_titles_ok"]
+
 ```
 
 2. **Backoff con jitter (opcional)**
@@ -393,7 +394,7 @@ import time
 from functools import wraps
 
 def bounded_jitter_backoff(tries=3, base=0.05, cap=0.5):
-    """Caped exponential backoff with jitter"""
+    """Retardo exponencial limitado con variación aleatoria"""
     def deco(fn):
         @wraps(fn)
         def _wrap(*a, **kw):
@@ -409,6 +410,7 @@ def bounded_jitter_backoff(tries=3, base=0.05, cap=0.5):
                     time.sleep(sleep)
         return _wrap
     return deco
+
 ```
 
 3. **Tests de resiliencia**
@@ -418,7 +420,7 @@ def bounded_jitter_backoff(tries=3, base=0.05, cap=0.5):
 import logging
 import pytest
 from .fake_http import FakeHttpClient
-from ..pruebas_fixtures.conftest import SecretRedactor  # reuse redactor
+from ..pruebas_fixtures.conftest import SecretRedactor  # reutiliza redactor
 
 LOGGER = logging.getLogger("imdb")
 
@@ -427,8 +429,8 @@ def test_timeout_logged_redacted(imdb_fixtures, caplog):
     LOGGER.addFilter(SecretRedactor())
     client = FakeHttpClient(imdb_fixtures, delay_ms=0, fail_mode="timeout")
     with pytest.raises(TimeoutError):
-        client.get_json("https://imdb-api.com/API/Ratings/KEY/tt0111161", headers={"Authorization": "Bearer AAA.BBB"})
-    # assert redaction
+        client.get_json("https://imdb-api.com/API/Ratings/KEY/tt0111161", headers={"Authorization":"Bearer AAA.BBB"})
+    # valida redacción
     msgs = " ".join(m for _,_,m in caplog.record_tuples)
     assert "Bearer <REDACTED>" in msgs
 
@@ -440,7 +442,8 @@ def test_http_500_branch(imdb_fixtures):
 def test_malformed_payload_branch(imdb_fixtures):
     client = FakeHttpClient(imdb_fixtures)
     data = client.get_json("https://imdb-api.com/API/Ratings/KEY/malformed")
-    assert "oops" in data  # downstream should reject later
+    assert "oops" in data 
+
 ```
 
 > **Gate de cobertura**: estos tests abren ramas de error (timeout/500/malformed).
@@ -513,7 +516,7 @@ class RealHttpClient(HttpClient):
         t = timeout or self.timeout
         resp = requests.get(url, headers=headers or {}, timeout=t)
         if resp.status_code >= 500:
-            raise RuntimeError(f"server error {resp.status_code}")
+            raise RuntimeError(f"Error server {resp.status_code}")
         resp.raise_for_status()
         return resp.json()
 ```
