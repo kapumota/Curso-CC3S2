@@ -338,9 +338,9 @@ TEST_DIR := tests
 OUT_DIR := out
 DIST_DIR := dist
 
-all: tools lint build test package ## Construir, testear y empaquetar todo
+all: tools lint build test package ## Construye, prueba y empaqueta todo
 
-build: $(OUT_DIR)/hello.txt ## Generar out/hello.txt
+build: $(OUT_DIR)/hello.txt ## Genera out/hello.txt
 
 $(OUT_DIR)/hello.txt: $(SRC_DIR)/hello.py
 	mkdir -p $(@D)
@@ -350,7 +350,7 @@ test: $(SRC_DIR)/hello.py $(TEST_DIR)/test_hello.py scripts/run_tests.sh ## Ejec
 	scripts/run_tests.sh
 	$(PYTHON) -m unittest discover -s $(TEST_DIR) -v
 
-package: $(DIST_DIR)/app.tar.gz ## Crear dist/app.tar.gz
+package: $(DIST_DIR)/app.tar.gz ## Crea dist/app.tar.gz
 
 $(DIST_DIR)/app.tar.gz: $(OUT_DIR)/hello.txt
 	mkdir -p $(@D)
@@ -361,7 +361,7 @@ lint: ## Lint Bash y (opcional) Python
 	$(SHFMT) -d scripts/run_tests.sh
 	@command -v ruff >/dev/null 2>&1 && ruff check $(SRC_DIR) || echo "ruff no instalado; omitiendo lint Python"
 
-tools: ## Verificar dependencias
+tools: ## Verifica dependencias
 	@command -v $(PYTHON) >/dev/null || { echo "Falta $(PYTHON)"; exit 1; }
 	@command -v $(SHELLCHECK) >/dev/null || { echo "Falta shellcheck"; exit 1; }
 	@command -v $(SHFMT) >/dev/null || { echo "Falta shfmt"; exit 1; }
@@ -371,9 +371,9 @@ tools: ## Verificar dependencias
 	@tar --version 2>/dev/null | grep -q 'GNU tar' || { echo "Se requiere GNU tar"; exit 1; }
 	@command -v sha256sum >/dev/null || { echo "Falta sha256sum"; exit 1; }
 
-check: lint test ## Ejecutar lint y tests
+check: lint test ## Ejecuta lint y tests
 
-benchmark: | $(OUT_DIR) ## Medir tiempo de ejecución
+benchmark: | $(OUT_DIR) ## Mide el tiempo de ejecución
 	@mkdir -p $(OUT_DIR)
 	@echo "Benchmark: $(shell date '+%Y-%m-%d %H:%M:%S') / Commit: $(shell git rev-parse --short HEAD 2>/dev/null || echo 'N/A')" > $(OUT_DIR)/benchmark.txt
 	@if command -v /usr/bin/time >/dev/null 2>&1; then \
@@ -382,14 +382,14 @@ benchmark: | $(OUT_DIR) ## Medir tiempo de ejecución
 	  time -p make all >> $(OUT_DIR)/benchmark.txt 2>&1; \
 	fi
 
-format: ## Formatear scripts con shfmt
+format: ## Formatea scripts con shfmt
 	$(SHFMT) -w scripts/run_tests.sh
 
 dist-clean: clean ## Limpiar todo (incluye caches opcionales)
 	@find . -type d -name '__pycache__' -prune -exec rm -rf {} +
 	@rm -rf .ruff_cache
 
-verify-repro: ## Verificar que dist/app.tar.gz sea 100% reproducible
+verify-repro: ## Verifica que dist/app.tar.gz sea 100% reproducible
 	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s package
 	@cp $(DIST_DIR)/app.tar.gz app1.tar.gz
 	@rm -rf $(OUT_DIR) $(DIST_DIR); $(MAKE) -s package
@@ -401,10 +401,10 @@ verify-repro: ## Verificar que dist/app.tar.gz sea 100% reproducible
 	@rm -f app1.tar.gz app2.tar.gz
 
 
-clean: ## Limpiar archivos generados
+clean: ## Limpia archivos generados
 	rm -rf $(OUT_DIR) $(DIST_DIR)
 
-help: ## Mostrar ayuda
+help: ## Muestra ayuda
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':|##' '{printf "  %-12s %s\n", $$1, $$3}'
 ```
 
@@ -614,7 +614,7 @@ Incluye secciones breves (3-8 líneas cada una) que respondan a lo pedido en el 
 * **Incidencias y mitigaciones**: cualquier problema y cómo lo resolviste.
 * **Conclusión operativa**: 2-3 líneas sobre por qué el pipeline es apto para CI/CD.
 
-> Si alguna herramienta opcional no está disponible (p. ej., `ruff`), deja **evidencia** en `logs/` de su ausencia (mensaje claro) y continúa con el resto.
+> Si alguna herramienta opcional no está disponible (por ejemplo, `ruff`), deja **evidencia** en `logs/` de su ausencia (mensaje claro) y continúa con el resto.
 
 #### 3) Comprobación rápida antes de subir
 
