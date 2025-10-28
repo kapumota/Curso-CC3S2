@@ -1,0 +1,10 @@
+
+buckets:
+  - name: research-artifacts
+    public: false
+    classification: Restricted
+    allowed_prefix: experiments/
+  - name: docs
+    public: false
+    classification: Internal
+    allowed_prefix: handbooks/
