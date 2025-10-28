@@ -90,7 +90,7 @@ Al finalizar, deberías poder:
   * Regresión funcional -> validación de contrato antes de promover.
   * Costo operativo del doble despliegue -> límites de tiempo de convivencia.
   * Manejo de sesiones -> "draining" y compatibilidad de esquemas.
-* Define un **KPI primario** (p. ej., error 5xx, latencia p95) y un **umbral numérico** con **ventana de observación** para **promoción/abortado**.
+* Define un **KPI primario** (por ejemplo, error 5xx, latencia p95) y un **umbral numérico** con **ventana de observación** para **promoción/abortado**.
 * **Pregunta retadora:** si el KPI técnico se mantiene, pero cae una métrica de producto (conversión), explica por qué **ambos tipos de métricas** deben coexistir en el gate.
 
 **Revisión:** el KPI tiene número y ventana; la tabla muestra comprensión del impacto en usuarios.
@@ -127,7 +127,7 @@ Realiza comprobaciones **con herramientas estándar**, pero **no** pegues los co
 
    * Describe **cómo** parametrizarías el puerto sin tocar código (config externa).
    * Indica **dónde** verías los logs en ejecución (flujo estándar) y **por qué** no deberías escribirlos en archivos locales rotados a mano.
-   * Señala un **anti-patrón** (p. ej., credenciales en el código) y su impacto en reproducibilidad.
+   * Señala un **anti-patrón** (por ejemplo, credenciales en el código) y su impacto en reproducibilidad.
 
 6. **Checklist de diagnóstico (incidente simulado)**
 
@@ -165,26 +165,26 @@ Realiza comprobaciones **con herramientas estándar**, pero **no** pegues los co
 
 #### 6) Sugerencia de **gestión del tiempo** (3 días, \~3 h en total)
 
-**Día 1 (≈60–70 min) - Investigación y comparativos**
+**Día 1 (≈60-70 min) - Investigación y comparativos**
 
-* **Lectura guiada (25–30 min):** revisa 1–2 fuentes serias sobre DevOps/DevSecOps, CI/CD y Agile. Toma notas breves con definiciones operativas (evita definiciones vagas).
-* **Desarrollo (25–30 min):** redacta 4.1 (DevOps vs cascada), 4.2 (silos y anti-patrones) y 4.3 (principios y beneficios). Incluye **trade-offs verificables** y un **indicador observable** (no financiero) con cómo lo medirías.
+* **Lectura guiada (25-30 min):** revisa 1-2 fuentes serias sobre DevOps/DevSecOps, CI/CD y Agile. Toma notas breves con definiciones operativas (evita definiciones vagas).
+* **Desarrollo (25-30 min):** redacta 4.1 (DevOps vs cascada), 4.2 (silos y anti-patrones) y 4.3 (principios y beneficios). Incluye **trade-offs verificables** y un **indicador observable** (no financiero) con cómo lo medirías.
 * **Imágenes (10 min):** crea/selecciona y guarda en `imagenes/`
 
   * `devops-vs-cascada.png` (muestra feedback continuo)
   * `silos-equipos.png` (silos y handoffs)
 * **Trazabilidad:** commit "Día 1-Comparativos e imágenes base".
 
-**Día 2 (≈60–70 min)-Seguridad y despliegue**
+**Día 2 (≈60-70 min)-Seguridad y despliegue**
 
-* **DevSecOps (25–30 min):** redacta 4.4 con **SAST vs DAST** y define un **gate mínimo** con **umbrales numéricos** (severidad, cobertura, caducidad de excepciones y responsable).
-* **Estrategia CI/CD (25–30 min):** redacta 4.5 eligiendo **una** (sandbox, canary, azul/verde). Construye una **tabla de riesgos vs mitigaciones** (≥3 filas) y fija **KPI + umbral + ventana** para promoción/rollback.
+* **DevSecOps (25-30 min):** redacta 4.4 con **SAST vs DAST** y define un **gate mínimo** con **umbrales numéricos** (severidad, cobertura, caducidad de excepciones y responsable).
+* **Estrategia CI/CD (25-30 min):** redacta 4.5 eligiendo **una** (sandbox, canary, azul/verde). Construye una **tabla de riesgos vs mitigaciones** (≥3 filas) y fija **KPI + umbral + ventana** para promoción/rollback.
 * **Imagen (10 min):** agrega `pipeline_canary.png` (pipeline o canary) en `imagenes/`.
 * **Trazabilidad:** commit "Día 2-DevSecOps y estrategia de despliegue".
 
-**Día 3 (≈60–80 min)-Evidencia práctica y cierre**
+**Día 3 (≈60-80 min)-Evidencia práctica y cierre**
 
-* **Comprobaciones prácticas (35–45 min):** realiza hallazgos para 4.6 sin pegar comandos:
+* **Comprobaciones prácticas (35-45 min):** realiza hallazgos para 4.6 sin pegar comandos:
 
   * HTTP (método, código y 2 cabeceras) -> `http-evidencia.png`
   * DNS (tipo y TTL) -> `dns-ttl.png`
@@ -192,8 +192,8 @@ Realiza comprobaciones **con herramientas estándar**, pero **no** pegues los co
   * Puertos (2 en escucha + interpretación) -> `puertos.png`
   * 12-Factor (port binding, config externa, logs) -> redacción breve
   * **Checklist de incidente (6 pasos)** con **evidencia esperada** y **acción**
-* **Desafíos y arquitectura (15–20 min):** 4.7 (riesgos y mitigaciones + `desafios_devops.png`) y 4.8 (diagrama `arquitectura-minima.png` con ubicación de controles).
-* **Cierre (10–15 min):** completa **tabla de evidencias**, revisa coherencia entre hallazgos y decisiones (umbrales), agrega **FUENTES.md** (≥2).
+* **Desafíos y arquitectura (15-20 min):** 4.7 (riesgos y mitigaciones + `desafios_devops.png`) y 4.8 (diagrama `arquitectura-minima.png` con ubicación de controles).
+* **Cierre (10-15 min):** completa **tabla de evidencias**, revisa coherencia entre hallazgos y decisiones (umbrales), agrega **FUENTES.md** (≥2).
 * **Trazabilidad:** commit "Día 3-Evidencia, diagramas y entrega final".
 
 **Consejos rápidos**
