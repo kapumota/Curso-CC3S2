@@ -1,3 +1,4 @@
+#test_contract.py
 """
 Pruebas de contrato: validación mínima de esquema JSON para módulos locales.
 """
