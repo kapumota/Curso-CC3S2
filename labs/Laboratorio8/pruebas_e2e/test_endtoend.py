@@ -1,3 +1,4 @@
+#test_endtoend.py
 """
 Prueba E2E local: desde la generación hasta la respuesta HTTP.
 """
