@@ -1,3 +1,4 @@
+#network.py
 """
 Módulo local para definir instancias de servidor en JSON, usa un rango IP localizado, sin proveedor cloud.
 """
