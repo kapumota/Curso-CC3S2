@@ -31,7 +31,7 @@ Sube una carpeta **`Actividad2-CC3S2/`** con:
 4. **Puertos abiertos con `ss`:**
 
    * `ss -ltnp | grep :8080` (evidencia del proceso y socket).
-5. **Logs como flujo:** Demuestra que los logs salen por stdout (pega 2–3 líneas). Explica por qué **no** se escriben en archivo (12-Factor).
+5. **Logs como flujo:** Demuestra que los logs salen por stdout (pega 2-3 líneas). Explica por qué **no** se escriben en archivo (12-Factor).
 
 > Herramientas: `curl`, `ss`, `lsof` (opcional para PID/FD), `journalctl` (si corres como servicio).
 
@@ -46,7 +46,7 @@ Sube una carpeta **`Actividad2-CC3S2/`** con:
    * `dig +short miapp.local` (debe devolver `127.0.0.1`).
    * `getent hosts miapp.local` (muestra la base de resolución del sistema).
 3. **TTL/caché (conceptual):** con `dig example.com A +ttlunits` explica cómo el TTL afecta respuestas repetidas (no cambies DNS público, solo observa).
-4. **Pregunta guía:** ¿Qué diferencia hay entre **/etc/hosts** y una zona DNS autoritativa? ¿Por qué el *hosts* sirve para laboratorio? Explica en 3–4 líneas.
+4. **Pregunta guía:** ¿Qué diferencia hay entre **/etc/hosts** y una zona DNS autoritativa? ¿Por qué el *hosts* sirve para laboratorio? Explica en 3-4 líneas.
 
 > Herramientas: `dig`, `getent`, `resolv.conf`/`resolvectl` (si aplica).
 
@@ -65,7 +65,7 @@ Sube una carpeta **`Actividad2-CC3S2/`** con:
 5. **Puertos y logs:**
 
    * `ss -ltnp | grep -E ':(443|8080)'` (evidencia de ambos sockets).
-   * `journalctl -u nginx -n 50 --no-pager` **o** `tail -n 50 /var/log/nginx/error.log` (pega 3–5 líneas relevantes).
+   * `journalctl -u nginx -n 50 --no-pager` **o** `tail -n 50 /var/log/nginx/error.log` (pega 3-5 líneas relevantes).
 
 > Nota: el *vínculo*  Nginx->Flask es **HTTP interno** en `127.0.0.1:8080`, tu cliente entra por **HTTPS** en `:443`.
 
