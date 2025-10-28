@@ -89,7 +89,7 @@ Cuando haces cambios en tus archivos, Git reconoce que estos archivos han cambia
 Primero, crea un nuevo archivo en tu directorio `kapumota-repo`:
 
 ```bash
-// Crear un archivo README.md
+// Crea un archivo README.md
 $ echo " README" > README.md
 ```
 
@@ -263,10 +263,10 @@ Las convenciones de nombres de *ramas* son importantes para la comunicación. Un
 También puedes crear una *rama* a partir de una *rama* o *commit* específico que sea diferente al que estás trabajando actualmente. Esto es particularmente útil cuando necesitas crear una *rama* de característica (feature) o corrección de errores (bugfix) que debería originarse desde una *rama* de desarrollo o *staging* designada en lugar de desde tu *branch* de trabajo actual:
 
 ```bash
-// Crear una rama desde una rama específica
+// Crea una rama desde una rama específica
 $ git branch <new-branch-name> <base-branch-name>
 
-// Crear una rama desde un commit específico
+// Crea una rama desde un commit específico
 $ git branch <new-branch-name> <commit-hash>
 ```
 
@@ -317,7 +317,7 @@ $ git checkout hotfix/bugfix
 Las versiones recientes de Git también ofrecen el comando `git switch`, que proporciona una forma más intuitiva de cambiar *ramas*:
 
 ```bash
-// Cambiar a la rama 'feature/new-feature'
+// Cambia a la rama 'feature/new-feature'
 $ git switch feature/new-feature
 ```
 
@@ -326,7 +326,7 @@ A veces, puede resultar eficiente crear una nueva *rama* y cambiar a ella inmedi
 Para crear una nueva *rama* y cambiar a ella en un solo paso, puedes usar el comando `git checkout -b`:
 
 ```bash
-// Crear y cambiar a una nueva rama
+// Crea y cambia a una nueva rama
 $ git checkout -b feature/another-new-feature
 ```
 
@@ -340,7 +340,7 @@ $ git checkout feature/another-new-feature
 En las versiones recientes de Git, puedes lograr lo mismo con `git switch` usando la opción `-c`:
 
 ```bash
-// Crear y cambiar a una nueva rama
+// Crea y cambia a una nueva rama
 $ git switch -c feature/another-new-feature
 ```
 
@@ -367,7 +367,7 @@ En tales casos, Git requerirá intervención manual para resolver los conflictos
 Una vez que una *rama* ha sido fusionada con éxito y ya no es necesaria, se puede eliminar para mantener limpio el repositorio:
 
 ```bash
-// Eliminar una rama local
+// Elimina una rama local
 $ git branch -d feature/new-feature
 ```
 
