@@ -1,4 +1,4 @@
-
+#secrets_scan.py
 import os, re, json, sys
 
 PATTERNS = [
