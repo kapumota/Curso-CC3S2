@@ -277,7 +277,7 @@ En tu flujo de trabajo diario, a menudo necesitarás cambiar de una *rama* a otr
 Cambiar tu *rama* de trabajo actual se conoce como cambiar a una *rama*. El comando `git checkout` facilita esto:
 
 ```bash
-// Cambiar a la rama 'feature/new-feature'
+// Cambia a la rama 'feature/new-feature'
 $ git checkout feature/new-feature
 ```
 
@@ -353,7 +353,7 @@ Una vez que hayas realizado cambios en una *rama* y los hayas probado a fondo, e
 // Primero, cambia a la rama en la que deseas fusionar
 $ git checkout main
 
-// Ahora, fusiona tu rama de características
+// Ahora fusiona tu rama feature
 $ git merge feature/new-feature
 ```
 
@@ -380,7 +380,7 @@ $ git branch -d feature/new-feature
 
 #### Ejercicios
 
-##### Ejercicio 1: Manejo avanzado de ramas y resolución de conflictos
+#### Ejercicio 1: Manejo avanzado de ramas y resolución de conflictos
 
 **Objetivo:** Practicar la creación, fusión y eliminación de ramas, así como la resolución de conflictos que puedan surgir durante la fusión.
 
