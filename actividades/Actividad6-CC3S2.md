@@ -307,7 +307,7 @@ $ git checkout feature/login
 // Verifica el historial de commits para identificar el commit específico
 $ git log --oneline
 
-// Crear una nueva rama 'hotfix/bugfix' basada en el commit 'abc1234'
+// Crea una nueva rama 'hotfix/bugfix' basada en el commit 'abc1234'
 $ git branch hotfix/bugfix abc1234
 
 // Cambia a la nueva rama 'hotfix/bugfix'
