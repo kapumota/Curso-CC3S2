@@ -1,0 +1,133 @@
+networks:
+  backend:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:13
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "512M"
+
+  etl-app:
+    build:
+      context: ./app
+    image: etl-app:1.0.0
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      ETL_INPUT: /app/data/input.csv
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "python", "healthcheck.py"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "256M"
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    image: airflow-secure:1.0.0
+    command: ["webserver"]
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${SQLALCHEMY_CONN}
+      AIRFLOW_UID: ${AIRFLOW_UID}
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./app:/opt/airflow/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512M"
+
+  airflow-scheduler:
+    image: airflow-secure:1.0.0
+    command: ["scheduler"]
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${SQLALCHEMY_CONN}
+      AIRFLOW_UID: ${AIRFLOW_UID}
+    networks:
+      - backend
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./app:/opt/airflow/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "512M"
+
+  airflow-init:
+    image: airflow-secure:1.0.0
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${SQLALCHEMY_CONN}
+      AIRFLOW_UID: ${AIRFLOW_UID}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+    entrypoint: ["bash","-lc"]
+    command: >
+      airflow db init &&
+      airflow users create
+        --username admin
+        --firstname Admin
+        --lastname User
+        --role Admin
+        --email admin@example.com
+        --password admin || true
+
+volumes:
+  postgres_data:
