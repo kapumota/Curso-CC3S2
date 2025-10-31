@@ -1,6 +1,5 @@
-##########
 # Stage 1: build
-##########
+
 FROM python:3.12-slim AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -22,9 +21,8 @@ RUN apt-get update \
  && apt-get autoremove -y \
  && rm -rf /var/lib/apt/lists/*
 
-##########
 # Stage 2: runtime minimal
-##########
+
 FROM python:3.12-slim AS runtime
 
 ENV PIP_NO_CACHE_DIR=1 \
