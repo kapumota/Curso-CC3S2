@@ -1,4 +1,4 @@
-### Laboratorio:DevSecOps con Docker, Compose y Airflow
+### Laboratorio: DevSecOps con Docker, Compose y Airflow
 
 Este proyecto es una maqueta práctica para enseñar **DevSecOps con contenedores**. 
 Veremos cómo una aplicación ETL corre dentro de Docker, orquestada con Compose, con **configuración por entorno**, **healthchecks**, **límites de recursos**, pruebas en contenedor y "gates" de **supply chain** (SBOM + escaneo).
