@@ -402,7 +402,7 @@ grep -R --line-number -E '(PASSWORD|SECRET|TOKEN)=' . \
 ```
 
 **Criterio**
-Las configuraciones sensibles provienen del entorno (no están hardcodeadas). Hay `.env.example` con documentación breve.
+Las configuraciones sensibles provienen del entorno (no están hardcodeadas). Hay un `.env.example` con documentación breve.
 
 **Evidencia**
 
