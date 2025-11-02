@@ -86,3 +86,111 @@ Para empezar desde cero (desechable): `docker compose down -v` y luego `make res
 
 
 > El flujo es simple, **construir -> inicializar -> levantar**, probar el ETL, pasar tests y registrar evidencia de SBOM/escaneo.
+
+
+### Seguridad
+
+
+#### Alcance y objetivos
+
+* **Alcance:** servicios definidos en `docker-compose.yml`: `airflow-webserver`, `airflow-scheduler`, `etl-app`, `postgres`.
+* **Objetivo:** garantizar un **entorno local seguro por defecto**, con superficie de ataque mínima y buenas prácticas básicas replicables.
+
+####  Postura de seguridad (baseline)
+
+* **Usuarios no-root:** las imágenes de Airflow se ejecutan como usuario **no root** en runtime.
+* **Privilegios:** no se usan `--privileged`, `cap-add`, `SYS_ADMIN` ni bind mounts sensibles del host.
+* **Redes:** comunicación **interna** por red de Compose; **no** se expone Postgres al host.
+* **Puertos:** solo se publica **`8080:8080`** para acceder a la UI de Airflow en local.
+* **Etiquetado de imágenes:** se usan **tags fijos** (por ejemplo, `1.0.0`, `13`) y **no** se usa `:latest`.
+
+#### Gestión de secretos y configuración
+
+* **`.env.example` obligatorio:** contiene variables de entorno de referencia y **no incluye secretos reales**.
+* **Uso de `.env` en este laboratorio:** por ser un entorno **didáctico/local**, **se permite** que exista `./.env` en el repositorio **si y solo si**:
+
+  * contiene **credenciales falsas / de laboratorio**,
+  * no se reutilizan en otros entornos,
+  * y se entiende que su objetivo es **facilitar la reproducción** del ejercicio.
+* **Regla para entornos reales:** en pre-producción/producción, **`.env no se versiona`**; solo `.env.example`. Los secretos deben gestionarse con gestores dedicados (ASM/Secrets Manager/KMS/Vault) o variables de entorno inyectadas por el orquestador/CI.
+
+#### Exposición de servicios
+
+* **UI Airflow:** accesible en `http://localhost:8080`.
+* **Base de datos:** **no** se publica `5432`; acceso únicamente desde los servicios de la red interna de Compose.
+* **Criterio:** cualquier publicación adicional de puertos debe ser **justificada** y documentada con propósito y alcance.
+
+#### Dependencias e imágenes
+
+* **Tags fijos (MUST):** todas las imágenes deben usar **tags explícitos** (sin `latest`).
+* **Digest (SHOULD para producción):** en laboratorios locales, el uso de `@sha256` es **opcional**. En pre-producción/producción, se **recomienda fuertemente** fijar `tag@sha256` para garantizar inmutabilidad.
+* **Actualizaciones:** cuando se suba de versión, registrar el **cambio de tag** en el README o changelog del laboratorio.
+
+#### SBOM y escaneo de vulnerabilidades
+
+> Este laboratorio **no requiere scripts adicionales** para generar SBOM/escaneos; puede hacerse con herramientas contenedorizadas.
+
+* **SBOM (opcional recomendado en local / requerido en producción):**
+
+  ```bash
+  # Syft contenedorizado (ejemplo)
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/syft:latest etl-app:1.0.0 -o spdx-json > dist/sbom-etl-app.spdx.json
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/syft:latest airflow-secure:1.0.0 -o spdx-json > dist/sbom-airflow.spdx.json
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/syft:latest postgres:13 -o spdx-json > dist/sbom-postgres.spdx.json
+  ```
+* **Escaneo (opcional recomendado en local / requerido en producción):**
+
+  ```bash
+  # Grype o Trivy contenedorizados (ejemplo con Grype)
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/grype:latest etl-app:1.0.0
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/grype:latest airflow-secure:1.0.0
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/grype:latest postgres:13
+  ```
+* **Criterio de aceptación local:** registrar **hallazgos críticos** y, si es posible, aplicar mitigaciones (actualizar base, fijar versión parche). En producción, **bloquear el despliegue** ante hallazgos críticos conocidos (gate).
+
+#### Logs, auditoría y evidencias
+
+* **Logs a stdout/stderr:** recolectados por `docker compose logs`.
+* **Evidencias mínimas (local):** conservar export de logs relevantes y, si se generan, los SBOM y reportes de escaneo en `./dist/`.
+* **PII/secret-free:** no almacenar secretos reales en evidencias.
+
+#### Recursos y límites
+
+* **Límites de recursos (recomendado):** en local pueden omitirse si el hardware es limitado, pero en entornos compartidos se recomienda establecer `cpus`, `mem_limit` y `healthcheck` para cada servicio crítico.
+
+#### Hardening adicional (recomendado)
+
+* **TLS (reverse proxy) para acceso externo:** solo si se publica fuera de `localhost`.
+* **Política de redes:** mantener servicios internos en redes privadas de Compose; preferir nombres de servicio sobre direcciones IP.
+* **Superficie mínima:** no añadir puertos/volúmenes/privilegios salvo necesidad explícita.
+
+#### Diferencias entre entornos (matriz)
+
+| Control              | Local (este lab)                                     | Pre-producción / producción                   |
+| -------------------- | ---------------------------------------------------- | --------------------------------- |
+| `.env` versionado    | **Permitido** con credenciales falsas de laboratorio | **Prohibido**                     |
+| Tags de imagen       | **Requeridos** (sin `latest`)                        | **Requeridos**                    |
+| Digest `@sha256`     | **Opcional**                                         | **Recomendado/Exigible**          |
+| SBOM                 | **Opcional recomendado**                             | **Obligatorio**                   |
+| Escaneo vuln.        | **Opcional recomendado**                             | **Obligatorio con gate**          |
+| Puertos expuestos    | Solo **8080** (Airflow UI)                           | Mínimos y detrás de TLS/ingress   |
+| DB publicada         | **No**                                               | **No** (salvo casos justificados) |
+| Privilegios elevados | **No**                                               | **No**                            |
+
+#### Responsabilidades
+
+* **Mantenedores del laboratorio:** actualizar versiones/tag y anotar cambios de seguridad relevantes.
+* **Usuarios del laboratorio:** no reutilizar credenciales de demo, ejecutar SBOM/escaneos cuando sea posible y reportar hallazgos.
+
+#### Incidentes y reporte
+
+* Si se detecta una exposición accidental (por ejemplo, publicación de un puerto no documentado o credencial real en `.env`), **crear un issue** en el repositorio con la descripción, impacto, y pasos de mitigación propuestos.
+* Para vulnerabilidades críticas en imágenes base, adjuntar **salida del escáner** y proponer **bump de versión**.
+
+####  Recomendaciones para pre-producción/producción
+
+1. Sustituir las credenciales de laboratorio por secretos gestionados (ASM/SM/Vault) y **eliminar `.env` versionado**.
+2. Fijar **`tag@sha256`** en imágenes, en especial para bases públicas (`postgres`).
+3. Habilitar **gates** de seguridad en CI: SBOM + escaneo + política de severidad (bloqueo en CRÍTICO/ALTO).
+4. Publicar la UI de Airflow detrás de **TLS** y autenticación; evitar exposición directa de `:8080` a internet.
+5. Definir **límites de recursos** y **healthchecks** estrictos para servicios críticos.
