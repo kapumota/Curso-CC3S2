@@ -76,7 +76,7 @@ Para empezar desde cero (desechable): `docker compose down -v` y luego `make res
 * Aviso de **FERNET** en Airflow -> genera una clave y colócala como `FERNET_KEY` en `.env`; expórtala con `AIRFLOW__CORE__FERNET_KEY`.
 * Docker/WSL raro (Windows) -> `wsl --shutdown`, reinicia Docker Desktop y repite `make build && make init && make up`.
 
-## Buenas prácticas que estás aplicando
+#### Buenas prácticas que estás aplicando
 
 * Contenedores **sin root** en runtime (menor superficie de ataque).
 * **Nada** de puertos de base de datos expuestos al host.
