@@ -2,7 +2,6 @@ import os
 from functools import lru_cache
 from typing import Dict, Any
 
-
 @lru_cache(maxsize=1)
 def settings() -> Dict[str, Any]:
     """
