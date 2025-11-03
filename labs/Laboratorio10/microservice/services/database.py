@@ -9,11 +9,9 @@ from microservice.utils.logger import logger
 
 DB_PATH = Path("app.db")
 
-
 def init_db() -> None:
     """
-    Inicializa la base de datos SQLite creando la tabla `items`
-    si no existe todavía.
+    Inicializa la base de datos SQLite creando la tabla `items` si no existe todavía.
     """
     logger.info("Inicializando base de datos en %s", DB_PATH)
     with sqlite3.connect(DB_PATH) as conn:
