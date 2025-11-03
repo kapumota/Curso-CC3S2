@@ -1,6 +1,6 @@
 ### IaC Local con DevSecOps: Plan -> Policy -> Apply -> Drift -> SBOM
 
-Este "mini-repo" es **100% local** (sin proveedores cloud) y muestra, en código, conceptos clave de Infraestructura como Código (IaC) y DevSecOps:
+Este ejemplo es **100% local** (sin proveedores cloud) y muestra, en código, conceptos clave de Infraestructura como Código (IaC) y DevSecOps:
 **plan -> policy (OPA opcional) -> apply -> drift -> SBOM -> tests**.
 
 Todo está diseñado para ejecutarse en tu entorno de Python `bdd`.   No se usa AWS, GCP, Azure ni ningún servicio externo.
