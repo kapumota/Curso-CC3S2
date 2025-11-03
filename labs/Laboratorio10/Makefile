@@ -1,6 +1,6 @@
 .PHONY: build run stop clean publish
 
-# Nombre de la imagen del microservicio
+# Nombre de la imagen de este microservicio
 IMAGE_NAME := ejemplo-microservice
 # Versión de la imagen (se puede sobreescribir al invocar: make build IMAGE_TAG=1.2.3)
 IMAGE_TAG ?= 0.1.0
