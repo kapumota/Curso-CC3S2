@@ -1,4 +1,4 @@
-### Actividad: Arquitectura y desarrollo de microservicios con Docker (base) y Kubernetes (bonus)
+### Actividad: Arquitectura y desarrollo de microservicios con Docker (base) y Kubernetes
 
 > Referencia: [Laboratorio 10](https://github.com/kapumota/Curso-CC3S2/tree/main/labs/Laboratorio10) (material del curso).
 
