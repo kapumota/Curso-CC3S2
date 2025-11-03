@@ -11,7 +11,6 @@ router = APIRouter(
     tags=["items"]
 )
 
-
 class ItemIn(BaseModel):
     """
     Modelo de datos para la creación de un ítem.
