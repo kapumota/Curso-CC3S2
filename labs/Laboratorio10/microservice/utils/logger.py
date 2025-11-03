@@ -1,7 +1,6 @@
 import logging
 import sys
 
-
 def _configurar_logger() -> logging.Logger:
     """
     Configura y retorna un logger con nombre 'microservice'.
