@@ -1,6 +1,5 @@
 """
 Suite de integración para los endpoints de ítems.
-
 Se asume que la lógica de negocio está en microservice/main.py y que FastAPI registra las rutas en /api/items.
 """
 
