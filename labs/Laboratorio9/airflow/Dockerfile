@@ -1,5 +1,4 @@
 FROM apache/airflow:2.9.1-python3.11
-
 USER root
 
 # Copiamos sólo lo necesario al runtime
