@@ -1,4 +1,4 @@
-# Core app
+# Librerias
 fastapi==0.110.0          # fija Starlette ~=0.37.*
 uvicorn[standard]==0.29.0
 pydantic==2.8.1
