@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 from microservice.services import database
 from microservice.utils.logger import logger
 
-
 def create_item(name: str, description: Optional[str] = None) -> Dict[str, Optional[int or str]]:
     """
     Crea un nuevo ítem en la base de datos y devuelve su representación.
