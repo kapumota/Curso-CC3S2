@@ -5,7 +5,6 @@ from microservice.api.routes import router as api_router
 from microservice.services.database import init_db
 from microservice.utils.logger import logger
 
-
 def get_application() -> FastAPI:
     """
     Crea y configura la instancia de FastAPI con sus rutas
