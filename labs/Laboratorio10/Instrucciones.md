@@ -1,4 +1,4 @@
-### Instrucciones
+### Laboratorio: Microservicios y docker
 
 Este documento describe cómo poner en marcha el microservicio tanto con Docker como en local, usando los nombres y comandos personalizados.
 
