@@ -1,8 +1,7 @@
 """
 Suite de integración para los endpoints de ítems.
 
-Se asume que la lógica de negocio está en microservice/main.py y que
-FastAPI registra las rutas en /api/items.
+Se asume que la lógica de negocio está en microservice/main.py y que FastAPI registra las rutas en /api/items.
 """
 
 import pytest
@@ -22,12 +21,10 @@ def client():
 ITEM_NAME = "test-item"
 ITEM_DESCRIPTION = "Descripción de prueba"
 
-
 def test_healthcheck_items_endpoint(client):
     """El listado debería responder 200 OK aun cuando no haya ítems."""
     resp = client.get("/api/items")
     assert resp.status_code == 200
-
 
 def test_create_item_and_verify_in_list(client):
     """
