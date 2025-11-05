@@ -2,6 +2,7 @@
 
 Este laboratorio demuestra el uso de los patrones de diseño **Singleton, Factory, Prototype, Builder y Composite** para generar configuraciones de Terraform **exclusivamente locales** (`null_resource` + `local_file`), sin depender de ningún proveedor en la nube ni de Docker.
 
+
 #### Inicio rápido
 
 ```bash
