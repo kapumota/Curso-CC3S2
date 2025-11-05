@@ -16,7 +16,7 @@ cd "$ROOT_DIR"
 function probar_patron() {
   local nombre=$1
   local python_cmd=$2
-  echo "=== Probando patrón: $nombre ==="
+  echo " Probando patrón: $nombre"
   # Genera el JSON
   python - <<EOF > "$TF_DIR/main.tf.json"
 $python_cmd
