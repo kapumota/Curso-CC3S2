@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-# -------- Parámetros --------
+# Parámetros 
 SERVICE ?= order-service
 IMAGE_REGISTRY ?=
 IMAGE_NAME ?= $(SERVICE)
@@ -10,7 +10,7 @@ K8S_VERSION ?= v1.32.2
 MINIKUBE_CPUS ?= 4
 MINIKUBE_MEMORY ?= 8192
 
-# --- Normalización del registry (sin booleanos que confundan a make) ---
+# Normalización del registry (sin booleanos que confundan a make) 
 # 1) strip espacios, 2) quita barra final, 3) arma repo si hay registry,
 # 4) sanea una barra inicial accidental (evita "/user-service:tag").
 REG_RAW      := $(strip $(IMAGE_REGISTRY))
@@ -44,7 +44,7 @@ env:
 	@echo "TAG=$(TAG)"
 	@echo "K8S_VERSION=$(K8S_VERSION)"
 
-# ========== BUILD ==========
+# BUILD 
 .PHONY: build
 build:
 	@echo "[i] usando daemon de minikube para que el cluster vea la imagen"
@@ -61,7 +61,7 @@ push:
 	  exit 0; \
 	fi
 
-# ========== SUPPLY CHAIN (SBOM / SCA / Firma) ==========
+# SUPPLY CHAIN (SBOM / SCA / Firma) 
 .PHONY: sbom
 sbom:
 	@mkdir -p $(ARTIFACTS)
@@ -98,7 +98,7 @@ ifeq ($(COSIGN_VERIFY),1)
 	@if which cosign >/dev/null 2>&1; then cosign verify $(IMAGE) >/dev/null && echo "Verificación de firma OK"; fi
 endif
 
-# ========== K8S ==========
+# K8S 
 .PHONY: k8s-prepare
 k8s-prepare:
 	@mkdir -p $(ARTIFACTS)
@@ -130,7 +130,7 @@ smoke:
 	@if [ "$(SERVICE)" = "order-service" ]; then ./scripts/minikube_smoke.sh order-service 8001 $(K8S_NS); \
 	else ./scripts/minikube_smoke.sh user-service 8000 $(K8S_NS); fi
 
-# ========== Flujos de alto nivel ==========
+# Flujos de alto nivel 
 .PHONY: dev
 dev: env minikube-up build k8s-prepare k8s-apply smoke
 	@echo "[DEV] OK -> $(SERVICE) @ $(K8S_IMAGE)"
