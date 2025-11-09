@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=8000
 
-# Fix apt on Debian trixie
+# Fix apt para Debian trixie
 RUN set -eux; \
     rm -f /etc/apt/apt.conf.d/docker-clean || true; \
     apt-get update; \
