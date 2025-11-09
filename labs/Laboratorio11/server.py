@@ -14,7 +14,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(f"Hello from {NAME} on {PORT}\n".encode())
 
     def log_message(self, fmt, *args):
-        # reduce noise in logs
+        # reduce ruido en logs
         pass
 
 if __name__ == "__main__":
