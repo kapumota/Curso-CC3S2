@@ -7,7 +7,7 @@ USE_REGISTRY="${USE_REGISTRY:-0}"
 services=("user-service" "order-service")
 make minikube-up
 for svc in "${services[@]}"; do
-  echo "==== [$svc] ===="
+  echo "[$svc]"
   if [[ "$BUILD_IN_MINIKUBE" == "1" && "$USE_REGISTRY" != "1" ]]; then
     make build-in-minikube SERVICE="$svc"
   else
@@ -26,4 +26,4 @@ for svc in "${services[@]}"; do
   make test SERVICE="$svc" || { make test-down SERVICE="$svc" || true; exit 1; }
   make test-down SERVICE="$svc" || true
 done
-echo "[✓] run_all.sh OK"
+echo "run_all.sh OK"
