@@ -1,12 +1,11 @@
-# Laboratorio: DevSecOps de extremo a extremo: Docker -> Cadena de suministro -> CI -> Kubernetes (local primero, reproducible)
+### Laboratorio: DevSecOps de extremo a extremo: Docker -> Cadena de suministro -> CI -> Kubernetes (local primero, reproducible)
 
 Este laboratorio, cubre el desarrollo local con Docker/Compose, **supply chain** (SBOM, SCA y firma), **CI local con registro**, y despliegue en **Kubernetes (Minikube)**, con verificación de salud y recolección de evidencias.
 
-
-## 0) Estructura relevante del paquete
+#### 0) Estructura relevante del paquete
 
 * **Raíz**
-  `Makefile`, `README.txt`, `requirements.txt`, `server.py`, `healthcheck.py`
+  `Makefile`, `Instrucciones.md`, `requirements.txt`, `server.py`, `healthcheck.py`
 * **Docker**
   `docker/Dockerfile.python-template`  <- sin `apt`, healthcheck en Python
 * **Tests (Compose)**
@@ -17,16 +16,14 @@ Este laboratorio, cubre el desarrollo local con Docker/Compose, **supply chain**
   *(con probes a `/health` e `imagePullPolicy: IfNotPresent`)*
 * **Scripts**
   `scripts/env.sh`, `pipeline.sh`, `run_all.sh`, `minikube_smoke.sh`,
-  `show_outputs.sh`, `pre-push.example.sh`, `tag.sh`, `wait-for-http.sh`
+  `muestra_salidas.sh`, `pre-push.ejemplo.sh`, `tag.sh`, `wait-for-http.sh`
 * **Artefactos**
   `artifacts/user-service-sbom.json`, `user-service-grype.sarif`,
   `user-service.tar`, `user-service.yaml`, `order-service.yaml`
 * **Supply chain**
-  `supply-chain/README.md`
+  `supply-chain/Instrucciones.md`
 
-
-
-## 1) Prerrequisitos
+#### 1) Prerrequisitos
 
 * **Docker** y **Docker Compose v2**
 * **Python 3.10+** (para `healthcheck.py`)
@@ -36,12 +33,11 @@ Este laboratorio, cubre el desarrollo local con Docker/Compose, **supply chain**
 > **Windows/WSL2**: usa **Docker Desktop** con integración WSL2 activada.
 
 
-
-## 2) Preparación de entorno (una sola vez por equipo)
+#### 2) Preparación de entorno (una sola vez por equipo)
 
 ```bash
 cd Laboratorio11
-python -m venv .venv && source .venv/bin/activate     # opcional
+python -m venv .venv && source .venv/bin/activate     # opcional (cambia de nombre)
 pip install -r requirements.txt                       # opcional
 
 # Variables comunes del laboratorio
@@ -54,13 +50,11 @@ make env SERVICE=user-service
 
 > `scripts/env.sh` centraliza nombres y tags. Ajusta ahí lo necesario.
 
-
-
-## 3) Desarrollo local (DEV) - pruebas con Docker Compose
+#### 3) Desarrollo local (DEV) - pruebas con Docker Compose
 
 **Objetivo:** compilar, levantar contenedor de prueba y comprobar `/health` con un contenedor `sut`.
 
-### 3.1 User Service
+#### 3.1 User Service
 
 **Con Makefile**
 
@@ -81,7 +75,7 @@ docker compose -f docker-compose.user.test.yml down -v
 * Mensaje final tipo **`SUT OK`** (porque el `sut` hace `curl http://app:8000/health` -> **200**)
 * Código de salida **0**
 
-### 3.2 Order Service
+#### 3.2 Order Service
 
 **Con Makefile**
 
@@ -104,13 +98,12 @@ docker compose -f docker-compose.order.test.yml down -v
 > **Si falla**: confirma que el servicio expone `/health` y el **puerto** correcto.
 
 
-
-## 4) Supply Chain (SEC) - SBOM + SCA (SARIF + gate) + Firma
+#### 4) Supply Chain (SEC) - SBOM + SCA (SARIF + gate) + Firma
 
 **Objetivo:** generar SBOM, ejecutar análisis de vulnerabilidades con **gate** y **firmar/verificar** la imagen.
 Usaremos `user-service` como ejemplo (puedes replicar con `order-service`).
 
-### 4.1 Generar SBOM
+#### 4.1 Generar SBOM
 
 **Con Makefile**
 
@@ -126,7 +119,7 @@ syft packages docker-archive:artifacts/user-service.tar -o json > artifacts/user
 
 **Salida esperada:** `artifacts/user-service-sbom.json` (inventario de componentes).
 
-### 4.2 SCA con gate (Grype -> SARIF)
+#### 4.2 SCA con gate (Grype -> SARIF)
 
 **Con Makefile (gate estricto)**
 
@@ -148,29 +141,27 @@ grype docker-archive:artifacts/user-service.tar -o sarif > artifacts/user-servic
   SCAN_FAIL_SEVERITY=critical make scan SERVICE=user-service
   ```
 
-### 4.3 Firma y verificación (Cosign)
+#### 4.3 Firma y verificación (Cosign)
 
 ```bash
 make sign SERVICE=user-service              # firma
 COSIGN_VERIFY=1 make sign SERVICE=user-service  # firma + verify
 ```
 
-### 4.4 Evidencias de supply chain
+#### 4.4 Evidencias de supply chain
 
 ```bash
 mkdir -p .evidence/sbom .evidence/scan .evidence/logs
 cp artifacts/*sbom*.json .evidence/sbom/ 2>/dev/null || true
 cp artifacts/*grype*.sarif .evidence/scan/ 2>/dev/null || true
-bash scripts/show_outputs.sh
+bash scripts/muestra_salidas.sh
 ```
 
-> Conceptos ampliados en `supply-chain/README.md`.
-
-
+> Conceptos ampliados en `supply-chain/Instrucciones.md`.
 
 #### 5) CI local con registro (push + firma)
 
-**Objetivo:** ejecutar pipeline "tipo CI" completa con push a un **registro** (p.ej. GHCR).
+**Objetivo:** ejecutar pipeline "tipo CI" completa con push a un **registro** (por ejemplo GHCR).
 
 1. Configura registro y autentícate
 
@@ -197,7 +188,6 @@ make pipeline SERVICE=order-service
 ```bash
 make ci SERVICE=order-service | tee .evidence/logs/ci-order-$(date +%F-%H%M).txt
 ```
-
 
 #### 6) Despliegue en Kubernetes (OPS) - Minikube
 
@@ -236,7 +226,6 @@ kubectl get deploy,svc,pod -o wide
 kubectl apply -f k8s/user-service/deployment-and-service.yaml
 kubectl apply -f k8s/order-service/deployment-and-service.yaml
 ```
-
 #### Verificación de readiness y health
 
 **Smoke test por port-forward automático**
@@ -263,7 +252,7 @@ python healthcheck.py --url "$ORDER_URL/health" --timeout 30
 
 ```bash
 kubectl get deploy,svc,pods -o wide | tee .evidence/logs/k8s-overview-$(date +%F-%H%M).txt
-bash scripts/show_outputs.sh
+bash scripts/muestra_salidas.sh
 ```
 
 #### Limpieza
@@ -273,8 +262,6 @@ kubectl delete -f k8s/user-service/deployment-and-service.yaml || true
 kubectl delete -f k8s/order-service/deployment-and-service.yaml || true
 # Opcional: minikube delete
 ```
-
-
 
 #### 7) Resumen con todo lo esencial
 
@@ -320,16 +307,14 @@ python healthcheck.py --url "$USER_URL/health" --timeout 30
 python healthcheck.py --url "$ORDER_URL/health" --timeout 30
 
 # 5) evidencias
-bash scripts/show_outputs.sh
+bash scripts/muestra_salidas.sh
 kubectl get deploy,svc,pods -o wide | tee .evidence/logs/k8s-overview-$(date +%F-%H%M).txt
 ```
-
 
 #### 8) Problemas comunes (y soluciones rápidas)
 
 * **El gate SCA falla**: sube el umbral **temporalmente** (solo para demo)
   `SCAN_FAIL_SEVERITY=critical make scan SERVICE=user-service`
-  *(Explica en la exposición el riesgo de relajar gates).*
 
 * **La imagen no se ve en Minikube**: compila dentro del daemon del cluster
 
@@ -348,16 +333,7 @@ kubectl get deploy,svc,pods -o wide | tee .evidence/logs/k8s-overview-$(date +%F
   `minikube -p minikube docker-env | Invoke-Expression`
 
 
-#### 9) Evidencias y checklist
-
-* **Checklist imprimible (.md)**: crea una lista de control con pasos y archivos de evidencia en `.evidence/`. Registra:
-
-  * Logs de DEV (`dev-user-*.txt`, `dev-order-*.txt`)
-  * SBOM y SARIF en `.evidence/sbom/` y `.evidence/scan/`
-  * CI: `.evidence/logs/ci-order-*.txt`
-  * K8s overview: `.evidence/logs/k8s-overview-*.txt`
-
-#### 10) Resumen de targets típicos del Makefile
+#### 9) Resumen de targets típicos del Makefile
 
 * `make env SERVICE=...` -> muestra variables (SERVICE, TAG, IMAGE)
 * `make dev SERVICE=...` -> build + test local con Compose
@@ -371,9 +347,9 @@ kubectl get deploy,svc,pods -o wide | tee .evidence/logs/k8s-overview-$(date +%F
 * `make k8s-apply SERVICE=...` -> despliegue K8s del servicio
 
 
-#### 11) Artefacto `.tar` en `artifacts/` 
+#### 10) Artefacto `.tar` en `artifacts/` 
 
-En el laboratorio no hay un **`.tar` preconstruido** (por ejemplo,  `artifacts/user-service.tar`). Cuando lo tengas esto permite:
+En el laboratorio no hay un **`.tar` preconstruido** (por ejemplo,  `artifacts/user-service.tar`). Cuando lo tengas y los uses permite:
 
 * Generar **SBOM** sin reconstruir la imagen:
 
