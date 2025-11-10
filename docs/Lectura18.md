@@ -1,5 +1,7 @@
 ### Escalabilidad y gobernanza de IaC
-La adopción de Infrastructure as Code (IaC) transforma por completo la forma en que los equipos diseñan, revisan y operan la infraestructura: el código se convierte en la fuente única de verdad y desencadena discusiones de arquitectura tan rigurosas como las que se dan sobre la lógica de una aplicación. Sin embargo, a medida que el número de personas que colaboran crece y con él la cantidad de estados, entornos, proveedores y componentes, surgen preguntas inevitables sobre organización, escalabilidad y gobierno. Resulta útil recorrer de manera integrada los pilares que suelen desencadenar fricción (o, por el contrario, que aceleran el flujo de trabajo) cuando hablamos de IaC a gran escala: la estructura de los repositorios y los módulos, las estrategias de versionado, los mecanismos de liberación y el marco cultural que permite compartir artefactos entre equipos sin sacrificar seguridad ni velocidad.
+La adopción de Infrastructure as Code (IaC) transforma por completo la forma en que los equipos diseñan, revisan y operan la infraestructura: el código se convierte en la fuente única de verdad y desencadena discusiones de arquitectura tan rigurosas como las que se dan sobre la lógica de una aplicación. Sin embargo, a medida que el número de personas que colaboran crece y con él la cantidad de estados, entornos, proveedores y componentes, surgen preguntas inevitables sobre organización, escalabilidad y gobierno. 
+
+Resulta útil recorrer de manera integrada los pilares que suelen desencadenar fricción (o, por el contrario, que aceleran el flujo de trabajo) cuando hablamos de IaC a gran escala: la estructura de los repositorios y los módulos, las estrategias de versionado, los mecanismos de liberación y el marco cultural que permite compartir artefactos entre equipos sin sacrificar seguridad ni velocidad.
 
 #### Escalar con el equipo 
 
@@ -32,7 +34,7 @@ Cuando llega el momento de extraer un módulo de un monorepositorio hacia su pro
 
 1. **Identificar y aislar el directorio**
 
-   * Elegir el módulo (p. ej. `modules/network/`) junto con su historia de commits más relevante.
+   * Elegir el módulo (por ejemplo `modules/network/`) junto con su historia de commits más relevante.
 2. **Extraer el historial con `git filter-repo`**
 
    ```bash
@@ -50,7 +52,7 @@ Cuando llega el momento de extraer un módulo de un monorepositorio hacia su pro
 4. **Configurar el nuevo repositorio**
 
    * Crear pipeline CI específico (lint, `terraform validate`, `plan`).
-   * Definir backend remoto (p. ej. `terraform { backend "s3" { … } }`).
+   * Definir backend remoto (por ejemplo `terraform { backend "s3" { … } }`).
 5. **Publicar la primera versión semántica**
 
    ```bash
