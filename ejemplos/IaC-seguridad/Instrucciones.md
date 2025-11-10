@@ -52,7 +52,7 @@ Significa:
 Ejecuta estos targets del `Makefile` en orden lógico:
 
 ```bash
-make tools        # Escaneo simple de secretos en el repo (búsqueda de "password", "token", etc.)
+make tools        # Escaneo simple de secretos en el repositorio (búsqueda de "password", "token", etc.)
 make plan         # Genera el plan en ./.evidence/plan.json (NO aplica todavía)
 make policy       # (Opcional) Aplica políticas Rego con 'opa' si lo tienes instalado
 make apply        # Crea / actualiza los recursos locales (carpetas bajo data/ + metadata.json)
@@ -104,7 +104,7 @@ Esto modela la detección de drift en runtime, que es parte clave de gobernanza 
 #### `make sbom`
 
 * Ejecuta `tools/sbom.py`.
-* Recorre el repo, calcula hash SHA-256 de cada archivo y escribe `./.evidence/sbom.json`.
+* Recorre el repositorio, calcula hash SHA-256 de cada archivo y escribe `./.evidence/sbom.json`.
 * Ese archivo SBOM local es una base para trazabilidad y cadena de suministro (saber qué artefactos existen, con qué checksum).
 
 #### `make test`
