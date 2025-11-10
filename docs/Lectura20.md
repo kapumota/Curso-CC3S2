@@ -163,7 +163,7 @@ Imagina que usas un DSL en lugar de Python para crear tu red. Para este ejemplo 
 
 En general, siempre puedes probar unitariamente los archivos que usaste para definir IaC. Si una herramienta usa un archivo de configuración, como CloudFormation, Terraform, Bicep, Ansible, Puppet, Chef y más, puedes probar unitariamente cualquier línea de la configuración.
 
-En el siguiente listado , puedes probar el nombre de la red, el número de subredes y los rangos de direcciones IP de subred para tu módulo de red sin generar un dry run. Se ejecuta pruebas similares con pytest para verificar los mismos parámetros.
+En el siguiente listado , puedes probar el nombre de la red, el número de subredes y los rangos de direcciones IP de subred para tu módulo de red sin generar un **dry-run**. Se ejecuta pruebas similares con pytest para verificar los mismos parámetros.
 
 ```python
 import json
@@ -206,17 +206,17 @@ def test_configuration_for_subnet_ip_ranges(subnets):
             == f"10.0.{i}.0/24"
 ```
 
-Quizás notes que las pruebas unitarias para DSLs se parecen a las de los lenguajes de programación. Verifican el nombre de la red, el número de subredes y las direcciones IP. Algunas herramientas tienen frameworks de pruebas especializados. Normalmente utilizan el mismo flujo de trabajo de generar una ejecución simulada (dry run) o un archivo de estado y analizarlo para extraer valores.
+Quizás notes que las pruebas unitarias para DSLs se parecen a las de los lenguajes de programación. Verifican el nombre de la red, el número de subredes y las direcciones IP. Algunas herramientas tienen frameworks de pruebas especializados. Normalmente utilizan el mismo flujo de trabajo de generar una ejecución simulada (**dry-run**) o un archivo de estado y analizarlo para extraer valores.
 
-Sin embargo, tu archivo de configuración puede no contenerlo todo. Por ejemplo, no tendrás ciertas configuraciones en Terraform o Ansible hasta después de hacer un dry run. Un dry run prevé los cambios de IaC sin desplegarlos y, internamente, identifica y resuelve posibles problemas.
+Sin embargo, tu archivo de configuración puede no contenerlo todo. Por ejemplo, no tendrás ciertas configuraciones en Terraform o Ansible hasta después de hacer un **dry-run**. Un **dry-run** prevé los cambios de IaC sin desplegarlos y, internamente, identifica y resuelve posibles problemas.
 
-> Un dry run prevé los cambios de IaC sin desplegarlos. Internamente identifica y resuelve posibles problemas.
+> Un **dry-run** prevé los cambios de IaC sin desplegarlos. Internamente identifica y resuelve posibles problemas.
 
-Los dry runs vienen en diferentes formatos y estándares. La mayoría de dry runs muestra la salida en la terminal, y puedes guardar esa salida en un archivo. Algunas herramientas generan automáticamente el dry run en un archivo.
+Los **dry-runs** vienen en diferentes formatos y estándares. La mayoría de **dry-runs** muestra la salida en la terminal, y puedes guardar esa salida en un archivo. Algunas herramientas generan automáticamente el **dry-run** en un archivo.
 
-#### Generando dry runs para pruebas unitarias
+#### Generando **dry-runs** para pruebas unitarias
 
-Algunas herramientas guardan sus dry runs en un archivo, mientras que otras muestran los cambios en la terminal. Si usas Terraform, escribes el plan de Terraform en un archivo JSON usando el siguiente comando:
+Algunas herramientas guardan sus **dry-runs** en un archivo, mientras que otras muestran los cambios en la terminal. Si usas Terraform, escribes el plan de Terraform en un archivo JSON usando el siguiente comando:
 
 ```bash
 $ terraform plan -out=dry_run && terraform show -json dry_run > dry_run.json
@@ -224,9 +224,9 @@ $ terraform plan -out=dry_run && terraform show -json dry_run > dry_run.json
 
 AWS CloudFormation ofrece *change sets*, y puedes analizar la descripción del change set una vez que se complete. De manera similar, puedes obtener información de dry-run de Kubernetes con la opción `--dry-run=client` de `kubectl run`.
 
-Como práctica general, priorizo las pruebas que verifican archivos de configuración. Escribo pruebas para analizar dry runs cuando no puedo obtener el valor directamente de los archivos de configuración. Un dry run normalmente necesita acceso en red a la API del proveedor de infraestructura y tarda un poco en ejecutarse. En ocasiones, la salida o el archivo contiene información sensible o identificadores que no quiero que una prueba analice explícitamente.
+Como práctica general, priorizo las pruebas que verifican archivos de configuración. Escribo pruebas para analizar **dry-runs** cuando no puedo obtener el valor directamente de los archivos de configuración. Un **dry-run** normalmente necesita acceso en red a la API del proveedor de infraestructura y tarda un poco en ejecutarse. En ocasiones, la salida o el archivo contiene información sensible o identificadores que no quiero que una prueba analice explícitamente.
 
-Aunque la configuración de dry-run puede no ajustarse a la definición más tradicional de pruebas unitarias en desarrollo de software, el análisis de dry runs no requiere ningún cambio en la infraestructura activa. Sigue siendo una forma de análisis estático. El dry run en sí actúa como una prueba unitaria para validar y mostrar el comportamiento de cambio esperado antes de aplicar el cambio.
+Aunque la configuración de dry-run puede no ajustarse a la definición más tradicional de pruebas unitarias en desarrollo de software, el análisis de **dry-runs** no requiere ningún cambio en la infraestructura activa. Sigue siendo una forma de análisis estático. El **dry-run** en sí actúa como una prueba unitaria para validar y mostrar el comportamiento de cambio esperado antes de aplicar el cambio.
 
 #### ¿Cuándo debes escribir pruebas unitarias?
 
@@ -246,7 +246,7 @@ Se ha limitado la explicación en esta sección a las pruebas de configuración 
 
 Debes usar pruebas unitarias para comprobar los pasos individuales y su idempotencia. Las pruebas unitarias deben ejecutar los pasos individuales con varios prerrequisitos y verificar que obtienen el mismo resultado. Si necesitas acceder a una API de infraestructura, puedes simular (mock) las respuestas de la API en tus pruebas unitarias.
 
-Los casos de uso para las pruebas unitarias incluyen verificar que has creado el número esperado de recursos de infraestructura, fijado versiones específicas de infraestructura o utilizado el estándar de nombres correcto. Las pruebas unitarias se ejecutan rápidamente y ofrecen retroalimentación casi instantánea a coste prácticamente cero (¡una vez escritas!). Se ejecutan en cuestión de segundos porque no realizan actualizaciones en la infraestructura ni requieren la creación de recursos de infraestructura activos. Si escribes pruebas unitarias para comprobar la salida de un dry run, añades un poco de tiempo debido al tiempo inicial que lleva generar el dry run.
+Los casos de uso para las pruebas unitarias incluyen verificar que has creado el número esperado de recursos de infraestructura, fijado versiones específicas de infraestructura o utilizado el estándar de nombres correcto. Las pruebas unitarias se ejecutan rápidamente y ofrecen retroalimentación casi instantánea a coste prácticamente cero (¡una vez escritas!). Se ejecutan en cuestión de segundos porque no realizan actualizaciones en la infraestructura ni requieren la creación de recursos de infraestructura activos. Si escribes pruebas unitarias para comprobar la salida de un **dry-run**, añades un poco de tiempo debido al tiempo inicial que lleva generar el **dry-run**.
 
 ### Pruebas de contrato
 
