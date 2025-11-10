@@ -10,12 +10,12 @@ Finalmente, evidencia significa poder demostrar que se cumplieron los controles:
 
 #### Parte A. Preguntas teórico-conceptuales (responder en texto)
 
-**A1. Monorepo vs. repositorios múltiples (respuesta ~200 palabras).**
+**A1. Monorepositorio vs. repositorios múltiples (respuesta ~200 palabras).**
 Imagina que hoy todo tu IaC vive en un solo repositorio. Explica:
 
 1. ¿Por qué este enfoque inicialmente acelera el "bootstrap" del equipo?
 2. ¿Por qué empieza a romperse cuando hay muchas personas cambiando cosas al mismo tiempo (locks, reviewers agotados, CI lento, permisos demasiado amplios)? 
-3. ¿Cuándo tendría sentido "extraer" un módulo (por ejemplo `modules/network/`) a su propio repo/versionado independiente? Explica el flujo resumido de migración (aislar directorio -> filtrar historial git -> crear pipeline propio -> publicar `v1.0.0`). 
+3. ¿Cuándo tendría sentido "extraer" un módulo (por ejemplo `modules/network/`) a su propio repositorio/versionado independiente? Explica el flujo resumido de migración (aislar directorio -> filtrar historial git -> crear pipeline propio -> publicar `v1.0.0`). 
 
 **A2. Versionado semántico y notas de versión (respuesta ~150 palabras).**
 Define con tus palabras qué significa publicar un módulo IaC en `v1.0.0`, `v1.1.0` y `v1.1.1`. 
@@ -31,7 +31,7 @@ Resume con tus palabras estas tres ideas y por qué son obligatorias en un pipel
 * **Política de "solo etiquetas firmadas" para producción** (rechazar módulos sin firma válida). 
 
 **A4. Secretos y privilegio mínimo (respuesta ~200 palabras).**
-Describe un error típico de estudiantes o equipos junior respecto a secretos (por ejemplo, dejar un `AWS_ACCESS_KEY` en el repo o exponerlo en un `output`). Explica cómo debería ser el flujo correcto usando:
+Describe un error típico de estudiantes o equipos junior respecto a secretos (por ejemplo, dejar un `AWS_ACCESS_KEY` en el repositorio o exponerlo en un `output`). Explica cómo debería ser el flujo correcto usando:
 
 * gestor centralizado de secretos,
 * rotación frecuente/TTL corto,
@@ -54,7 +54,7 @@ Menciona ejemplos de evidencia que un equipo debe guardar:
 En esta parte no se despliega a la nube. El objetivo es simular un pipeline DevSecOps de IaC en local.
 
 **Contexto:**
-Se asume que les diste un mini-repo local de IaC (por ejemplo el que ya preparaste con Makefile y directorio `.evidence/`) con targets tipo:
+Se asume que les diste un mini-repositorio local de IaC (por ejemplo el que ya preparaste con Makefile y directorio `.evidence/`) con targets tipo:
 
 ```bash
 make plan        # genera un plan JSON reproducible (por ejemplo, ./.evidence/plan.json)
@@ -99,7 +99,7 @@ make evidence    # empaqueta artefactos de auditoría listos para archivar
 **C1. Gobernanza vs velocidad (~150 palabras).**
 Contesta: ¿Cómo puedo permitir que los equipos de producto avancen rápido creando/modificando módulos (autonomía), pero al mismo tiempo imponer políticas duras (encriptado por defecto, IAM mínimo, no secretos en outputs, TLS 1.3+ obligatorio) sin volver el proceso burocrático? Relaciona tu respuesta con:
 
-* separar módulos en repos distintos con dueños naturales,
+* separar módulos en repositorios distintos con dueños naturales,
 * versionado semántico con notas de versión claras,
 * gates automáticos (OPA, escaneo de secretos, SBOM),
 * y métricas tipo DORA / KPIs de IaC (tiempo de revisión, locks concurrentes bajos, % de rechazos por política bajo pero distinto de 0).  
@@ -116,7 +116,7 @@ Cada estudiante sube una carpeta llamada `Actividad-IaC-Seguridad-Gobernanza/` c
    * `B1.txt`, `B2.txt`, `B3.txt` con las observaciones prácticas.
 3. `evidencia-local/`
 
-   * Copia de los artefactos generados por su ejecución local del mini-repo:
+   * Copia de los artefactos generados por su ejecución local del mini-repositorio:
 
      * plan (`plan.json` o equivalente),
      * salida del policy check (puede ser `policy_result.txt` o similar),
