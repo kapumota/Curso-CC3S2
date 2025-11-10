@@ -19,6 +19,7 @@ Un módulo de IaC encapsula un conjunto cohesivo de recursos y variables con un 
    Toda la configuración y los módulos conviven bajo el mismo árbol de directorios. Herramientas como *terraform workspaces* o *terragrunt* facilitan la separación por entorno. El descubrimiento de "qué recurso existe y dónde" es inmediato porque hay una sola fuente. La trazabilidad de cambios a lo largo del tiempo es excelente: un solo registro de *commits* refleja la evolución completa del patrimonio digital. Además, depurar integraciones es más sencillo,un *git grep* o un *IDE* con *go to definition* resuelven la mayoría de dudas en segundos.
 
    El talón de Aquiles se revela con el paso de los meses: el *pipeline* CI debe volver a procesar mucho código aunque la modificación sea local a un módulo diminuto; los *reviewers* reciben notificaciones constantes y acaban revisando áreas fuera de su dominio y lo más sensible, los permisos en Git (por ramas o por directorio) rara vez cubren la granularidad deseada.
+
    En términos prácticos, un monorepositorio escala mal cuando varias decenas de ingenieros empujan *merge requests* de forma concurrente.
 
 3. **Repositorios múltiples**.
