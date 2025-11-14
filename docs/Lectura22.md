@@ -2,8 +2,7 @@
 
 Docker y Kubernetes cumplen diferentes propósitos pero pueden complementarse entre sí en el contexto de la ingeniería de datos.
 Docker se centra en la creación y gestión de contenedores, mientras que Kubernetes se encarga de orquestar y escalar aplicaciones contenerizadas.
-Muchas arquitecturas de ingeniería de datos usan Docker para desarrollar y empaquetar componentes de procesamiento de datos, mientras que Kubernetes gestiona
-el despliegue, el escalado y la administración de esos contenedores en entornos de producción.
+Muchas arquitecturas de ingeniería de datos usan Docker para desarrollar y empaquetar componentes de procesamiento de datos, mientras que Kubernetes gestiona el despliegue, el escalado y la administración de esos contenedores en entornos de producción.
 
 Comprender ambas tecnologías es valioso para los ingenieros de datos que necesitan crear, desplegar y gestionar canalizaciones de procesamiento de datos de manera eficiente.
 
