@@ -35,7 +35,6 @@ Genera JSON de red y subredes locales y comprueba la estructura:
 pytest pruebas_unitarias
 ```
 
-
 #### 2. Pruebas de contrato
 
 Ubicación: `pruebas_contrato/`
