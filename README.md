@@ -1,5 +1,5 @@
 ## Curso de desarrollo de software CC3S2
-Curso práctico y básico para llevar código a producción, enfocándose en calidad, automatización, seguridad y operabilidad. Cubre  metodologías ágiles, Git, TDD/BDD (pytest/behave), CI/CD (GitHub Actions), Infraestructura como Código (Terraform, OPA/tfsec), contenedores (Docker), orquestación (Kubernetes), observabilidad (OpenTelemetry, Prometheus, Grafana) y DevSecOps (SAST/SCA/DAST, SBOM, SLSA, NIST SSDF). Incluye verificación formal (TLA+) y AIOps/LLMs con guardrails para IA segura en DevOps.
+Curso práctico y básico para llevar código a producción, enfocándose en calidad, automatización, seguridad y operabilidad. Cubre  metodologías ágiles, Git, TDD/BDD (pytest/behave), CI/CD (GitHub Actions), Infraestructura como Código (Terraform, OPA/tfsec), contenedores (Docker), orquestación (Kubernetes), observabilidad (OpenTelemetry, Prometheus, Grafana) y DevSecOps (SAST/SCA/DAST, SBOM, SLSA, NIST SSDF) de manera local. Incluye verificación formal (TLA+) y AIOps/LLMs con guardrails para IA segura en DevOps.
 
 Este repositorio contiene lecturas, laboratorios y ejemplos de código.
 
