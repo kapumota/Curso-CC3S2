@@ -468,7 +468,7 @@ En este código, el endpoint `/health` devuelve un JSON muy simple con `"status"
 * Las estrategias de despliegue como:
 
   * **Zero-downtime deployment**: se lanza una nueva versión mientras la antigua sigue atendiendo. Kubernetes solo redirige tráfico a pods marcados como sanos según `/health`, de modo que los usuarios no perciben caída.
-  * **Red–green (blue–green)**: se mantiene un entorno "red" (actual) y uno "green" (nuevo). Primero se despliega la versión nueva y se comprueba su salud con `/health`. Solo cuando está OK se cambia el tráfico del entorno viejo al nuevo; si falla, se regresa al entorno anterior.
+  * **Red-green (blue-green)**: se mantiene un entorno "red" (actual) y uno "green" (nuevo). Primero se despliega la versión nueva y se comprueba su salud con `/health`. Solo cuando está OK se cambia el tráfico del entorno viejo al nuevo; si falla, se regresa al entorno anterior.
   * **Ring-based deployment**: se despliega la nueva versión por "anillos" o grupos (por ejemplo, un pequeño porcentaje de usuarios, luego más, hasta el 100%). En cada anillo se verifica con `/health` (y otras métricas) que la versión se comporta correctamente antes de avanzar al siguiente grupo.
 
 
