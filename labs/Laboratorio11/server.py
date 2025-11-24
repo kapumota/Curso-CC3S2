@@ -11,7 +11,7 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(b"OK")
             return
         self.send_response(200); self.end_headers()
-        self.wfile.write(f"Hello from {NAME} on {PORT}\n".encode())
+        self.wfile.write(f"Hola desde {NAME} on {PORT}\n".encode())
 
     def log_message(self, fmt, *args):
         # reduce ruido en logs
