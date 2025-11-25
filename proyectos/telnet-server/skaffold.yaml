@@ -7,11 +7,11 @@ build:
   artifacts:
     - image: dftd/telnet-server
 
-# Pruebas con kubectl
+# Pruebas con kubectl (modo "simple", sin blue–green, Deployment telnet-server)
 test:
   - image: dftd/telnet-server
     custom:
-      # Espera a que el Deployment esté listo
+      # Espera a que el Deployment clásico esté listo
       - command: "kubectl wait deployment/telnet-server --for=condition=available --timeout=2m -n default"
       # Comprueba que el Service exista
       - command: "kubectl get svc telnet-server -n default"
@@ -20,3 +20,33 @@ deploy:
   kubectl:
     manifests:
       - kubernetes/*
+
+# Perfiles para blue–green deployment
+profiles:
+  - name: blue
+    deploy:
+      kubectl:
+        manifests:
+          - kubernetes/deployment-blue-green.yaml
+          - kubernetes/service.yaml
+    test:
+      - image: dftd/telnet-server
+        custom:
+          # Espera a que el deployment BLUE esté listo
+          - command: "kubectl wait deployment/telnet-server-blue --for=condition=available --timeout=2m -n default"
+          # Comprueba que el Service apunte y exista
+          - command: "kubectl get svc telnet-server -n default"
+
+  - name: green
+    deploy:
+      kubectl:
+        manifests:
+          - kubernetes/deployment-blue-green.yaml
+          - kubernetes/service.yaml
+    test:
+      - image: dftd/telnet-server
+        custom:
+          # Espera a que el deployment GREEN esté listo
+          - command: "kubectl wait deployment/telnet-server-green --for=condition=available --timeout=2m -n default"
+          # Comprueba que el Service apunte y exista
+          - command: "kubectl get svc telnet-server -n default"
