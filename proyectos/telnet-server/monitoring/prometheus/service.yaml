@@ -1,3 +1,4 @@
+# Service de Prometheus expuesto vía NodePort para acceder a la interfaz web en el clúster
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,4 +17,3 @@ spec:
   ports:
     - port: 9090
       targetPort: 9090 
-
