@@ -38,7 +38,7 @@ data:
           }
         ]
       },
-      "description": "Kubernetes to monitor POD statistics",
+      "description": "Kubernetes para monitorear las estadisticas de POD",
       "editable": false,
       "gnetId": 6588,
       "graphTooltip": 1,
@@ -119,7 +119,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Memory Usage",
+          "title": "Uso de la memoria",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -225,7 +225,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU Usage",
+          "title": "Uso de la CPU",
           "tooltip": {
             "msResolution": true,
             "shared": true,
