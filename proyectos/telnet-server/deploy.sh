@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
 # 1. Inicia Minikube con driver Docker
 minikube start --driver=docker
 
