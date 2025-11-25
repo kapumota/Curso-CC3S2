@@ -9,7 +9,7 @@ spec:
   type: LoadBalancer
   selector:
     app: telnet-server
-    color: blue    # ← cambia a "green" cuando quieras pasar al entorno verde
+    color: blue    # <- cambia a "green" cuando quieras pasar al entorno verde
   ports:
     - port: 2323
       name: telnet
@@ -30,7 +30,7 @@ spec:
   type: ClusterIP
   selector:
     app: telnet-server
-    color: blue    # ← mismo color que el Service principal
+    color: blue    # <- mismo color que el Service principal
   ports:
     - name: metrics
       port: 9000
