@@ -1,4 +1,4 @@
-### **Instrucciones y preguntas**
+### **Instrucciones**
 
 ### **Sobre contenedores**
 
