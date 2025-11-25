@@ -1,3 +1,4 @@
+# ConfigMap de Alertmanager con configuración básica de rutas y receptor por defecto "none"
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -31,4 +32,3 @@ data:
         - receiver: none
           match:
             severity: "Critical"
-
