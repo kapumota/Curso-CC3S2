@@ -6,8 +6,8 @@ go 1.17
 
 // Dependencias directas
 require (
-    github.com/prometheus/client_golang v1.6.0    // cliente de Prometheus para Go
-    github.com/stretchr/testify       v1.4.0    // librería de aserciones y utilidades para tests
+    github.com/prometheus/client_golang v1.6.0    // Cliente de Prometheus para Go
+    github.com/stretchr/testify       v1.4.0    // Librería de aserciones y utilidades para tests
 )
 
 // Dependencias indirectas (requeridas por las dependencias directas)
