@@ -11,6 +11,7 @@ type tcpServerMock struct {
 	mock.Mock
 }
 
+
 // Run es la implementación simulada del método Run del servidor TCP
 func (t *tcpServerMock) Run() {
 	fmt.Println("Función de notificación de carga simulada")
