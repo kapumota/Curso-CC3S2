@@ -1,3 +1,4 @@
+# Service de Grafana expuesto vía NodePort para acceder a la consola web
 apiVersion: v1
 kind: Service
 metadata:
