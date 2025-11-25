@@ -32,7 +32,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "prometheus",
-          "description": "Connections per second",
+          "description": "Conexiones por segundo",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -82,7 +82,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Connections per second",
+          "title": "Conexiones por segundo",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -126,7 +126,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "prometheus",
-          "description": "CPU throttling by container in seconds",
+          "description": "Limitación de CPU por contenedor en segundos",
           "fieldConfig": {
             "defaults": {
               "custom": {},
@@ -221,7 +221,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "prometheus",
-          "description": "Errors per second rate",
+          "description": "Tasa de errores por segundo",
           "fieldConfig": {
             "defaults": {
               "custom": {},
@@ -286,7 +286,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Errors per second",
+          "title": "Errores por segundo",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -542,7 +542,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "prometheus",
-              "description": "The total connections of telnet-server",
+              "description": "El total de conexiones del servidor telnet",
               "fieldConfig": {
                 "defaults": {
                   "custom": {}
@@ -592,7 +592,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Total Connections",
+              "title": "Total de conexiones",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -685,7 +685,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Active Connections",
+              "title": "Conexiones activas",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -725,7 +725,7 @@ data:
             },
             {
               "datasource": "prometheus",
-              "description": "Errors per second rate",
+              "description": "Tasa de errores por segundo",
               "fieldConfig": {
                 "defaults": {
                   "custom": {},
@@ -783,12 +783,12 @@ data:
               ],
               "timeFrom": null,
               "timeShift": null,
-              "title": "Connection Error Total",
+              "title": "Error de conexión total",
               "type": "stat"
             },
             {
               "datasource": "prometheus",
-              "description": "Total Unknown Commands",
+              "description": "Comandos totalmente desconocidos",
               "fieldConfig": {
                 "defaults": {
                   "custom": {},
@@ -848,7 +848,7 @@ data:
               ],
               "timeFrom": null,
               "timeShift": null,
-              "title": "Unknown Commands Total",
+              "title": "Comandos desconocidos total",
               "type": "stat"
             }
           ],
