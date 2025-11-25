@@ -1,3 +1,4 @@
+# Dashboard de Grafana para monitorizar pods de Kubernetes (CPU, memoria y red) desde Prometheus
 apiVersion: v1
 kind: ConfigMap
 metadata:
