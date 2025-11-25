@@ -1,3 +1,4 @@
+# ConfigMap de Prometheus con reglas de alertas para telnet-server y scrape de métricas de Kubernetes
 apiVersion: v1
 kind: ConfigMap
 metadata:
