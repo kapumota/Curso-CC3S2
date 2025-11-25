@@ -33,7 +33,7 @@ var (
 	})
 )
 
-// MetricServer mantiene el estado de nuestro servidor de métricas Prometheus
+// MetricServer mantiene el estado del servidor de métricas Prometheus
 type MetricServer struct {
 	port     string
 	endPoint string
