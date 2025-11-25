@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 1. Información del cluster
-echo "Info del Cluster"
+echo "Info del cluster"
 minikube kubectl cluster-info
 
 # 2. Explicación de labels
