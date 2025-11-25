@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+
 // TCPServer mantiene la estructura de nuestro servidor TCP
 type TCPServer struct {
 	addr    string
