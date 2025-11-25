@@ -1,4 +1,4 @@
-# ConfigMap de Prometheus con reglas de alertas para telnet-server y scrape de métricas de Kubernetes
+# ConfigMap de Prometheus con reglas de alerta y scrape de Kubernetes
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -18,8 +18,7 @@ data:
           severity: Critical
         annotations:
           summary: High Error Rate
-          description: "telnet-server has a high error rate per second in the last 2 minutes"
-          runbook_url: https://github.com/bradleyd/devops_for_the_desperate/blob/main/runbooks/telnet-server.md#high-error-rate
+          description: "telnet-server tiene una alta tasa de error por segundo en los últimos 2 minutos"
 
       - alert: HighConnectionRatePerSecond
         expr: sum(rate(telnet_server_connection_total{job="kubernetes-pods"}[2m])) > 2
@@ -28,8 +27,7 @@ data:
           severity: Critical
         annotations:
           summary: High Connection Rate
-          description: "telnet-server has a high connection rate per second in the last 2 minutes"
-          runbook_url: https://github.com/bradleyd/devops_for_the_desperate/blob/main/runbooks/telnet-server.md#high-connection-rate
+          description: "telnet-server tiene una alta tasa de conexiones por segundo en los últimos 2 minutos"
 
       - alert: HighCPUThrottleRate
         expr: sum by(container) (rate(container_cpu_cfs_throttled_seconds_total{container="telnet-server",container!="POD",image!=""}[2m])) > 0.00003
@@ -38,9 +36,7 @@ data:
           severity: Critical
         annotations:
           summary: High CPU Throttling
-          description: "telnet-server is being CPU throttled\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-          runbook_url: https://github.com/bradleyd/devops_for_the_desperate/blob/main/runbooks/telnet-server.md#high-cpu-throttling
-
+          description: "telnet-server está siendo limitado por CPU\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
   prometheus.yml: |-
     global:
@@ -57,31 +53,24 @@ data:
 
     scrape_configs:
       - job_name: 'kubernetes-apiservers'
-
         kubernetes_sd_configs:
         - role: endpoints
         scheme: https
-
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-
         relabel_configs:
         - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
           action: keep
           regex: default;kubernetes;https
 
       - job_name: 'kubernetes-nodes'
-
         scheme: https
-
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-
         kubernetes_sd_configs:
         - role: node
-
         relabel_configs:
         - action: labelmap
           regex: __meta_kubernetes_node_label_(.+)
@@ -93,10 +82,8 @@ data:
           replacement: /api/v1/nodes/${1}/proxy/metrics
 
       - job_name: 'kubernetes-pods'
-
         kubernetes_sd_configs:
         - role: pod
-
         relabel_configs:
         - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
           action: keep
@@ -124,16 +111,12 @@ data:
         - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
 
       - job_name: 'kubernetes-cadvisor'
-
         scheme: https
-
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-
         kubernetes_sd_configs:
         - role: node
-
         relabel_configs:
         - action: labelmap
           regex: __meta_kubernetes_node_label_(.+)
@@ -145,10 +128,8 @@ data:
           replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       
       - job_name: 'kubernetes-service-endpoints'
-
         kubernetes_sd_configs:
         - role: endpoints
-
         relabel_configs:
         - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
           action: keep
