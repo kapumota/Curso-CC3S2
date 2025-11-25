@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
 echo "Services: telnet-server"
 minikube kubectl -- get services telnet-server
 
