@@ -1,3 +1,4 @@
+# Dashboard de Grafana específico para visualizar métricas y golden signals de telnet-server
 apiVersion: v1
 kind: ConfigMap
 metadata:
