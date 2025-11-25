@@ -1,3 +1,4 @@
+# Pruebas de comando y metadatos para el binario telnet-server
 schemaVersion: 2.0.0
 commandTests:
   - name: "telnet-server"
