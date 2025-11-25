@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telnet-server-blue
+  labels:
+    app: telnet-server
+    color: blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: telnet-server
+      color: blue
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: telnet-server
+        color: blue
+    spec:
+      containers:
+        - name: telnet-server
+          image: dftd/telnet-server:v1      # Versión "actual"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TELNET_PORT
+              value: "2323"
+            - name: METRIC_PORT
+              value: "9000"
+          ports:
+            - containerPort: 2323
+              name: telnet
+            - containerPort: 9000
+              name: metrics
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "0.1"
+              memory: "1Mi"
+            limits:
+              cpu: "0.5"
+              memory: "100Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telnet-server-green
+  labels:
+    app: telnet-server
+    color: green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: telnet-server
+      color: green
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: telnet-server
+        color: green
+    spec:
+      containers:
+        - name: telnet-server
+          # Aquí normalmente usarías la nueva versión de imagen
+          # por ejemplo: dftd/telnet-server:v2
+          image: dftd/telnet-server:v1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TELNET_PORT
+              value: "2323"
+            - name: METRIC_PORT
+              value: "9000"
+          ports:
+            - containerPort: 2323
+              name: telnet
+            - containerPort: 9000
+              name: metrics
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "0.1"
+              memory: "1Mi"
+            limits:
+              cpu: "0.5"
+              memory: "100Mi"
