@@ -1,3 +1,4 @@
+# Service de Alertmanager expuesto vía NodePort para acceso externo y scraping de métricas
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,4 +19,3 @@ spec:
     protocol: TCP
     port: 9093
     targetPort: 9093
-
