@@ -1,3 +1,4 @@
+# ConfigMap para registrar los dashboards de Grafana desde archivos en el pod
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,8 +11,6 @@ data:
     providers:
       - name: 'dftd-dashboards'
         orgId: 1
-        # <string> name of the dashboard folder.
-        # <string> folder UID. will be automatically generated if not specified
         type: file
         disableDeletion: false
         editable: true
@@ -19,6 +18,4 @@ data:
         allowUiUpdates: false
         options:
           path: /etc/grafana/dashboards
-          # <bool> use folder names from filesystem to create folders in Grafana
           foldersFromFilesStructure: true
-
