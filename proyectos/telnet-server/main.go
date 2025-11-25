@@ -37,7 +37,7 @@ func metricServerPort() string {
 
 func main() {
 	var info bool
-	// bandera -i para imprimir los valores de entorno y salir
+	// flag -i para imprimir los valores de entorno y salir
 	flag.BoolVar(&info, "i", false, "Imprimir puertos desde ENV")
 	flag.Parse()
 
