@@ -1,4 +1,4 @@
-# Etapa de compilación
+# Etapa de compilación(build)
 FROM golang:alpine AS build-env
 ADD . /
 RUN cd / && go build -o telnet-server
