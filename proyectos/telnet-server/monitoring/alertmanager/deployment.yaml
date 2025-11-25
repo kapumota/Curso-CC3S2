@@ -1,3 +1,4 @@
+# Deployment de Alertmanager que monta su configuración desde ConfigMap y usa almacenamiento efímero
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,4 +38,3 @@ spec:
           name: alertmanager-config
       - name: alertmanager
         emptyDir: {}
-
