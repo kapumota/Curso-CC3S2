@@ -23,10 +23,17 @@ echo "[5] Listando Pods en el namespace 'monitoring'..."
 minikube kubectl -- get pods -n monitoring
 
 echo
-echo "[5b] Esperando a que los Pods de 'monitoring' estén en Ready (hasta 180s)..."
-# Espera a que todos los pods del namespace monitoring alcancen condition=Ready
-minikube kubectl -- wait --for=condition=ready pod -n monitoring --all --timeout=180s \
-  || echo "Algunos Pods de 'monitoring' no llegaron a Ready en el tiempo esperado"
+echo "[5b] Esperando a que los Pods clave estén en Ready (hasta 120s por componente)..."
+# En lugar de --all, esperamos por cada app concreta con menos timeout.
+# Ajusta las etiquetas (app=...) si tus Deployments usan otras.
+minikube kubectl -- wait --for=condition=ready pod -l app=prometheus   -n monitoring --timeout=120s \
+  || echo "Prometheus no llegó a Ready en el tiempo esperado"
+
+minikube kubectl -- wait --for=condition=ready pod -l app=grafana      -n monitoring --timeout=120s \
+  || echo "Grafana no llegó a Ready en el tiempo esperado"
+
+minikube kubectl -- wait --for=condition=ready pod -l app=alertmanager -n monitoring --timeout=120s \
+  || echo "Alertmanager no llegó a Ready en el tiempo esperado"
 
 echo
 echo "[6] Listando Services en el namespace 'monitoring'..."
