@@ -24,12 +24,11 @@ minikube kubectl -- get pods -n monitoring
 
 echo
 echo "[5b] Esperando a que los Deployments clave estén disponibles (hasta 120s por componente)..."
-# En lugar de esperar por Pods con labels (que pueden no coincidir),
-# esperamos a que los Deployments reporten condition=Available.
-minikube kubectl -- wait deployment/prometheus  -n monitoring --for=condition=Available --timeout=120s \
+# Esperamos a que los Deployments reporten condition=Available.
+minikube kubectl -- wait deployment/prometheus   -n monitoring --for=condition=Available --timeout=120s \
   || echo "Prometheus no llegó a Available en el tiempo esperado"
 
-minikube kubectl -- wait deployment/grafana     -n monitoring --for=condition=Available --timeout=120s \
+minikube kubectl -- wait deployment/grafana      -n monitoring --for=condition=Available --timeout=120s \
   || echo "Grafana no llegó a Available en el tiempo esperado"
 
 minikube kubectl -- wait deployment/alertmanager -n monitoring --for=condition=Available --timeout=120s \
@@ -40,39 +39,47 @@ echo "[6] Listando Services en el namespace 'monitoring'..."
 minikube kubectl -- get svc -n monitoring
 
 echo
-echo "[7] Obteniendo URLs de acceso (minikube service --url)..."
-PROM_URL="$(minikube service prometheus-service   -n monitoring --url 2>/dev/null || true)"
-GRAFANA_URL="$(minikube service grafana-service    -n monitoring --url 2>/dev/null || true)"
-ALERT_URL="$(minikube service alertmanager-service -n monitoring --url 2>/dev/null || true)"
+echo "[7] Obteniendo URLs de acceso (usando minikube ip + NodePort)..."
+MINIKUBE_IP="$(minikube ip)"
 
-if [ -n "${PROM_URL}" ]; then
+PROM_PORT="$(minikube kubectl -- get svc prometheus-service   -n monitoring -o jsonpath='{.spec.ports[0].nodePort}')"
+GRAFANA_PORT="$(minikube kubectl -- get svc grafana-service    -n monitoring -o jsonpath='{.spec.ports[0].nodePort}')"
+ALERT_PORT="$(minikube kubectl -- get svc alertmanager-service -n monitoring -o jsonpath='{.spec.ports[0].nodePort}')"
+
+PROM_URL=""
+GRAFANA_URL=""
+ALERT_URL=""
+
+if [ -n "${PROM_PORT}" ]; then
+  PROM_URL="http://${MINIKUBE_IP}:${PROM_PORT}"
   echo "Prometheus URL     : ${PROM_URL}"
 else
-  echo "Prometheus URL     : (no disponible todavía)"
+  echo "Prometheus URL     : (no disponible; no se pudo obtener NodePort)"
 fi
 
-if [ -n "${GRAFANA_URL}" ]; then
+if [ -n "${GRAFANA_PORT}" ]; then
+  GRAFANA_URL="http://${MINIKUBE_IP}:${GRAFANA_PORT}"
   echo "Grafana URL        : ${GRAFANA_URL}"
 else
-  echo "Grafana URL        : (no disponible todavía)"
+  echo "Grafana URL        : (no disponible; no se pudo obtener NodePort)"
 fi
 
-if [ -n "${ALERT_URL}" ]; then
+if [ -n "${ALERT_PORT}" ]; then
+  ALERT_URL="http://${MINIKUBE_IP}:${ALERT_PORT}"
   echo "Alertmanager URL   : ${ALERT_URL}"
 else
-  echo "Alertmanager URL   : (no disponible todavía)"
+  echo "Alertmanager URL   : (no disponible; no se pudo obtener NodePort)"
 fi
 
 echo
 echo "[8] Revisión rápida de reglas de alerta cargadas en Prometheus (via API)..."
 if [ -n "${PROM_URL}" ]; then
-  PROM_HTTP_BASE="${PROM_URL%%,*}"   # por si minikube imprime varias URLs separadas por coma
-  curl -s "${PROM_HTTP_BASE}/api/v1/rules" | head -n 20 || true
+  curl -s "${PROM_URL}/api/v1/rules" | head -n 20 || true
 else
-  echo "Prometheus no está disponible aún, se omite la llamada a /api/v1/rules."
+  echo "Prometheus no está disponible aún; se omite la llamada a /api/v1/rules."
 fi
 
 echo
 echo "----------------------------------------"
 echo "monitoring-commands.sh completado."
-echo "Abre en el navegador las URLs anteriores para Prometheus, Grafana y Alertmanager cuando estén disponibles."
+echo "Abre en el navegador las URLs anteriores para Prometheus, Grafana y Alertmanager."
