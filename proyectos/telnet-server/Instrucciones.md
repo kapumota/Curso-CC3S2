@@ -1,342 +1,442 @@
-### **Instrucciones**
+### Microservicio Telnet con Kubernetes y Observabilidad (Prometheus/Grafana/Alertmanager)
 
-### **Sobre contenedores**
+#### 0. Requisitos previos
 
-#### 1. Requisitos previos
+En **Windows 10/11**:
 
-* Tener instalado **Minikube** (v1.17.1 o superior).
-* Tener instalado **Docker Desktop** en Windows con el driver `docker` activo.
-* Consola con permisos de administrador para evitar problemas de permisos en Windows.
-* Estar dentro del entorno Python `bdd` (opcional, si usas Python para otras tareas).
+1. **Docker Desktop**
 
-#### 2. Cómo ejecutar el script
+   * Activar backend de **WSL2** y asegurarte de que Docker está corriendo.
 
-1. Descarga o clona el repositorio que contiene `deploy.sh`.
-2. Abre una consola (PowerShell o CMD, Git Bash) **como administrador**.
-3. Otorga permisos de ejecución al script:
+2. **Minikube** (v1.17.1 o superior)
 
-   ```bash
-   chmod +x deploy.sh
-   ```
-4. Ejecuta el script:
+   * Instalado y en el `PATH`.
 
-   ```bash
-   ./deploy.sh
-   ```
+3. **kubectl**
 
-Al finalizar, el script habrá:
+   * Opcionalmente puedes usar siempre el de Minikube:
 
-* Iniciado Minikube con driver Docker.
-* Ajustado las variables de entorno de Docker al demonio de Minikube.
-* Construido y etiquetado la imagen `dftd/telnet-server:v1`.
-* Desplegado el contenedor dentro de Minikube, vinculando el puerto 2323.
-* Mostrado logs, historial de la imagen y métricas básicas.
+     ```bash
+     minikube kubectl -- version
+     ```
 
-#### 3. Resolución de problemas comunes
+4. **Skaffold** (para la parte de CI/CD local)
 
-* **Warning `overlayfs` vs `overlay2`**:
-  "docker is currently using the overlayfs storage driver…"
-  -> No detiene el flujo, pero afecta el rendimiento.
-  **Solución:** Configura Docker para usar `overlay2` editando el archivo `daemon.json` de Docker Desktop.
+   * Instalado y en el `PATH`.
 
-* **Error de `icacls`**:
-  "icacls failed applying permissions…"
-  -> Suele ocurrir al crear la VM de Minikube en Windows.
-  **Solución:** Ejecuta la consola como Administrador o da permisos a la carpeta `~/.minikube`.
+5. **Cliente Telnet**
 
-* **Desajuste de versiones `kubectl`**:
-  "kubectl.exe is version 1.32.2…"
-  **Solución:** Usa la versión de `kubectl` que trae Minikube:
+   * En Windows, activar "Cliente Telnet" desde *Características de Windows* o usar `telnet` de WSL.
 
-  ```bash
-  minikube kubectl -- get pods -A
-  ```
+6. Opcional: entorno Python `bdd` (solo si lo usas para otras cosas).
 
-* **Error al lanzar `sh` con Git Bash**:
-  "exec: "C:/Program Files/Git/usr/bin/sh": no such file…"
-  **Solución:**
+### 1. Obtener el proyecto y entrar al directorio
 
-  * Ejecuta `docker exec -it telnet-server sh` desde PowerShell/CMD.
-  * O usa `winpty` en Git Bash:
-
-    ```bash
-    winpty docker exec -it telnet-server sh
-    ```
-
-* **Contenedor sale con código 2**:
-  Estado `exited` con `ExitCode=2` indica error interno del servidor.
-  **Solución:** Revisa los logs:
-
-  ```bash
-  docker logs telnet-server
-  ```
-
-  y ajusta el entrypoint o los parámetros de arranque.
-
-Resuelve todos estos incidentes.
-
-#### 4. Conexiones Telnet: localhost vs Minikube IP
-
-**¿Por qué `telnet localhost 2323` funciona y `telnet $(minikube ip) 2323` no?**
-
-* **`localhost:2323`** conecta al puerto expuesto en tu **host** de Windows.
-* **`$(minikube ip):2323`** apunta a la IP de la VM de Minikube. Si el contenedor corre en el **host**, no estará escuchando dentro de la VM.
-
-#### ¿Cómo arreglarlo?
-
-1. **Construye y ejecuta la imagen dentro de Minikube**:
-
-   ```bash
-   eval "$(minikube -p minikube docker-env --shell bash)"
-   docker run -p 2323:2323 -d --name telnet-server dftd/telnet-server:v1
-   ```
-
-   Así quedará disponible en `$(minikube ip):2323`.
-
-2. **Exponer el servicio con Minikube Tunnel** (para LoadBalancer):
-
-   ```bash
-   minikube tunnel
-   ```
-
-3. **Bind en todas las interfaces** (0.0.0.0):
-
-   ```bash
-   docker run -p 0.0.0.0:2323:2323 …
-   ```
-
-Investiga todos los casos.
-
-#### 5. Preguntas
-
-* ¿Qué ventajas e inconvenientes trae usar `overlay2` frente a `overlayfs` en Docker?
-* ¿Por qué es importante alinear la versión de `kubectl` con el cluster de Kubernetes?
-* ¿Cómo cambia el comportamiento de red si usas el modo `hostNetwork` en Pod de Kubernetes?
-* ¿Qué diferencia hay entre exponer un puerto con Docker y crear un Service de tipo LoadBalancer en Kubernetes?
-* ¿Cómo automatizarías la limpieza de contenedores e imágenes antiguas tras cada despliegue?
-* ¿Qué herramientas usarías para depurar contenedores en tiempo real sin parar el servicio?
-
-### **Kubernetes**
-
-Para orquestar los comandos de Kubernetes, crea un archivo k8s-commands.sh en tu proyecto y luego dale permisos y ejecútalo:
+```bash
+# Clonar el repositorio (o descomprimir el zip en una carpeta)
+git clone <URL_DEL_REPO> telnet-server
+cd telnet-server
 ```
+
+(En tu caso asegúrate de estar dentro de la carpeta `telnet-server/` donde están `Dockerfile`, `deploy.sh`, `k8s-commands.sh`, `monitoring/`, `skaffold.yaml`, etc.)
+
+### 2. Probar localmente solo con Docker (opcional, pero muy útil)
+
+#### 2.1. Construir la imagen
+
+```bash
+docker build -t dftd/telnet-server:v1 .
+```
+
+Ver la imagen:
+
+```bash
+docker images | grep telnet-server
+```
+
+#### 2.2. Ejecutar y probar Telnet
+
+```bash
+docker run --rm -d --name telnet-server -p 2323:2323 -p 9000:9000 dftd/telnet-server:v1
+```
+
+* Telnet contra el host:
+
+  ```bash
+  telnet localhost 2323
+  ```
+
+* Ver logs:
+
+  ```bash
+  docker logs -f telnet-server
+  ```
+
+* Probar métricas en el navegador o con curl:
+
+  ```bash
+  curl http://localhost:9000/metrics
+  ```
+
+#### 2.3. Entrar al contenedor (debug)
+
+En **PowerShell/CMD**:
+
+```bash
+docker exec -it telnet-server sh
+```
+
+En **Git Bash** (si da el error del `sh` de Git):
+
+```bash
+winpty docker exec -it telnet-server sh
+```
+
+Para parar el contenedor:
+
+```bash
+docker stop telnet-server
+```
+
+> Esto te ayuda a entender el binario y `/metrics` antes de meterlo en Kubernetes.
+
+### 3. Preparar Minikube + Docker dentro de Minikube
+
+Abre una consola **como Administrador** (PowerShell, CMD o Git Bash).
+
+#### 3.1. Iniciar Minikube con driver Docker
+
+```bash
+minikube start --driver=docker
+```
+
+> Si ves warnings de `overlayfs` vs `overlay2`, es tema de rendimiento, no un error fatal. Idealmente en Docker Desktop configurar `overlay2` en `daemon.json`, pero no bloquea el laboratorio.
+
+#### 3.2. Apuntar Docker al demonio de Minikube
+
+En **Git Bash/WSL/bash**:
+
+```bash
+eval "$(minikube -p minikube docker-env --shell bash)"
+```
+
+En **PowerShell**:
+
+```powershell
+minikube -p minikube docker-env --shell powershell
+# Copias y ejecutas las líneas que imprime (SET/ENV)
+```
+
+A partir de aquí, **`docker build` y `docker run` actúan dentro del entorno de Minikube**, no en el host.
+
+### 4. Script `deploy.sh` (flujo "rápido" de despliegue en Docker/Minikube)
+
+Usaremos este script como flujo estándar:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 1. Inicia Minikube con driver Docker (idempotente)
+echo "[1] Iniciando Minikube con driver Docker..."
+minikube start --driver=docker
+
+# 2. Apunta Docker al daemon de Minikube
+echo "[2] Configurando docker-env para usar el daemon de Minikube..."
+eval "$(minikube -p minikube docker-env --shell bash)"
+
+# 3. Comprueba versiones
+echo "[3] Versiones de Docker (cliente/servidor):"
+docker version
+
+# 4. Construye la imagen del telnet-server
+echo "[4] Construyendo imagen dftd/telnet-server:v1 ..."
+docker build -t dftd/telnet-server:v1 .
+
+# 5. Lista la imagen resultante
+echo "[5] Imágenes filtradas por dftd/telnet-server..."
+docker image ls dftd/telnet-server
+
+# 6. Arranca el contenedor exponiendo puertos de servicio (2323) y métricas (9000)
+echo "[6] Arrancando contenedor telnet-server (2323/TCP, 9000/TCP)..."
+docker run -p 0.0.0.0:2323:2323 \
+           -p 0.0.0.0:9000:9000 \
+           -d \
+           --name telnet-server \
+           dftd/telnet-server:v1
+
+# 7. Lista contenedores para verificar que está en ejecución
+echo "[7] Contenedores en ejecución (filtrando por telnet-server)..."
+docker container ls -f name=telnet-server
+
+# 8. Información interna del contenedor (variables de entorno)
+echo "[8] Variables de entorno dentro del contenedor..."
+docker exec telnet-server env
+
+# 9. Shell interactiva opcional para debug
+echo "[9] Shell dentro del contenedor (sal con 'exit' cuando termines)..."
+docker exec -it telnet-server /bin/sh || true
+
+# 10. Historial de capas y métricas de recursos
+echo "[10] Historial de la imagen dftd/telnet-server:v1..."
+docker history dftd/telnet-server:v1
+
+echo "[10b] Uso de recursos (stats) del contenedor telnet-server..."
+docker stats --no-stream telnet-server
+
+# 11. Prueba de conexión Telnet - localhost vs IP de Minikube
+echo "[11] Probando Telnet a localhost:2323 y a Minikube IP:2323..."
+
+MINIKUBE_IP="$(minikube ip)"
+echo "Minikube IP: ${MINIKUBE_IP}"
+
+echo ">>> Telnet a localhost 2323 (puerto mapeado en el host)"
+telnet localhost 2323 || true
+
+echo ">>> Telnet a ${MINIKUBE_IP} 2323 (cuando el contenedor corre con docker-env de Minikube)"
+telnet "${MINIKUBE_IP}" 2323 || true
+
+# 12. Logs del contenedor
+echo "[12] Logs del contenedor telnet-server..."
+docker logs telnet-server
+
+echo "-"
+echo "deploy.sh completado."
+echo "Contenedor 'telnet-server' sigue en ejecución."
+echo "Puedes detenerlo con: docker stop telnet-server"
+```
+
+#### 4.1. Dar permisos y ejecutar
+
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### 5. Conexiones Telnet: `localhost` vs `minikube ip`
+
+#### 5.1. Caso 1: contenedor en el host
+
+Si el contenedor corre así:
+
+```bash
+docker run -p 2323:2323 -d dftd/telnet-server:v1
+```
+
+* Funciona: `telnet localhost 2323`
+* **NO** funciona: `telnet $(minikube ip) 2323`
+  porque el contenedor está en el host, no "dentro" de la VM de Minikube.
+
+#### 5.2. Caso 2: contenedor usando el Docker de Minikube
+
+Con `docker-env` activo:
+
+```bash
+eval "$(minikube -p minikube docker-env --shell bash)"
+docker run -p 2323:2323 -d --name telnet-server dftd/telnet-server:v1
+```
+
+Ahora puedes hacer:
+
+```bash
+minikube ip
+# Ejemplo: 192.168.49.2
+telnet 192.168.49.2 2323
+```
+
+También puedes usar `0.0.0.0` para bind:
+
+```bash
+docker run -p 0.0.0.0:2323:2323 -d dftd/telnet-server:v1
+```
+
+### 6. Script `k8s-commands.sh`: revisar el Deployment y el Service
+
+Usaremos este script como "laboratorio de Kubernetes":
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 1. Información del cluster
+echo "[1] Info del cluster"
+minikube kubectl -- cluster-info
+
+# 2. Explicación de labels en Deployment
+echo
+echo "[2] Explica deployment.metadata.labels"
+minikube kubectl -- explain deployment.metadata.labels
+
+# 3. Despliegue / actualización de recursos del directorio kubernetes/
+echo
+echo "[3] Aplicando manifiestos de kubernetes/"
+minikube kubectl -- apply -f kubernetes/
+
+# 4. Inspección de Deployment, Pods y Services
+echo
+echo "[4] Deployment, Pods, Services"
+minikube kubectl -- get deployments.apps telnet-server
+minikube kubectl -- get pods -l app=telnet-server
+minikube kubectl -- get services -l app=telnet-server
+
+# 5. Abre el túnel en background (Services tipo LoadBalancer)
+echo
+echo "[5] Iniciando minikube tunnel en background..."
+minikube tunnel & TUNNEL_PID=$!
+echo "Tunnel PID: ${TUNNEL_PID}"
+
+# 6. Verificación de Service y Endpoints
+echo
+echo "[6] Services & Endpoints (telnet-server)"
+minikube kubectl -- get services telnet-server
+minikube kubectl -- get endpoints -l app=telnet-server
+minikube kubectl -- get pods -l app=telnet-server
+
+# 7. Simula caída de un Pod y recuperación automática
+echo
+echo "[7] Eliminando un Pod para observar la autorecuperación..."
+POD="$(minikube kubectl -- get pods -l app=telnet-server -o jsonpath='{.items[0].metadata.name}')"
+echo "Borrando pod: ${POD}"
+minikube kubectl -- delete pod "${POD}"
+
+echo "Pods actuales tras la eliminación:"
+minikube kubectl -- get pods -l app=telnet-server
+
+# 8. Escalado del Deployment (a 3 réplicas)
+echo
+echo "[8] Escalando deployment telnet-server a 3 replicas..."
+minikube kubectl -- scale deployment telnet-server --replicas=3
+minikube kubectl -- get deployments.apps telnet-server
+
+echo "Pods tras el escalado:"
+minikube kubectl -- get pods -l app=telnet-server
+
+# 9. Logs de uno de los Pods
+echo
+echo "[9] Logs desde un Pod (todos los contenedores, con prefijo de nombre)..."
+FIRST_POD="$(minikube kubectl -- get pods -l app=telnet-server -o name | head -n1 | cut -d'/' -f2)"
+echo "Primer pod encontrado: ${FIRST_POD}"
+minikube kubectl -- logs "${FIRST_POD}" --all-containers=true --prefix=true
+
+# 10. Cierre del túnel
+echo
+echo "[10] Cerrando el túnel de Minikube..."
+kill "${TUNNEL_PID}" || true
+
+echo "-"
+echo "k8s-commands.sh completado."
+```
+
+#### 6.1. Dar permisos y ejecutar
+
+```bash
 chmod +x k8s-commands.sh
 ./k8s-commands.sh
 ```
 
-**1. Información del cluster**
+### 7. Despliegue de monitoreo: Prometheus, Grafana y Alertmanager
+
+#### 7.0. Script `monitoring-commands.sh`
+
+Para no escribir todo a mano cada vez, usaremos este script:
 
 ```bash
-echo "Cluster Info"
-minikube kubectl cluster-info
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[1] Creando / actualizando namespace 'monitoring'..."
+minikube kubectl -- apply -f monitoring/00_namespace.yaml
+
+echo
+echo "[2] Desplegando Prometheus..."
+minikube kubectl -- apply -f monitoring/prometheus/
+
+echo
+echo "[3] Desplegando Grafana..."
+minikube kubectl -- apply -f monitoring/grafana/
+
+echo
+echo "[4] Desplegando Alertmanager..."
+minikube kubectl -- apply -f monitoring/alertmanager/
+
+echo
+echo "[5] Listando Pods en el namespace 'monitoring'..."
+minikube kubectl -- get pods -n monitoring
+
+echo
+echo "[6] Listando Services en el namespace 'monitoring'..."
+minikube kubectl -- get svc -n monitoring
+
+echo
+echo "[7] Obteniendo URLs de acceso (minikube service --url)..."
+PROM_URL="$(minikube service prometheus-service -n monitoring --url)"
+GRAFANA_URL="$(minikube service grafana-service -n monitoring --url)"
+ALERT_URL="$(minikube service alertmanager-service -n monitoring --url)"
+
+echo "Prometheus URL   : ${PROM_URL}"
+echo "Grafana URL      : ${GRAFANA_URL}"
+echo "Alertmanager URL : ${ALERT_URL}"
+
+echo
+echo "[8] Revisión rápida de reglas de alerta cargadas en Prometheus (via API)..."
+PROM_HTTP_BASE="${PROM_URL%%,*}"   # por si minikube imprime varias URLs
+curl -s "${PROM_HTTP_BASE}/api/v1/rules" | head -n 20 || true
+
+echo
+echo "-"
+echo "monitoring-commands.sh completado."
+echo "Abre en el navegador las URLs anteriores para Prometheus, Grafana y Alertmanager."
 ```
 
-**Salida típica**
-
-```
-Cluster Info
-Kubernetes control plane is running at https://192.168.49.2:8443
-CoreDNS is running at https://192.168.49.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-```
-
-> Te muestra las URL del API‐server y de los add-ons esenciales (CoreDNS, etc).
-
-
-**2. Explicación de `deployment.metadata.labels`**
+#### Uso
 
 ```bash
-echo "Explica deployment.metadata.labels"
-minikube kubectl -- explain deployment.metadata.labels
+chmod +x monitoring-commands.sh
+./monitoring-commands.sh
 ```
 
-**Salida típica**
+Salidas típicas:
 
-```
-Explica deployment.metadata.labels
-DEPLOYMENT.METADATA.LABELS   <map[string]string>
-    Map of string keys and values that can be used to organize and categorize
-    (scope and select) the object. May match selectors of replication controllers
-    and services.
-```
+* `created` / `configured` para los recursos de Prometheus/Grafana/Alertmanager.
+* `get pods -n monitoring` mostrando los pods `prometheus-deployment-...`, `grafana-deployment-...`, `alertmanager-deployment-...` en `Running`.
+* `get svc -n monitoring` mostrando `prometheus-service`, `grafana-service`, `alertmanager-service` (NodePort).
+* URLs tipo `http://192.168.49.2:30090` (Prometheus), `:30030` (Grafana), `:30093` (Alertmanager).
+* El JSON de `/api/v1/rules` con tus reglas de alerta (`telnet-server-golden-signals`, etc.) truncado a ~20 líneas.
 
-> Esta sección extrae la documentación embebida en la API de Kubernetes sobre el campo `labels`.
+#### 7.1. (Opcional) Comandos manuales equivalentes
 
-**3. Despliegue de manifiestos**
+Si prefieres hacerlo sin script, los comandos sueltos son los mismos que antes:
 
 ```bash
-echo "Aplicando manifiestos"
-minikube kubectl -- apply -f kubernetes/
+minikube kubectl -- apply -f monitoring/00_namespace.yaml
+minikube kubectl -- apply -f monitoring/prometheus/
+minikube kubectl -- apply -f monitoring/grafana/
+minikube kubectl -- apply -f monitoring/alertmanager/
+minikube kubectl -- get pods -n monitoring
+minikube kubectl -- get svc  -n monitoring
 ```
 
-**Salida típica**
-
-```
-Aplicando manifiestos
-deployment.apps/telnet-server created
-service/telnet-server created
-```
-
-> Verás uno por cada recurso en tu carpeta `kubernetes/`, indicando si se ha creado o actualizado.
-
-**4. Inspección de Deployment, Pods y Services**
+Y acceso con:
 
 ```bash
-echo "Deployment, Pods, Services"
-minikube kubectl -- get deployments.apps telnet-server
-minikube kubectl -- get pods -l app=telnet-server
-minikube kubectl -- get services -l app=telnet-server
+minikube service prometheus-service -n monitoring
+minikube service grafana-service -n monitoring
+minikube service alertmanager-service -n monitoring
 ```
 
-**Salida típica**
+o `kubectl port-forward` si lo prefieres.
 
-```
-Deployment, Pods, Services
-NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-telnet-server   1/1     1            1           30s
+### 8. Flujo con `skaffold.yaml` (build -> test -> deploy)
 
-NAME                               READY   STATUS    RESTARTS   AGE
-telnet-server-84c58d8849-abcde     1/1     Running   0          25s
+#### 8.1. Ejecutar Skaffold
 
-NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-telnet-server   ClusterIP   10.96.123.456    <none>        2323/TCP   25s
-```
-
-> Te confirma que tu Deployment tiene sus réplicas listas, el Pod está corriendo y el Service expone el puerto.
-
-
-**5. Abrir el túnel en background**
+Con Minikube activo y `docker-env` apuntando a Minikube:
 
 ```bash
-echo "Inicio del Tunel"
-minikube tunnel & TUNNEL_PID=$!
-echo "Tunnel PID: $TUNNEL_PID"
+skaffold dev --cleanup=false
 ```
 
-**Salida típica**
-
-```
-Inicio del Tunel
-Tunnel PID: 12345
-```
-
-> `minikube tunnel` se queda escuchando para instalar rutas de LoadBalancer en tu host; con el PID podrás matarlo al final.
-
-
-**6. Verificación de Service y Endpoints**
-
-```bash
-echo "Service & Endpoints"
-minikube kubectl -- get services telnet-server
-minikube kubectl -- get endpoints -l app=telnet-server
-minikube kubectl -- get pods -l app=telnet-server
-```
-
-**Salida típica**
-
-```
-Service & Endpoints
-NAME            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
-telnet-server   LoadBalancer   10.96.123.456    192.168.49.2  2323:32323/TCP   1m
-
-NAME                         ENDPOINTS           AGE
-telnet-server                172.17.0.5:2323     1m
-
-NAME                               READY   STATUS    RESTARTS   AGE
-telnet-server-84c58d8849-abcde     1/1     Running   0          1m
-```
-
-> Ahora el Service es de tipo LoadBalancer y tiene una IP externa (la IP de Minikube). Los Endpoints muestran la IP interna del Pod.
-
-
-**7. Simular caída de un Pod y recuperación**
-
-```bash
-echo "Eliminando un Pod"
-POD=$(minikube kubectl -- get pods -l app=telnet-server -o jsonpath='{.items[0].metadata.name}')
-minikube kubectl -- delete pod "$POD"
-minikube kubectl -- get pods -l app=telnet-server
-```
-
-**Salida típica**
-
-```
-Eliminando un Pod
-pod "telnet-server-84c58d8849-abcde" deleted
-
-NAME                               READY   STATUS        RESTARTS   AGE
-telnet-server-84c58d8849-fghij     1/1     Running       0          5s
-```
-
-> Al borrar el Pod, el ReplicaSet automáticamente crea uno nuevo. Ves primero el mensaje `deleted` y luego el Pod fresco en estado `Running`.
-
-
-**8. Escalado del Deployment**
-
-```bash
-echo "Escalando a 3 replicas"
-minikube kubectl -- scale deployment telnet-server --replicas=3
-minikube kubectl -- get deployments.apps telnet-server
-```
-
-**Salida típica**
-
-```
-Escalando a 3 replicas
-deployment.apps/telnet-server scaled
-
-NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-telnet-server   3/3     3            3           2m
-```
-
-> La línea `scaled` confirma la orden, y después ves las 3 réplicas listas.
-
-**9. Logs de uno de los Pods**
-
-```bash
-echo "Logs desde un Pods"
-FIRST_POD=$(minikube kubectl -- get pods -l app=telnet-server -o name | head -n1 | cut -d'/' -f2)
-minikube kubectl -- logs "$FIRST_POD" --all-containers=true --prefix=true
-```
-
-**Salida típica**
-
-```
-Logs desde un Pod
-telnet-server-84c58d8849-abcde | Server listening on port 2323
-telnet-server-84c58d8849-abcde | New connection from 172.17.0.1
-telnet-server-84c58d8849-abcde | Command received: q
-```
-
-> Muestra las líneas de log prefijadas con el nombre del Pod, útiles para identificar rápidamente la fuente.
-
-
-**10. Cierre del túnel**
-
-```bash
-echo "Fin del tunel"
-kill "$TUNNEL_PID" || true
-```
-
-**Salida típica**
-
-```
-Fin del tunel
-```
-
-> No suele imprimir nada más; simplemente mata el proceso de túnel.
-
-### Preguntas
-
-* ¿Por qué minikube tunnel debe ejecutarse en otro terminal o en background?
-* ¿Qué información muestra cluster-info y por qué es útil para diagnosticar el estado del cluster?
-* ¿Cómo funcionan los label selectors en Kubernetes y cuándo es mejor usarlos?
-* ¿Cuál es la diferencia entre un Service de tipo ClusterIP, NodePort y LoadBalancer?
-* ¿Qué sucede internamente al escalar un Deployment en Kubernetes?
-* ¿Cómo podrías asegurar que los pods recién creados cumplen con las políticas de seguridad (PSP o PodSecurity)?
-
-### **Despliegue de código**
-
-Este `skaffold.yaml` es un "orquestador"  local para todo el flujo de desarrollo con Minikube y Kubernetes. 
+Skaffold hará:
 
 1. **Build**
 
@@ -347,10 +447,7 @@ Este `skaffold.yaml` es un "orquestador"  local para todo el flujo de desarrollo
        - image: dftd/telnet-server
    ```
 
-   * Usa tu daemon Docker local (que en realidad, cuando haces `eval $(minikube -p minikube docker-env --shell bash)`, será el de Minikube).
-   * Compila la imagen `dftd/telnet-server` a partir de tu `Dockerfile`.
-
-2. **Test**
+2. **Test** (unit tests + container-structure-test):
 
    ```yaml
    test:
@@ -360,10 +457,7 @@ Este `skaffold.yaml` es un "orquestador"  local para todo el flujo de desarrollo
          - command: "docker run … container-structure-test ... --image={{.IMAGE}} …"
    ```
 
-   * Ejecuta primero tus unit tests de Go.
-   * Después corre las pruebas de integridad del contenedor (estructura, metadatos, comandos) usando `container-structure-test` dentro de un contenedor Docker.
-
-3. **Deploy**
+3. **Deploy** con tus manifests:
 
    ```yaml
    deploy:
@@ -372,20 +466,17 @@ Este `skaffold.yaml` es un "orquestador"  local para todo el flujo de desarrollo
          - kubernetes/*
    ```
 
-   * Aplica **todos** los manifiestos (`*.yaml`) que tengas en la carpeta `kubernetes/` al clúster activo (tu Minikube).
-   * Eso incluye Deployments, Services, ConfigMaps, etc.
+4. Se queda viendo cambios en el código. Si editas Go/Dockerfile, reconstruye y redepliega.
 
-4. **Flujo `skaffold dev --cleanup=false`**
+Cuando quieras limpiar todo:
 
-   1. Genera un tag único para `dftd/telnet-server` (por ejemplo `:603bafb-dirty`).
-   2. Construye la imagen.
-   3. Corre los tests.
-   4. Aplica los manifiestos con `kubectl apply`.
-   5. **No** borra nada al salir, así puedes inspeccionar el estado de pods, servicios, revisiones, etc.
+```bash
+skaffold delete
+```
 
-#### **Script de inspección y rollback**
+### 9. Script `check_and_rollback.sh` (inspección y rollback)
 
-Puedes automatizar esas comprobaciones y el deshacer ("undo") de un rollout en un sencillo script Bash. Por ejemplo, crea un archivo `check_and_rollback.sh` en la raíz de tu proyecto:
+Crea este archivo en la raíz:
 
 ```bash
 #!/usr/bin/env bash
@@ -397,57 +488,23 @@ minikube kubectl -- get services telnet-server
 echo; echo "Historia rollout: telnet-server"
 minikube kubectl -- rollout history deployment telnet-server
 
-echo; echo " A revision 1"
+echo; echo "Rollback a revision 1"
 minikube kubectl -- rollout undo deployment telnet-server --to-revision=1
 
 echo; echo "Pods despues de undo"
 minikube kubectl -- get pods
 ```
 
-**Cómo usarlo**
+Dar permisos y ejecutar:
 
-1. Dale permisos de ejecución:
+```bash
+chmod +x check_and_rollback.sh
+./check_and_rollback.sh
+```
+Con esto ya tienes las **instrucciones completas** integrando:
 
-   ```bash
-   chmod +x check_and_rollback.sh
-   ```
-2. Ejecuta:
-
-   ```bash
-   ./check_and_rollback.sh
-   ```
-
-* **`get services telnet-server`**: muestra el Service que expone tu aplicación.
-* **`rollout history deployment telnet-server`**: lista las revisiones de tu Deployment (cada `apply` crea una nueva revisión).
-* **`rollout undo ... --to-revision=1`**: deshace el Deployment a la revisión número 1.
-* **`get pods`**: te enseña los pods actuales tras el rollback.
-
-Así tienes tanto el flujo build -> test -> deploy con Skaffold, como un script ad hoc para inspección y recuperación de despliegues en tu clúster Minikube.
-
-#### **Preguntas**
-
-
-1. **Entorno y contexto**
-
-   * ¿Usas siempre el namespace `default` o despliegas en uno distinto (por ejemplo `monitoring` o `staging`)?
-   * ¿Necesitas que Skaffold cambie automáticamente entre contextos de Kubernetes (p. ej. Minikube vs. otro clúster)?
-
-2. **Pruebas adicionales**
-
-   * Además de las pruebas de Go y de estructura de contenedor, ¿quieres validar algo en el clúster tras el deploy (por ejemplo un "smoke test" vía `kubectl exec` o un simple `curl` a un endpoint)?
-   * ¿Te interesa incluir chequeos de salud o probes para tus pods?
-
-3. **Rollout y rollback**
-
-   * ¿Con qué frecuencia planeas hacer rollouts? ¿Te gustaría automatizar comprobaciones post-rollout (por ejemplo, garantizar que el 100 % de los pods estén disponibles)?
-   * ¿Quieres que el script de rollback forme parte de un hook automático (antes de un nuevo deploy) o prefieres ejecutarlo manualmente?
-
-4. **Observabilidad y métricas**
-
-   * ¿Piensas integrar Prometheus/Grafana en el mismo flujo de Skaffold o lo gestionas por separado?
-   * ¿Te vendría bien un paso que despliegue también un Dashboard y verifique que los endpoints de métricas responden?
-
-5. **Limpieza y estado**
-
-   * Con `--cleanup=false` mantienes los recursos tras detener Skaffold; ¿quieres a la inversa un comando rápido que elimine todo (`skaffold delete` o similar)?
-   * ¿Necesitas preservar volúmenes o datos de métricas entre ejecuciones?
+* `deploy.sh`
+* `k8s-commands.sh`
+* `monitoring-commands.sh`
+* `check_and_rollback.sh`
+* y el flujo con Docker, Minikube, Kubernetes, Prometheus, Grafana, Alertmanager y Skaffold.
