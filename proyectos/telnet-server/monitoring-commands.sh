@@ -23,17 +23,17 @@ echo "[5] Listando Pods en el namespace 'monitoring'..."
 minikube kubectl -- get pods -n monitoring
 
 echo
-echo "[5b] Esperando a que los Pods clave estén en Ready (hasta 120s por componente)..."
-# En lugar de --all, esperamos por cada app concreta con menos timeout.
-# Ajusta las etiquetas (app=...) si tus Deployments usan otras.
-minikube kubectl -- wait --for=condition=ready pod -l app=prometheus   -n monitoring --timeout=120s \
-  || echo "Prometheus no llegó a Ready en el tiempo esperado"
+echo "[5b] Esperando a que los Deployments clave estén disponibles (hasta 120s por componente)..."
+# En lugar de esperar por Pods con labels (que pueden no coincidir),
+# esperamos a que los Deployments reporten condition=Available.
+minikube kubectl -- wait deployment/prometheus  -n monitoring --for=condition=Available --timeout=120s \
+  || echo "Prometheus no llegó a Available en el tiempo esperado"
 
-minikube kubectl -- wait --for=condition=ready pod -l app=grafana      -n monitoring --timeout=120s \
-  || echo "Grafana no llegó a Ready en el tiempo esperado"
+minikube kubectl -- wait deployment/grafana     -n monitoring --for=condition=Available --timeout=120s \
+  || echo "Grafana no llegó a Available en el tiempo esperado"
 
-minikube kubectl -- wait --for=condition=ready pod -l app=alertmanager -n monitoring --timeout=120s \
-  || echo "Alertmanager no llegó a Ready en el tiempo esperado"
+minikube kubectl -- wait deployment/alertmanager -n monitoring --for=condition=Available --timeout=120s \
+  || echo "Alertmanager no llegó a Available en el tiempo esperado"
 
 echo
 echo "[6] Listando Services en el namespace 'monitoring'..."
@@ -69,7 +69,7 @@ if [ -n "${PROM_URL}" ]; then
   PROM_HTTP_BASE="${PROM_URL%%,*}"   # por si minikube imprime varias URLs separadas por coma
   curl -s "${PROM_HTTP_BASE}/api/v1/rules" | head -n 20 || true
 else
-  echo "Prometheus no está disponible aún; se omite la llamada a /api/v1/rules."
+  echo "Prometheus no está disponible aún, se omite la llamada a /api/v1/rules."
 fi
 
 echo
