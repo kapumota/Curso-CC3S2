@@ -459,7 +459,7 @@ Para un reset completo del clúster:
 minikube delete
 ```
 
-Con estas secciones se recorre, paso a paso:
+Con estas secciones se recorre, paso a paso todo esto:
 
 1. `deploy.sh` -> imagen probada en el host y disponible en Minikube.
 2. `k8s-commands.sh` -> despliegue, Service tipo LoadBalancer, túnel, autorecuperación y escalado.
