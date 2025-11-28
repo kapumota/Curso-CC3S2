@@ -1,4 +1,4 @@
-### Laboratorio: DevSecOps de extremo a extremo: Docker -> Cadena de suministro -> CI -> Kubernetes (local primero, reproducible)
+### Laboratorio: DevSecOps total: Docker -> Cadena de suministro -> CI -> Kubernetes (local primero, reproducible)
 
 Este laboratorio, cubre el desarrollo local con Docker/Compose, **supply chain** (SBOM, SCA y firma), **CI local con registro**, y despliegue en **Kubernetes (Minikube)**, con verificación de salud y recolección de evidencias.
 
