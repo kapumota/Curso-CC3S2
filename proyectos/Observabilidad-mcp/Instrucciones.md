@@ -1,4 +1,4 @@
-### Guía de uso del proyecto `Observabilidad-mcp`
+### Instrucciones para  `Observabilidad-mcp`
 
 #### 0. Estructura del proyecto
 
