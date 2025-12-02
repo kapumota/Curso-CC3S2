@@ -377,7 +377,7 @@ Si te aparece vacío:
   * El rango de tiempo (arriba a la derecha; por ejemplo "Last 6 hours") incluye el momento actual.
 * Cambia el rango a "Last 15 minutes" y vuelve a lanzar tráfico.
 
-### 9.3. Filtrar por texto en el log
+#### 9.3. Filtrar por texto en el log
 
 Una vez que ya ves líneas de logs:
 
