@@ -1,0 +1,18 @@
+server:
+  # Tempo expone su API HTTP en este puerto
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          # Aquí escucha Tempo el tráfico OTLP gRPC desde el collector
+          endpoint: 0.0.0.0:4317
+
+storage:
+  trace:
+    backend: local
+    local:
+      # Tempo guardará los bloques de trazas en este directorio
+      path: /tmp/tempo/blocks
