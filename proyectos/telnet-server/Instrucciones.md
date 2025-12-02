@@ -1,4 +1,4 @@
-### Instrucciones con `telnet-server`
+### Instrucciones para `telnet-server`
 
 Esta guía está **alineada exactamente** con los scripts del proyecto:
 
