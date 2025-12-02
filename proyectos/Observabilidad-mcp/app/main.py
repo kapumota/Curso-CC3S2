@@ -29,9 +29,8 @@ file_handler = logging.FileHandler(os.path.join(LOG_DIR, "app.log"))
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-# ---------------------------------------------------------------------
 #  OpenTelemetry controlado SOLO por DISABLE_OTEL
-# ---------------------------------------------------------------------
+
 DISABLE_OTEL = os.getenv("DISABLE_OTEL", "0") == "1"
 provider = None
 
@@ -57,9 +56,8 @@ if not DISABLE_OTEL:
 # Si no hay provider configurado, get_tracer usa el no-op por defecto.
 tracer = trace.get_tracer(__name__)
 
-# ---------------------------------------------------------------------
 #  FastAPI
-# ---------------------------------------------------------------------
+
 app = FastAPI(title="DevSecOps Observability Demo", version="0.1.0")
 
 if provider is not None:
