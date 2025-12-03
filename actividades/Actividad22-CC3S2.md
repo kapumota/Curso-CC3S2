@@ -2,7 +2,7 @@
 
 #### Descripción general
 
-En esta actividad vas a trabajar con el proyecto `Observabilidad-mcp`, que levanta:
+En esta actividad vas a trabajar con el proyecto [Observabilidad-mcp](https://github.com/kapumota/Curso-CC3S2/tree/main/proyectos/Observabilidad-mcp), que levanta:
 
 * Un microservicio **FastAPI** instrumentado con **OpenTelemetry**.
 * Un **OpenTelemetry Collector** que expone métricas a **Prometheus**.
@@ -326,8 +326,9 @@ Actividad22/dashboard-actividad22.json
    * Etiquetas: `severity="critical"`.
    * Mensaje: "La demo-app está devolviendo demasiados 5xx".
 
-3. No es necesario configurar contact points reales, pero documenta la regla.
-
+3. No es necesario configurar **contact points** reales, pero documenta la regla.
+   > En Grafana, un contact point es el destino al que se envía la alerta cuando se dispara la regla. Por ejemplo: un correo (`equipo-sre@empresa.com`).
+   
 En `Actividad22/grafana-alerting.md`:
 
 * Describe:
