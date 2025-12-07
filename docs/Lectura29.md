@@ -38,9 +38,7 @@ OpenSSF viene empujando justo esta visión de **MLSecOps**: extender las prácti
 
 #### AIOps aplicado a SRE/operaciones
 
-En operaciones, AIOps no es magia; es **usar modelos para digerir la avalancha de telemetría** (métricas, logs, trazas, eventos) y ayudar al SRE a mantener SLO/SLI sin morir de fatiga de guardia.
-
-Las plataformas de AIOps modernas hacen, sobre todo, tres cosas:
+En operaciones, AIOps no es magia; es **usar modelos para digerir la avalancha de telemetría** (métricas, logs, trazas, eventos) y ayudar al SRE a mantener SLO/SLI sin morir de fatiga de guardia. Las plataformas de AIOps modernas hacen, sobre todo, tres cosas:
 
 * **Detección de anomalías**, muchas veces multidimensional, donde se correlacionan métricas, logs y trazas para detectar patrones que un ojo humano no vería o vería demasiado tarde.
 * **Correlación de eventos y reducción de ruido** (*event correlation*): agrupan alertas relacionadas, colapsan duplicados y señalan el "incidente raíz" en vez de inundar de notificaciones a la persona de *on-call*. 
